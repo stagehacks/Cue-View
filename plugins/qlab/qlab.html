@@ -1,0 +1,196 @@
+<% function cueTemplate(cueList, groupModes, depth, workspace){ %>
+
+	<% depth++ %>
+
+	<% for(var c in cueList.cues){ %>
+
+		<% var cue = cueList.cues[c] %>
+			<tr class="q-<%= cue.colorName %> q-armed-<%= cue.armed %> <%if(data.playbackPosition==cue.uniqueID){ %>playback-position scroll-position<% } %>" id="<%= cue.uniqueID %>">
+
+				<td></td> <!-- playhead/color indicator -->
+
+				<% if(cue.broken){ %>
+					<td><center><img src="plugins/qlab/img/status_broken.png" height="18px"></center></td>
+				<% }else if(cue.running){ %>
+					<td><center><img src="plugins/qlab/img/status_running.png" height="18px"></center></td>
+				<% }else if(cue.loaded){ %>
+					<td><center><img src="plugins/qlab/img/status_loaded.png" height="18px"></center></td>
+				<% }else if(cue.flagged){ %>
+					<td><center><img src="plugins/qlab/img/status_flagged.png" height="20px"></center></td>
+				<% }else{ %>
+					<td></td>
+				<% } %>
+
+
+				<td><img src="plugins/qlab/img/<%= cue.type.toLowerCase() %>.png" height="20px"></td>
+				<td><center><%- cue.number || "&nbsp;" %></center></td>
+
+				<%
+				var nextCueDepth = 0;
+				if(workspace.allCuesOrdered[cue.index+1]!=undefined){
+					nextCueDepth = workspace.allCuesOrdered[cue.index+1].groups.length-1;
+				}
+
+				%>
+				
+				
+
+				<!-- spacer cells before cue name --> 
+				<% for(var i=0; i<depth; i++){ %>
+
+					<% if(i==depth-1 && cue.type=="Group"){ %>
+
+						<% if(cue.cues.length==0){ %>
+							<td width="15px" class="group-arrow gMode-<%= cue.mode %> gLeft gTop gBot"></td>
+
+						<% }else{ %>
+							<td width="15px" class="group-arrow gMode-<%= cue.mode %> gLeft gTop"></td>
+
+						<% } %>
+
+					<% }else if(i<nextCueDepth){ %>
+						<td width="15px" class="gMode-<%= groupModes[i] %> gLeft"></td>
+
+					<% }else if(i>=nextCueDepth && i<depth-1 ){ %>
+						<td width="15px" class="gMode-<%= groupModes[i] %> gLeft gBot"></td>
+
+					<% }else if(i==depth-1 && i>nextCueDepth){ %>
+						<td width="15px" class="gMode-<%= groupModes[groupModes.length-1] %> gBot"></td>
+
+					<% }else{ %>
+						<td width="15px" ></td>
+
+					<% } %>
+
+				<% } %>
+
+				
+
+				<!-- cue name -->
+				<% if(cue.type=="Group"){ %>
+					<% if(cue.cues.length==0){ %>
+						<td colspan="<%= 11-depth %>" class="gMode-<%= cue.mode %> gTop gBot gRight"><%= cue.listName %></td>
+
+					<% }else{ %>
+						<td colspan="<%= 11-depth %>" class="gMode-<%= cue.mode %> gTop gRight"><%= cue.listName %></td>
+
+					<% } %>
+				<% }else if(depth>nextCueDepth+1){ %>
+					<td colspan="<%= 11-depth %>" class="gMode-<%= groupModes[groupModes.length-1] %> gBot gRight"><%= cue.listName %></td>
+
+				<% }else if(depth>1){ %>
+					<td colspan="<%= 11-depth %>" class="gMode-<%= groupModes[groupModes.length-1] %> gRight"><%= cue.listName %></td>
+
+				<% }else{ %>
+					<td colspan="<%= 11-depth %>"><%= cue.listName %></td>
+
+				<% } %>
+
+				<td class="q-time hide-medium"><%= cue.target %></td>
+
+				<% if(cue.preWait){ %>
+					<td class="q-time hide-small"><%= prettyFormatTime(cue.preWait) %></td>
+				<% }else{ %>
+					<td class="q-time q-gray-text hide-small">00:00.00</td>
+				<% } %>
+
+				<% if(cue.duration || (cue.type=="Group" && cue.mode==3)){ %>
+					<% %>
+					<td class="q-time hide-medium"><%= prettyFormatTime(cue.duration) %></td>
+				<% }else{ %>
+					<td class="hide-medium"></td>
+				<% } %>
+
+				<% if(cue.postWait){ %>
+					<td class="q-time q-gray-text hide-medium"><%= prettyFormatTime(cue.postWait) %></td>
+				<% }else{ %>
+					<td class="q-time q-gray-text hide-medium">00:00.00</td>
+				<% } %>
+
+				<% if(cue.continueMode==2){ %>
+					<td class="hide-small"><center><img src="plugins/qlab/img/auto_follow.png" height="20px"></center></td>
+				<% }else if(cue.continueMode==1){ %>
+					<td class="hide-small"><center><img src="plugins/qlab/img/auto_continue.png" height="20px"></center></td>
+				<% }else{ %>
+					<td class="hide-small"></td>
+				<% } %>
+
+				
+
+				
+				
+			
+
+
+			</tr>
+		<% if(cue.cues){ %>
+			<% groupModes.push(cue.mode) %>
+			<% cueTemplate(cue, groupModes, depth, workspace) %>
+		<% } %>
+
+	<% } %>
+	<% groupModes.pop(); %>
+<% } %>
+
+<header>
+	<h1><%= listName %></h1>
+	<h2><%= data.version || "" %></h2>
+</header>
+
+
+<% for(var i in data.workspaces){ %>
+	<% for(var j in data.workspaces[i].cueLists){ %>
+		<% let cueList = data.workspaces[i].cueLists[j] %>
+		<h3><%= cueList.listName %> - <%= data.workspaces[i].displayName %></h3>
+
+		<% cueListOffset = 0 %>
+		<table cellspacing="0">
+			<tr>
+				<th width="1px" style="border-left: none; border-right: none;"></th>
+				<th width="20px" style="border-left: none; border-right: none;"></th>
+				<th width="20px" style="border-left: none;"></th>
+				<th width="55px">Number</th>
+				<th width="25px" style="padding: 0px"></th>
+				<th width="25px" class="no-border">Q</th>
+				<th width="25px" class="no-border"></th>
+				<th width="25px" class="no-border"></th>
+				<th width="25px" class="no-border"></th>
+				<th width="25px" class="no-border"></th>
+				<th width="25px" class="no-border"></th>
+				<th width="25px" class="no-border"></th>
+				<th width="25px" class="no-border"></th>
+				<th width="25px" class="no-border"></th>
+				<th class="no-border"></th>
+				<th width="55px" class="hide-medium">Target</th>
+				<th width="80px" class="hide-small"style="border-right: none;">Pre Wait</th>
+				<th width="80px" class="hide-medium" style="border-left: none; border-right: none;">Action</th>
+				<th width="80px" class="hide-medium" style="border-left: none; border-right: none;">Post Wait</th>
+				<th width="20px" class="hide-small" style="border-left: none; border-right: none;">
+					<img src="plugins/qlab/img/auto_continue_stubby.png" height="20px">
+				</th>
+			</tr>
+			<% cueTemplate(cueList, [], [], data.workspaces[i]) %>
+		</table>
+	<% } %>
+
+<% } %>
+
+<script>
+	var $scrollTo = document.getElementsByClassName("scroll-position");
+	if($scrollTo.length==1){
+		window.scroll({top: $scrollTo[0].offsetTop-200, behavior: 'smooth'});
+	}
+</script>
+
+<%
+	function prettyFormatTime(seconds){
+		var startIndex = 14;
+		if(seconds>=3600){
+			startIndex = 11;
+		}
+		var string = new Date(seconds * 1000).toISOString()
+		return string.substring(startIndex, string.length-2)
+	}
+
+
+%>

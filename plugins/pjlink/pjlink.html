@@ -1,0 +1,97 @@
+<header>
+	<h1><%= listName  %></h1>
+</header>
+
+
+<table class="cv-table">
+	<tr>
+		<td>Power</td>
+		<td><div>
+		<% if(data.power==0){ %><span class='error'>OFF</span><% } %>
+		<% if(data.power==1){ %><span class='ok'>ON</span><% } %>
+		<% if(data.power==2){ %><span class='warning'>COOLING DOWN</span><% } %>
+		<% if(data.power==3){ %><span class='warning'>WARMING UP</span><% } %>
+		</div></td>
+	</tr>
+	<tr>
+		<td>AV Mute</td>
+		<td><div>
+		<% if(data.avmute==11){ %><span class='error'>Video Mute</span><% } %>
+		<% if(data.avmute==21){ %><span class='error'>Audio Mute</span><% } %>
+		<% if(data.avmute==31){ %><span class='error'>Video &amp; Audio Mute</span><% } %>
+		<% if(data.avmute==30){ %>...<% } %>
+		</div></td>
+	</tr>
+	<tr>
+		<td>Errors</td>
+		<td><div>
+		<% if(data.fanError==1){ %><span class="warning">Fan Warning</span><br><% } %>
+		<% if(data.fanError==2){ %><span class="error">Fan Error</span><br><% } %>
+
+		<% if(data.lampError==1){ %><span class="warning">Lamp Warning</span><br><% } %>
+		<% if(data.lampError==2){ %><span class="error">Lamp Error</span><br><% } %>
+
+		<% if(data.tempError==1){ %><span class="warning">Temp Warning</span><br><% } %>
+		<% if(data.tempError==2){ %><span class="error">Temp Error</span><br><% } %>
+
+		<% if(data.coverError==1){ %><span class="warning">Cover Warning</span><br><% } %>
+		<% if(data.coverError==2){ %><span class="error">Cover Error</span><br><% } %>
+
+		<% if(data.filterError==1){ %><span class="warning">Filter Warning</span><br><% } %>
+		<% if(data.filterError==2){ %><span class="error">Filter Error</span><br><% } %>
+
+		<% if(data.otherError==1){ %><span class="warning">Other Warning</span><br><% } %>
+		<% if(data.otherError==2){ %><span class="error">Other Error</span><br><% } %>
+		&nbsp;</div></td>
+	</tr>
+	<tr>
+		<td>Input</td>
+		<td><div>
+		<% if(data.input){ %>
+		<% if(data.input[0]==1){ %>RGB<% } %>
+		<% if(data.input[0]==2){ %>Video<% } %>
+		<% if(data.input[0]==3){ %>Digital<% } %>
+		<% if(data.input[0]==4){ %>Storage<% } %>
+		<% if(data.input[0]==5){ %>Network<% } %>
+		<%= data.input[1] %>
+		<% } %>
+		</div></td>
+	</tr>
+	
+	<% if(data.lamp){ %>
+		<% for(var i=0; i<data.lamp.length; i+=2){ %>
+		<tr>
+			<td>Lamp <%= i/2 %></td>
+			<td>
+			<% if(Number(data.lamp[i+1])){ %>
+				<div class='ok'>ON</div>
+			<% }else{ %>
+				<div class='error'>OFF</div>
+			<% } %>
+			</td>
+		</tr>
+		<% } %>
+	<% } %>
+
+
+	<tr>
+		<td>Name</td>
+		<td><div><%= data.name %></div></td>
+	</tr>
+	<tr>
+		<td>Info 1</td>
+		<td><div><%= data.info1 %></div></td>
+	</tr>
+	<tr>
+		<td>Info 2</td>
+		<td><div><%= data.info2 %></div></td>
+	</tr>
+	<tr>
+		<td>Serial Number</td>
+		<td><div><%= data.serial %></div></td>
+	</tr>
+	<tr>
+		<td>Version</td>
+		<td><div><%= data.version %></div></td>
+	</tr>
+</table>

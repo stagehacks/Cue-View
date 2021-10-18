@@ -1,0 +1,63 @@
+<header>
+	<h1><%= listName %></h1>
+</header>
+
+
+<table class="cv-table">
+	<tr>
+		<td colspan="2">
+		<% if(data.rate=="true"){ %>
+			<span class="ok">Playing</span>
+		<% }else{ %>
+			<span class="warning">Stopped</span>
+		<% } %>
+		</td>
+	</tr>
+	<tr>
+		<% var seconds = Math.floor(data.position/1000) %>
+		<% var minutes = Math.floor(seconds/60) %>
+		<% var millis = data.position %>
+		<td colspan="2"><h1><%= minutes %>:<%= ((seconds%60)+"").padStart(2, "0") %>.<%= millis%1000 %></h1></td>
+	</tr>
+
+	
+
+	<tr>
+		<td>Busy</td>
+		<td><div><%= data.busy %></div></td></td>
+	</tr>
+	
+	<tr>
+		<td>Display Open</td>
+		<td><div><%= data.displayOpen %></td></td>
+	</tr>
+	<tr>
+		<td>Active</td>
+		<td><div><%= data.showActive %></td></td>
+	</tr>
+	<tr>
+		<td>Programmer</td>
+		<td><div><%= data.programmerOnline %></td></td>
+	</tr>
+	<tr>
+		<td>Health</td>
+		<td><div><%= data.health %></td></td>
+	</tr>
+	<tr>
+		<td>Standby</td>
+		<td><div><%= data.standby %></td></td>
+	</tr>
+	<tr>
+		<td>Error</td>
+		<td>
+		<% if(data.error==1){ %><span class="error">Operating System Error</span><% } %>
+		<% if(data.error==2){ %><span class="error">QuickTime Error</span><% } %>
+		<% if(data.error==3){ %><span class="error">Rendering API Error</span><% } %>
+		<% if(data.error==4){ %><span class="error">Network Error</span><% } %>
+		<% if(data.error==5){ %><span class="error">File Server Error</span><% } %>
+		<% if(data.error==6){ %><span class="error">Syntax/Parser Error</span><% } %>
+		<% if(data.error==7){ %><span class="error">General Runtime Error</span><% } %>
+		<% if(data.error==8){ %><span class="error">Authentication Error</span><% } %>
+		</td>
+	</tr>
+</table>

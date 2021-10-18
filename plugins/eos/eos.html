@@ -1,0 +1,119 @@
+<header>
+	<h1><%= listName  %></h1>
+	<h2><%= data.version  %></h2>
+</header>
+
+
+<% for(var i in data.cuelists){ %>
+	<strong>List <%= i %></strong>
+	<table cellspacing="0">
+		<tr>
+			<th width="70px">Cue</th>
+			<th width="30px">Int Up</th>
+			<th width="30px">Int Down</th>
+			<th width="40px" class="hide-medium">Focus</th>
+			<th width="40px" class="hide-medium">Color</th>
+			<th width="40px" class="hide-medium">Beam</th>
+			<th width="40px" class="hide-small">Dur</th>
+			<th width="20px" class="hide-small">M</th>
+			<th width="20px" class="hide-small">B</th>
+			<th width="20px" class="hide-small">A</th>
+			<th width="70px" class="hide-small">Fw/Hg</th>
+			<th width="150px">Label</th>
+			<th width="10px" class="hide-medium">Ext Links</th>
+		</tr>
+
+		<% var cues = Object.keys(data.cuelists[i]).sort(function(a, b){return Number(a)-Number(b)}) %>
+
+		<% for(var j=0; j<cues.length; j++){ %>
+			<% var q = data.cuelists[i][cues[j]] %>
+			
+			<% for(var partNumber in q){ %>
+
+				<% var p = q[partNumber] %>
+
+
+				<% if(p.scene.length>0 && partNumber==0){ %>
+				<tr>
+					<td></td>
+					<td colspan="12" class="scene"><hr><span><%= p.scene %></span></td>
+				</tr>
+				<% } %>
+
+				<% if(cues[j]==data.activeCue+""){ %>
+					<tr class="active-cue">
+				<% }else{ %>
+					<tr>
+				<% } %>
+
+					<% if(partNumber!=0){ %>
+						<td class="num">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P<%= partNumber %></td>
+					<% }else{ %>
+						<td class="num">&nbsp;<%= cues[j] %></td>
+					<% } %>
+
+					<% if(partNumber!=0 || p.partcount==0){ %>
+
+						<!-- Int Up/Int Down -->
+						<% if(p.uptimeduration == p.downtimeduration || p.downtimeduration==-1){ %>
+							<td class="black" colspan="2"><%- prettyDuration(p.uptimedelay) || "" %><%- prettyDuration(p.uptimeduration, true) %></td>
+						<% }else{ %>
+							<td class="black"><%- prettyDuration(p.uptimedelay) || "" %><%- prettyDuration(p.uptimeduration, true) %></td>
+							<td class="black "><%- prettyDuration(p.downtimeduration, true) %></td>
+						<% } %>
+
+						<td class="black hide-medium"><%- prettyDuration(p.focustimeduration, true) %></td>
+						<td class="black hide-medium"><%- prettyDuration(p.colortimeduration, true) %></td>
+						<td class="black hide-medium"><%- prettyDuration(p.beamtimeduration, true) %></td>
+						<td class="hide-small"><%= prettyDuration(p.duration) %></td>
+
+					<% }else{ %>
+						<td class="black" colspan="2"></td>
+						<td class="black hide-medium"></td>
+						<td class="black hide-medium"></td>
+						<td class="black hide-medium"></td>
+						<td class="hide-small"></td>
+
+					<% } %>
+
+					<td class="black hide-small"><%= p.mark %></td>
+					<td class="black hide-small"><%= p.block %></td>
+					<td class="black hide-small"><%= p.assert %></td>
+					<td class="black hide-small">
+						<%= (p.follow>=0)? "F"+prettyDuration(p.follow) : "" %>
+						<%= (p.hang>=0)? "H"+prettyDuration(p.hang) : "" %>
+					</td>
+					<td class="black" style="text-align: left">
+						<%- (partNumber==0 ? "": "&nbsp;&nbsp;&nbsp;") %>
+						<%= p.label %>
+					</td>
+					<td class="black hide-medium"><%= p.extlinks %></td>
+				</tr>
+
+			<% } %>
+
+		<% } %>
+	</table>
+
+<% } %>
+
+<script>
+	var $scrollTo = document.getElementsByClassName("active-cue");
+	if($scrollTo.length==1){
+		window.scroll({top: $scrollTo[0].offsetTop-200, behavior: 'smooth'});
+	}
+</script>
+
+<%
+	function prettyDuration(milliseconds, box){
+		if(milliseconds==-1){
+			return "";
+		}
+		var num = Math.round(milliseconds/100)/10;
+		if(box){
+			return "<div class='time'>"+num+"</div>";
+		}
+		return num;
+		
+	}
+%>

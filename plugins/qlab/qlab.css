@@ -1,0 +1,189 @@
+table{
+	background-color: #323232;
+	border: 0px;
+	color: #b8b8b8;
+	font-family: sans-serif;
+	width: 100%;
+	table-layout:fixed;
+	margin-bottom: 30px;
+}
+th{
+	font-size: 12px;
+	font-weight: normal;
+	padding: 0px 4px;
+	background-color: #2d2c2d;
+	border: #545454 1px solid;
+	border-right: none;
+}
+	th.no-border{
+		border-left: none;
+		border-right: none;
+		padding: 0px;
+	}
+
+td{
+	padding: 0px;
+	height: 25px;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+	td img{
+		padding-top: 4px;
+	}
+
+
+
+tr:nth-child(even) {
+	background: #2c2c2c;
+}
+tr:nth-child(odd) {
+	background: #323232;
+}
+
+
+tr:nth-child(even).q-red{
+	background: linear-gradient(to top, #2c2c2c, #4c3130 1px);
+}
+tr:nth-child(odd).q-red{
+	background: linear-gradient(to top, #323232, #513635 1px);
+}
+	.q-red td:first-of-type{
+		padding-left: 5px;
+		border-left: 5px #ff4242 solid;
+	}
+tr:nth-child(even).q-orange{
+	background: linear-gradient(to top, #2c2c2c, #4b3e2a 1px);
+}
+tr:nth-child(odd).q-orange{
+	background: linear-gradient(to top, #323232, #514330 1px);
+}
+	.q-orange td:first-of-type{
+		padding-left: 5px;
+		border-left: 5px #ffa500 solid;
+	}
+tr:nth-child(even).q-green{
+	background: linear-gradient(to top, #2c2c2c, #2d452d 1px);
+}
+tr:nth-child(odd).q-green{
+	background: linear-gradient(to top, #323232, #324b33 1px);
+}
+	.q-green td:first-of-type{
+		padding-left: 5px;
+		border-left: 5px #01d52f solid;
+	}
+tr:nth-child(even).q-blue{
+	background: linear-gradient(to top, #2c2c2c, #323647 1px);
+}
+tr:nth-child(odd).q-blue{
+	background: linear-gradient(to top, #323232, #363b4b 1px);
+}
+	.q-blue td:first-of-type{
+		padding-left: 5px;
+		border-left: 5px #536de0 solid;
+	}
+tr:nth-child(even).q-purple{
+	background: linear-gradient(to top, #2c2c2c, #39273d 1px);
+}
+tr:nth-child(odd).q-purple{
+	background: linear-gradient(to top, #323232, #433147 1px);
+}
+	.q-purple td:first-of-type{
+		padding-left: 5px;
+		border-left: 5px #a601c0 solid;
+	}
+
+tr.q-armed-false td{
+	background: url("img/disarmed-pattern-light.png");
+	background-attachment: fixed;
+}
+
+
+tr.playback-position{
+	background-image: none !important;
+	background: #1557da !important;
+	color: white !important;
+}
+tr.playback-position .q-gray-text{
+	color: white !important;
+}
+
+
+.gLeft{
+	height: 24px;
+	width: 12px;
+	border-left: 2px solid;
+}
+.gTop{
+	border-top: 2px solid;
+}
+.gBot{
+	border-bottom: 2px solid;
+}
+.gRight{
+	border-right: 2px solid;
+}
+.gMode-1.gLeft.gTop{
+	border-radius: 6px 0px 0px 0px;
+}
+.gMode-1.gLeft.gBot{
+	border-radius: 0px 0px 0px 6px;
+}
+.gMode-1.gRight.gBot{
+	border-radius: 0px 0px 6px 0px;
+}
+.gMode-1.gLeft.gTop.gBot{
+	border-radius: 6px 0px 0px 6px;
+}
+.gMode-1.gLeft.gTop.gRight{
+	border-radius: 6px 6px 0px 0px;
+}
+.gMode-1.gTop.gRight.gBot{
+	border-radius: 0px 6px 6px 0px;
+}
+.gMode-1.gLeft.gTop.gRight.gBot{
+	border-radius: 6px;
+}
+.gMode-1{
+	border-color: #5a5a87;
+}
+.gMode-2{
+	border-color: #5a5a87;
+}
+.gMode-3{
+	border-color: #429242;
+}
+.gMode-4{
+	border-color: #925fc0;
+}
+.gMode-, .gMode-0{
+	border-color: rgba(0, 0, 0, 0);
+}
+.group-arrow{
+	width: 13px;
+	background-image: url("img/arrow-down.png");
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.q-time{
+	font-size: 14px;
+	text-align: center;
+}
+.q-gray-text{
+	color: #424242;
+}
+
+
+
+@media screen and (min-width: 0px) and (max-width: 750px) {
+	.hide-medium{
+		display: none;
+	}
+}
+@media screen and (min-width: 0px) and (max-width: 550px) {
+	.hide-small{
+		display: none;
+	}
+}
+

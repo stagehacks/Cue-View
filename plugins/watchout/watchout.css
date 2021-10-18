@@ -1,0 +1,16 @@
+table{
+	font-family: PlexMono !important;
+}
+
+
+
+
+.warning{
+	color: #e9873a;
+}
+.error{
+	color: #ed5f5d;
+}
+.ok{
+	color: #79b757;
+}
