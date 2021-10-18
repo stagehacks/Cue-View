@@ -8,14 +8,16 @@ module.exports.all = allPlugins;
 
 module.exports.init = function(callback){
 
-	console.log("Loading Plugin Files...")
+	console.log("Loading plugin files... "+__dirname+"/../plugins")
 
-	fs.readdir("./plugins", function(err, files){
+	fs.readdir(__dirname+"/../plugins", function(err, files){
 		for(var i in files){
-			var plugin = files[i];			
+			var plugin = files[i];
+
 
 			if(plugin[0]!="."){
-				allPlugins[plugin] = require(process.cwd()+"/plugins/"+plugin+"/"+plugin+".js");
+				console.log(i+" "+plugin);
+				allPlugins[plugin] = require(__dirname+"/../plugins/"+plugin+"/"+plugin+".js");
 
 				allPlugins[plugin].deviceInfoUpdate = function(device, param, value){
 					DEVICE.infoUpdate(device, param, value)
@@ -24,7 +26,7 @@ module.exports.init = function(callback){
 					VIEW.draw(device);
 				}
 
-				allPlugins[plugin].template = ejs.compile(fs.readFileSync(process.cwd()+"/plugins/"+plugin+"/"+plugin+".html", 'utf8'));
+				allPlugins[plugin].template = ejs.compile(fs.readFileSync(__dirname+"/../plugins/"+plugin+"/"+plugin+".html", 'utf8'));
 				
 				if(allPlugins[plugin].heartbeatInterval==undefined || allPlugins[plugin].heartbeatInterval<50){
 					allPlugins[plugin].heartbeatInterval = 5000;
