@@ -22,7 +22,7 @@ A dashboard for everything in your show.
 - XAir Audio Consoles
 
 
-## Future Devices
+### Future Devices
 - Spikemark
 - ATEM Video Mixers
 - Art-Net, sACN Universes
