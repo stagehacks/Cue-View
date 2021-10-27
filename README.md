@@ -1,5 +1,11 @@
 # Cue View
-Monitor audio, video, and lighting equipment
+A dashboard for everything in your show.
+
+### Features
+- Tons of supported equipment
+- Auto discover devices on the network
+- Live updating
+- Configurable layout
 
 
 ## Supported Devices
@@ -11,8 +17,11 @@ Monitor audio, video, and lighting equipment
 - XAir Audio Consoles
 
 
-## ToDo
+## Future Devices
 - Spikemark
 - ATEM Video Mixers
 - Art-Net, sACN Universes
 - Epson Pro series Projectors
+- DiGiCo Consoles
+- d&b DS100, amps
+
