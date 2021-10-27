@@ -1,6 +1,11 @@
 # Cue View
 A dashboard for everything in your show.
 
+![Screen Shot 2021-10-26 at 11 57 21 PM](https://user-images.githubusercontent.com/919746/138997636-dfca293a-7c98-459d-85a3-405c9b11ce8a.png)
+
+
+
+
 ### Features
 - Tons of supported equipment
 - Auto discover devices on the network
