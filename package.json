@@ -1,7 +1,7 @@
 {
   "name": "Cue View",
   "version": "0.9.2",
-  "description": "Monitor audio, video, and lighting equipment",
+  "description": "A dashboard for everything in your show",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -39,7 +39,8 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "Cue View 2"
+            "name": "Cue View",
+            "iconUrl": "./src/img/win-icon.ico"
           }
         },
         {
