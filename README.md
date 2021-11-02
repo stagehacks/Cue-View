@@ -30,3 +30,6 @@ A dashboard for everything in your show.
 - DiGiCo Consoles
 - d&b DS100, amps
 
+
+## Known Issues
+QLab Cue Carts are not supported yet.
