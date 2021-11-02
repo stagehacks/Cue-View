@@ -6,7 +6,7 @@ A dashboard for everything in your show.
 
 
 
-### Features
+## Features
 - Tons of supported equipment
 - Auto discover devices on the network
 - Live updating
@@ -22,7 +22,7 @@ A dashboard for everything in your show.
 - XAir Audio Consoles
 
 
-### Future Devices
+#### Future Devices
 - Spikemark
 - ATEM Video Mixers
 - Art-Net, sACN Universes
@@ -32,4 +32,4 @@ A dashboard for everything in your show.
 
 
 ## Known Issues
-QLab Cue Carts are not supported yet.
+- QLab Cue Carts are not supported yet.
