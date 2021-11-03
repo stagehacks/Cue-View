@@ -29,6 +29,7 @@ A dashboard for everything in your show.
 - Epson Pro series Projectors
 - DiGiCo Consoles
 - d&b DS100, amps
+- Hog
 
 
 ## Known Issues
