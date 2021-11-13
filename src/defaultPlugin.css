@@ -85,12 +85,4 @@ table.cv-table{
 	border-radius: 5px;
 }
 
-@font-face {
-    font-family: PlexMono;
-    src: url("media/IBMPlexMono-Text.otf") format("opentype");
-}
 
-@font-face {
-    font-family: PlexSans;
-    src: url("media/IBMPlexSans-Light.otf") format("opentype");
-}
