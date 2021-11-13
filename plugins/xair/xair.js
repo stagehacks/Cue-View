@@ -90,7 +90,6 @@ exports.data = function(device, buf){
 		device.send(Buffer.from("/ch/"+addr[1]+"/mix/fader\u0000\u0000\u0000\u0000"));
 
 	}else if(msg[0].indexOf("/config/name")>0){
-		console.log(msg);
 		var addr = parseAddress(msg[0]);
 		var channel = Number(addr[1]);
 		device.data.channelNames[channel-1] = msg[4];
