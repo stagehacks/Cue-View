@@ -29,7 +29,6 @@ tr td:first-child{
 	padding: 1px 6px;
 	border-radius: 10px;
 	color: black;
-	font-family: PlexMono !important;
 	text-align: center;
 	text-overflow: ellipsis;
 	white-space: nowrap; 
