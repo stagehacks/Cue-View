@@ -36,14 +36,20 @@ exports.ready = function(device){
 
 exports.data = function(device, buf){
 	this.deviceInfoUpdate(device, "status", "ok");
-	var msg = buf.toString().split('\u0000\u0000')
+	var msg = buf.toString().split('\u0000')
 
 	if(msg[0]=="/xinfo"){
-		this.deviceInfoUpdate(device, "defaultName", msg[4]);
-		device.data.name = msg[4];
-		device.data.ip = msg[2];
-		device.data.firmware = msg[7];
-		device.data.model = msg[5];
+
+		if(msg[7].length>0){
+			device.data.name = msg[7];
+		}else{
+			device.data.name = msg[6];
+		}
+		
+		device.data.ip = msg[5];
+		device.data.firmware = msg[13];
+		device.data.model = msg[9];
+		this.deviceInfoUpdate(device, "defaultName", device.data.name);
 
 
 		device.send(Buffer.from("/lr/mix/fader\u0000\u0000\u0000\u0000"));
@@ -84,9 +90,10 @@ exports.data = function(device, buf){
 		device.send(Buffer.from("/ch/"+addr[1]+"/mix/fader\u0000\u0000\u0000\u0000"));
 
 	}else if(msg[0].indexOf("/config/name")>0){
+		console.log(msg);
 		var addr = parseAddress(msg[0]);
 		var channel = Number(addr[1]);
-		device.data.channelNames[channel-1] = msg[2];
+		device.data.channelNames[channel-1] = msg[4];
 		device.draw();
 		device.send(Buffer.from("/ch/"+addr[1]+"/config/color\u0000\u0000\u0000\u0000"));
 
