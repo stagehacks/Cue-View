@@ -15,5 +15,6 @@ module.exports = {
     'no-console': 'off',
     'no-alert': 'off',
     'no-plusplus': 'off',
+    'import/extensions': 'off',
   },
 };
