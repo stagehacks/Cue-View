@@ -2,15 +2,15 @@ const { remote } = require('electron');
 const { ipcRenderer } = require('electron');
 // let currWindow = remote.BrowserWindow.getFocusedWindow();
 const { v4: uuid } = require('uuid');
-let ejs = require('ejs');
+const ejs = require('ejs');
 
-let net = require('net');
+const net = require('net');
 
-let DEVICE = require('./src/device.js');
-let PLUGINS = require('./src/plugins.js');
-let SEARCH = require('./src/search.js');
-let VIEW = require('./src/view.js');
-let SAVESLOTS = require('./src/saveSlots.js');
+const DEVICE = require('./src/device.js');
+const PLUGINS = require('./src/plugins.js');
+const SEARCH = require('./src/search.js');
+const VIEW = require('./src/view.js');
+const SAVESLOTS = require('./src/saveSlots.js');
 
 window.addDevice = DEVICE.addDevice;
 

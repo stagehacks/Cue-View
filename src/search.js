@@ -1,14 +1,14 @@
 const { ipcRenderer } = require('electron');
-let netmask = require('netmask').Netmask;
-let dgram = require('dgram');
-let bonjour = require('bonjour')();
-let net = require('net');
-let os = require('os');
-let ip = require('ip');
+const netmask = require('netmask').Netmask;
+const dgram = require('dgram');
+const bonjour = require('bonjour')();
+const net = require('net');
+const os = require('os');
+const ip = require('ip');
 
-let DEVICE = require('./device.js');
-let SEARCH = require('./search.js');
-let PLUGINS = require('./plugins.js');
+const DEVICE = require('./device.js');
+const SEARCH = require('./search.js');
+const PLUGINS = require('./plugins.js');
 
 var searching = false;
 var allServers = false;

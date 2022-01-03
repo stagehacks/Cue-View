@@ -1,12 +1,12 @@
 const { v4: uuid } = require('uuid');
-let osc = require('osc');
-let net = require('net');
-let udp = require('dgram');
-var _ = require('lodash/function');
+const osc = require('osc');
+const net = require('net');
+const udp = require('dgram');
+const _ = require('lodash/function');
 
-let PLUGINS = require('./plugins.js');
-let VIEW = require('./view.js');
-let SAVESLOTS = require('./saveSlots.js');
+const PLUGINS = require('./plugins.js');
+const VIEW = require('./view.js');
+const SAVESLOTS = require('./saveSlots.js');
 
 var devices = {};
 module.exports.all = devices;

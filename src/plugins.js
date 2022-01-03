@@ -1,6 +1,6 @@
-let fs = require('fs');
-let DEVICE = require('./device.js');
-let VIEW = require('./view.js');
+const fs = require('fs');
+const DEVICE = require('./device.js');
+const VIEW = require('./view.js');
 
 var allPlugins = {};
 module.exports.all = allPlugins;

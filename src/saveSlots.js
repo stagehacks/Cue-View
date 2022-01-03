@@ -1,5 +1,5 @@
-let VIEW = require('./view.js');
-let DEVICE = require('./device.js');
+const VIEW = require('./view.js');
+const DEVICE = require('./device.js');
 
 var activeSlot = false;
 var savedSlots = [[], [], [], []];
