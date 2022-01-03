@@ -9,5 +9,11 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 13,
   },
-  rules: {},
+  rules: {
+    'import/no-extraneous-dependencies': 0,
+    'no-unused-vars': ['error', { args: 'none' }],
+    'no-console': 'off',
+    'no-alert': 'off',
+    'no-plusplus': 'off',
+  },
 };
