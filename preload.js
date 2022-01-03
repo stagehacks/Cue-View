@@ -20,7 +20,7 @@ window.init = function () {
   ipcRenderer.send('enableDeviceDropdown');
   ipcRenderer.send('enableSearchAll');
 
-  PLUGINS.init(function () {
+  PLUGINS.init(() => {
     VIEW.init();
     SAVESLOTS.loadDevices();
     SAVESLOTS.loadSlot(1);
@@ -138,7 +138,7 @@ window.init = function () {
   };
 };
 
-ipcRenderer.on('setActiveDevicePinned', function (event, message) {
+ipcRenderer.on('setActiveDevicePinned', (event, message) => {
   if (!message) {
     VIEW.unpinActiveDevice();
   } else {
@@ -146,25 +146,25 @@ ipcRenderer.on('setActiveDevicePinned', function (event, message) {
   }
 });
 
-ipcRenderer.on('doSearch', function (event, message) {
+ipcRenderer.on('doSearch', (event, message) => {
   window.searchAll();
 });
 
-ipcRenderer.on('doDelete', function (event, message) {
+ipcRenderer.on('doDelete', (event, message) => {
   DEVICE.deleteActive();
 });
 
-ipcRenderer.on('resetViews', function (event, message) {
+ipcRenderer.on('resetViews', (event, message) => {
   SAVESLOTS.resetSlots();
 });
 
-ipcRenderer.on('doSlots1', function (event, message) {
+ipcRenderer.on('doSlots1', (event, message) => {
   SAVESLOTS.loadSlot(1);
 });
-ipcRenderer.on('doSlots2', function (event, message) {
+ipcRenderer.on('doSlots2', (event, message) => {
   SAVESLOTS.loadSlot(2);
 });
-ipcRenderer.on('doSlots3', function (event, message) {
+ipcRenderer.on('doSlots3', (event, message) => {
   SAVESLOTS.loadSlot(3);
 });
 

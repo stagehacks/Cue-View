@@ -50,7 +50,7 @@ const createWindow = () => {
 app.whenReady().then(() => {
   createWindow();
 
-  app.on('activate', function () {
+  app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
@@ -78,7 +78,7 @@ ipcMain.on('disableSearchAll', (event, arg) => {
   menu.getMenuItemById('deviceSearch').enabled = false;
 });
 
-ipcMain.on('setDevicePin', function (event, arg) {
+ipcMain.on('setDevicePin', (event, arg) => {
   menu.getMenuItemById('devicePin').checked = arg;
 });
 

@@ -91,17 +91,17 @@ initDeviceConnection = function (id) {
       port: device.port,
     });
     device.connection.open();
-    device.connection.on('error', function (error) {
+    device.connection.on('error', (error) => {
       // console.error(error)
       device.connection.close();
     });
-    device.connection.on('ready', function () {
+    device.connection.on('ready', () => {
       plugins[type].ready(device);
       if (Object.keys(devices).length == 1) {
         VIEW.switchDevice(device.id);
       }
     });
-    device.connection.on('message', function (message) {
+    device.connection.on('message', (message) => {
       // log("OSC IN", message.address);
       plugins[type].data(device, message);
       device.lastMessage = Date.now();
@@ -115,19 +115,19 @@ initDeviceConnection = function (id) {
 
     device.connection.connect(
       { port: device.port, host: device.addresses[0] },
-      function () {}
+      () => {}
     );
 
-    device.connection.on('error', function (error) {
+    device.connection.on('error', (error) => {
       // console.error(error)
     });
-    device.connection.on('ready', function () {
+    device.connection.on('ready', () => {
       plugins[type].ready(device);
       if (Object.keys(devices).length == 1) {
         VIEW.switchDevice(device.id);
       }
     });
-    device.connection.on('data', function (message) {
+    device.connection.on('data', (message) => {
       // log("SOCK IN", message);
       plugins[type].data(device, message);
       device.lastMessage = Date.now();
@@ -140,24 +140,19 @@ initDeviceConnection = function (id) {
   } else if (plugins[type].connectionType == 'UDPsocket') {
     device.connection = udp.createSocket('udp4');
 
-    device.connection.bind(function () {
+    device.connection.bind(() => {
       plugins[type].ready(device);
 
-      device.connection.on('message', function (msg, info) {
+      device.connection.on('message', (msg, info) => {
         plugins[type].data(device, msg);
         infoUpdate(device, 'status', 'ok');
       });
     });
 
     device.send = function (data) {
-      device.connection.send(
-        data,
-        device.port,
-        device.addresses[0],
-        function (err) {
-          // console.log(err);
-        }
-      );
+      device.connection.send(data, device.port, device.addresses[0], (err) => {
+        // console.log(err);
+      });
     };
   }
 };

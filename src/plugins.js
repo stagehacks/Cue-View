@@ -8,7 +8,7 @@ module.exports.all = allPlugins;
 module.exports.init = function (callback) {
   console.log(`Loading plugin files... ${__dirname}/../plugins`);
 
-  fs.readdir(`${__dirname}/../plugins`, function (err, files) {
+  fs.readdir(`${__dirname}/../plugins`, (err, files) => {
     for (var i in files) {
       var plugin = files[i];
 
