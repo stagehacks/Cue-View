@@ -1,47 +1,51 @@
 <header>
-	<h1><%= listName %></h1>
-	<h2><%= data.model %></h2>
+  <h1><%= listName %></h1>
+  <h2><%= data.model %></h2>
 </header>
 
 <table class="cv-table">
-	<tr>
-		<th width="40px"></th>
-		<th width="100px">Channel</th>
-		<th width="55px">Mute</th>
-		<th width="45px">dB</th>
-		<th width="160px">Fader</th>
-	</tr>
-	<tr>
-		<td width="40px">LR</td>
-		<td width="100px"><div class="color color-8">MAIN OUT</div></td>
-		<td><div class="fader-mute mute-<%=data.stereoMute%>">M</div></td>
-		<td><%- formatAsDB(data.stereoFaderDB) %></td>
-		<td><input type="range" min="0" max="100" value="<%= data.stereoFader*100 %>" disabled></td>
-	</tr>
-	<% for(var i=0; i<32; i++){ %>
-		<% if(data.channelNames[i]=="end"){break;} %>
-		<tr>
-			<td><%= i+1 %></td>
-			<td><div class="color color-<%= data.channelColors[i] %>"><%- data.channelNames[i] || i+1 %></div></td>
-			<td><div class="fader-mute mute-<%=data.channelMutes[i]%>">M</div></td>
-			<td><%- formatAsDB(data.channelFadersDB[i]) %></td>
-			<td><input type="range" min="0" max="100" value="<%= data.channelFaders[i]*100 %>" disabled></td>
-		</tr>
-	<% } %>
-
+  <tr>
+    <th width="40px"></th>
+    <th width="100px">Channel</th>
+    <th width="55px">Mute</th>
+    <th width="45px">dB</th>
+    <th width="160px">Fader</th>
+  </tr>
+  <tr>
+    <td width="40px">LR</td>
+    <td width="100px"><div class="color color-8">MAIN OUT</div></td>
+    <td><div class="fader-mute mute-<%=data.stereoMute%>">M</div></td>
+    <td><%- formatAsDB(data.stereoFaderDB) %></td>
+    <td>
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value="<%= data.stereoFader*100 %>"
+        disabled />
+    </td>
+  </tr>
+  <% for(var i=0; i<32; i++){ %> <% if(data.channelNames[i]=="end"){break;} %>
+  <tr>
+    <td><%= i+1 %></td>
+    <td>
+      <div class="color color-<%= data.channelColors[i] %>">
+        <%- data.channelNames[i] || i+1 %>
+      </div>
+    </td>
+    <td><div class="fader-mute mute-<%=data.channelMutes[i]%>">M</div></td>
+    <td><%- formatAsDB(data.channelFadersDB[i]) %></td>
+    <td>
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value="<%= data.channelFaders[i]*100 %>"
+        disabled />
+    </td>
+  </tr>
+  <% } %>
 </table>
 
-
-
-<%
-function formatAsDB(val){
-	if(val==-90){
-		return "-&infin;";
-	}
-	if(val>0){
-		return "+"+val.toFixed(1);
-	}
-	return val.toFixed(1);
-}
-
-%>
+<% function formatAsDB(val){ if(val==-90){ return "-&infin;"; } if(val>0){
+return "+"+val.toFixed(1); } return val.toFixed(1); } %>
