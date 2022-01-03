@@ -15,7 +15,7 @@ registerDevice = function (newDevice) {
   console.log(PLUGINS.all);
 
   if (PLUGINS.all[newDevice.type] == undefined) {
-    console.error('Plugin for device ' + newDevice.type + ' does not exist.');
+    console.error(`Plugin for device ${newDevice.type} does not exist.`);
     return true;
   }
 
@@ -166,11 +166,9 @@ module.exports.initDeviceConnection = initDeviceConnection;
 module.exports.deleteActive = function () {
   var device = VIEW.getActiveDevice();
   var choice = confirm(
-    'Are you sure you want to delete ' +
-      device.type +
-      ' device "' +
-      (device.displayName || device.defaultName) +
-      '"?'
+    `Are you sure you want to delete ${device.type} device "${
+      device.displayName || device.defaultName
+    }"?`
   );
 
   if (choice) {

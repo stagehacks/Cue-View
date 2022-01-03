@@ -6,20 +6,17 @@ var allPlugins = {};
 module.exports.all = allPlugins;
 
 module.exports.init = function (callback) {
-  console.log('Loading plugin files... ' + __dirname + '/../plugins');
+  console.log(`Loading plugin files... ${__dirname}/../plugins`);
 
-  fs.readdir(__dirname + '/../plugins', function (err, files) {
+  fs.readdir(`${__dirname}/../plugins`, function (err, files) {
     for (var i in files) {
       var plugin = files[i];
 
       if (plugin[0] != '.') {
-        console.log(i + ' ' + plugin);
-        allPlugins[plugin] = require(__dirname +
-          '/../plugins/' +
-          plugin +
-          '/' +
-          plugin +
-          '.js');
+        console.log(`${i} ${plugin}`);
+        allPlugins[
+          plugin
+        ] = require(`${__dirname}/../plugins/${plugin}/${plugin}.js`);
 
         allPlugins[plugin].deviceInfoUpdate = function (device, param, value) {
           DEVICE.infoUpdate(device, param, value);
@@ -30,7 +27,7 @@ module.exports.init = function (callback) {
 
         allPlugins[plugin].template = ejs.compile(
           fs.readFileSync(
-            __dirname + '/../plugins/' + plugin + '/' + plugin + '.html',
+            `${__dirname}/../plugins/${plugin}/${plugin}.html`,
             'utf8'
           )
         );

@@ -14,8 +14,8 @@ module.exports.init = function () {
 drawDeviceInterface = function (id) {
   // console.log("DRAW")
 
-  var $deviceDrawArea = document.getElementById('device-' + id + '-draw-area');
-  var $devicePinned = document.getElementById('device-' + id + '-pinned');
+  var $deviceDrawArea = document.getElementById(`device-${id}-draw-area`);
+  var $devicePinned = document.getElementById(`device-${id}-pinned`);
 
   if ($deviceDrawArea == null) {
     return true;
@@ -68,7 +68,7 @@ drawDeviceInterface = function (id) {
 
   str += '</body></html>';
 
-  $deviceDrawArea.setAttribute('class', d.type + ' draw-area');
+  $deviceDrawArea.setAttribute('class', `${d.type} draw-area`);
   $deviceDrawArea.contentWindow.document.open();
   $deviceDrawArea.contentWindow.document.write(str);
 
@@ -155,29 +155,17 @@ switchDevice = function (id) {
 
   var $deviceWrapper = document.getElementById('device-' + i);
   if (!$deviceWrapper) {
-    var html =
-      '<div class="col device-wrapper" id="device-' +
-      i +
-      '">' +
-      '<img id="device-' +
-      i +
-      '-pinned" class="device-pin" src="src/img/outline_push_pin_white_18dp.png">' +
-      '<iframe id="device-' +
-      i +
-      '-draw-area" class="draw-area"></iframe>' +
-      '<div id="device-' +
-      i +
-      '-settings"></div></div>';
+    var html = `<div class="col device-wrapper" id="device-${i}"><img id="device-${i}-pinned" class="device-pin" src="src/img/outline_push_pin_white_18dp.png"><iframe id="device-${i}-draw-area" class="draw-area"></iframe><div id="device-${i}-settings"></div></div>`;
     document
       .getElementById('all-devices')
       .insertAdjacentHTML('afterbegin', html);
 
-    $deviceWrapper = document.getElementById('device-' + i);
+    $deviceWrapper = document.getElementById(`device-${i}`);
   }
 
   switchClass(document.getElementById(id), 'active-device');
   drawDeviceInterface(id);
-  switchClass(document.getElementById('device-' + id), 'active-device-outline');
+  switchClass(document.getElementById(`device-${id}`), 'active-device-outline');
 
   document.getElementById('device-settings-table').style.display = 'block';
   document.getElementById('device-settings-plugin-dropdown').value =

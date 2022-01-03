@@ -46,7 +46,7 @@ loadSlot = function (slotIndex) {
 module.exports.loadSlot = loadSlot;
 
 module.exports.loadDevices = function () {
-  console.log('Loading ' + savedDevices.length + ' saved devices...');
+  console.log(`Loading ${savedDevices.length} saved devices...`);
   console.log(savedDevices);
 
   for (var i = 0; i < savedDevices.length; i++) {
@@ -75,11 +75,7 @@ module.exports.saveAll = function () {
   }
   localStorage.setItem('savedSlots', JSON.stringify(savedSlots));
   console.log(
-    'Saved ' +
-      currentPins.length +
-      ' pinned devices to slot ' +
-      activeSlot +
-      '!'
+    `Saved ${currentPins.length} pinned devices to slot ${activeSlot}!`
   );
 
   savedDevices = [];

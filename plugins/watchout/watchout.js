@@ -27,7 +27,7 @@ exports.data = function (device, message) {
     var i = 0;
     while (arr[i][arr[i].length - 1] != '"') {
       i++;
-      device.data.showName += arr[i] + ' ';
+      device.data.showName += `${arr[i]} `;
     }
     device.data.showName = device.data.showName.substring(
       1,

@@ -25,12 +25,12 @@ exports.data = function (device, osc) {
         selectionIsPlayhead: true,
       };
       device.data.version = d[i].version;
-      device.send('/workspace/' + d[i].uniqueID + '/cueLists');
-      device.send('/workspace/' + d[i].uniqueID + '/updates', [
+      device.send(`/workspace/${d[i].uniqueID}/cueLists`);
+      device.send(`/workspace/${d[i].uniqueID}/updates`, [
         { type: 'i', value: 1 },
       ]);
       device.send('/cue/playbackPosition/uniqueID');
-      device.send('/workspace/' + d[i].uniqueID + '/selectionIsPlayhead');
+      device.send(`/workspace/${d[i].uniqueID}/selectionIsPlayhead`);
     }
   } else if (p[1] == 'workspace' && p[3] == 'cueLists') {
     var workspace = p[2];
@@ -59,11 +59,7 @@ exports.data = function (device, osc) {
 
           cue.groups = groups;
           device.send(
-            '/workspace/' +
-              workspace +
-              '/cue_id/' +
-              cue.uniqueID +
-              '/valuesForKeys',
+            `/workspace/${workspace}/cue_id/${cue.uniqueID}/valuesForKeys`,
             [
               {
                 type: 's',
@@ -89,7 +85,7 @@ exports.data = function (device, osc) {
 
     device.draw();
   } else if (p[0] == 'update' && p[1] == 'workspace' && p[3] == 'cue_id') {
-    device.send('/workspace/' + p[2] + '/cueLists');
+    device.send(`/workspace/${p[2]}/cueLists`);
   } else if (
     p[0] == 'update' &&
     p[1] == 'workspace' &&
@@ -143,8 +139,6 @@ exports.data = function (device, osc) {
 
 exports.heartbeat = function (device) {
   try {
-    device.send(
-      '/workspace/' + Object.keys(device.data.workspaces)[0] + '/thump'
-    );
+    device.send(`/workspace/${Object.keys(device.data.workspaces)[0]}/thump`);
   } catch (err) {}
 };

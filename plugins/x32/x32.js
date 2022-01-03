@@ -48,9 +48,9 @@ exports.data = function (device, buf) {
     for (var i = 0; i <= 32; i++) {
       device.send(
         Buffer.from(
-          '/ch/' +
-            i.toString().padStart(2, '0') +
-            '/config/name\u0000\u0000\u0000\u0000'
+          `/ch/${i
+            .toString()
+            .padStart(2, '0')}/config/name\u0000\u0000\u0000\u0000`
         )
       );
     }
@@ -85,7 +85,7 @@ exports.data = function (device, buf) {
     }
     device.draw();
     device.send(
-      Buffer.from('/ch/' + addr[1] + '/mix/fader\u0000\u0000\u0000\u0000')
+      Buffer.from(`/ch/${addr[1]}/mix/fader\u0000\u0000\u0000\u0000`)
     );
   } else if (msg[0].indexOf('/config/name') > 0) {
     var addr = parseAddress(msg[0]);
@@ -93,16 +93,14 @@ exports.data = function (device, buf) {
     device.data.channelNames[channel - 1] = msg[2];
     device.draw();
     device.send(
-      Buffer.from('/ch/' + addr[1] + '/config/color\u0000\u0000\u0000\u0000')
+      Buffer.from(`/ch/${addr[1]}/config/color\u0000\u0000\u0000\u0000`)
     );
   } else if (msg[0].indexOf('/config/color') > 0) {
     var addr = parseAddress(msg[0]);
     var channel = Number(addr[1]);
     device.data.channelColors[channel - 1] = buf.readInt8(27);
     device.draw();
-    device.send(
-      Buffer.from('/ch/' + addr[1] + '/mix/on\u0000\u0000\u0000\u0000')
-    );
+    device.send(Buffer.from(`/ch/${addr[1]}/mix/on\u0000\u0000\u0000\u0000`));
   } else {
     //console.log(msg)
   }

@@ -58,7 +58,7 @@ searchAll = function () {
           break;
       }
     } catch (err) {
-      console.error('Unable to search for plugin ' + p);
+      console.error(`Unable to search for plugin ${p}`);
     }
   }
 
@@ -218,7 +218,7 @@ findOnlineDevices = function () {
       cur[2] = j;
       for (var k = Number(f[3]); k < Number(l[3]); k++) {
         cur[3] = k;
-        allIPs.push(cur[0] + '.' + cur[1] + '.' + cur[2] + '.' + cur[3]);
+        allIPs.push(`${cur[0]}.${cur[1]}.${cur[2]}.${cur[3]}`);
       }
     }
   }

@@ -25,10 +25,9 @@ exports.data = function (device, message) {
   const md5 = require('md5');
 
   if (msg.substring(0, 8) == 'PJLINK 1') {
-    password = md5(msg.substring(9, 17) + 'JBMIAProjectorLink');
+    password = md5(`${msg.substring(9, 17)}JBMIAProjectorLink`);
     device.send(
-      password +
-        '%1POWR ?\r%1INPT ?\r%1AVMT ?\r%1ERST ?\r%1LAMP ?\r%1NAME ?\r%1INF1 ?\r%1INF2 ?\r%2SNUM ?\r%2SVER ?\r'
+      `${password}%1POWR ?\r%1INPT ?\r%1AVMT ?\r%1ERST ?\r%1LAMP ?\r%1NAME ?\r%1INF1 ?\r%1INF2 ?\r%2SNUM ?\r%2SVER ?\r`
     );
   }
   if (msg.substring(0, 7) == '%1POWR=') {
@@ -115,8 +114,7 @@ function processPJLink(device, str, that) {
 exports.heartbeat = function (device) {
   if (password) {
     device.send(
-      password +
-        '%1POWR ?\r%1INPT ?\r%1AVMT ?\r%1ERST ?\r%1LAMP ?\r%1NAME ?\r%1INF1 ?\r%1INF2 ?\r%2SNUM ?\r%2SVER ?\r'
+      `${password}%1POWR ?\r%1INPT ?\r%1AVMT ?\r%1ERST ?\r%1LAMP ?\r%1NAME ?\r%1INF1 ?\r%1INF2 ?\r%2SNUM ?\r%2SVER ?\r`
     );
   }
 };

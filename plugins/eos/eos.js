@@ -32,7 +32,7 @@ exports.data = function (device, osc) {
     this.deviceInfoUpdate(device, 'defaultName', osc.args[0]);
   } else if (osc.address == '/eos/out/get/cuelist/count') {
     for (var i = 0; i < osc.args[0]; i++) {
-      device.send('/eos/get/cuelist/index/' + i);
+      device.send(`/eos/get/cuelist/index/${i}`);
     }
   } else if (
     p[1] == 'out' &&
@@ -41,7 +41,7 @@ exports.data = function (device, osc) {
     p[5] == 'list'
   ) {
     device.data.cuelists[p[4]] = {};
-    device.send('/eos/get/cue/' + p[4] + '/count');
+    device.send(`/eos/get/cue/${p[4]}/count`);
   } else if (
     p[1] == 'out' &&
     p[2] == 'get' &&
@@ -49,7 +49,7 @@ exports.data = function (device, osc) {
     p[5] == 'count'
   ) {
     for (var i = 0; i < osc.args[0]; i++) {
-      device.send('/eos/get/cue/' + p[4] + '/index/' + i);
+      device.send(`'/eos/get/cue/${p[4]}/index/${i}`);
     }
   } else if (
     p[1] == 'out' &&
@@ -124,7 +124,7 @@ exports.data = function (device, osc) {
     var listCount = p[7];
     var cueNumber = osc.args[1];
 
-    device.send('/eos/get/cue/' + cueList + '/' + cueNumber);
+    device.send(`/eos/get/cue/${cueList}/${cueNumber}`);
     //console.log("SENT /eos/get/cue/"+cueList+"/"+cueNumber);
   } else if (
     p[2] == 'cmd' ||
