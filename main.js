@@ -2,11 +2,12 @@ const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
+// eslint-disable-next-line global-require
 if (require('electron-squirrel-startup')) {
-  // eslint-disable-line global-require
   app.quit();
 }
 
+// eslint-disable-next-line global-require
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
