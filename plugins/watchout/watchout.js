@@ -50,7 +50,7 @@ exports.data = function (device, message) {
   // if(msg.substring(0, 5)=="Error"){
   // 	device.data.error = msg.substring(6, 7);
   // }
-  //console.log(msg)
+  // console.log(msg)
 };
 
 exports.heartbeat = function (device) {

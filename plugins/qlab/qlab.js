@@ -14,7 +14,7 @@ exports.data = function (device, osc) {
   var p = osc.address.split('/');
   p.shift();
 
-  //console.log(address)
+  // console.log(address)
 
   if (osc.address == '/reply/workspaces') {
     const d = JSON.parse(osc.args[0]).data;
@@ -53,7 +53,7 @@ exports.data = function (device, osc) {
 
         for (var cueIndex in group.cues) {
           var cue = group.cues[cueIndex];
-          //console.log(cue)
+          // console.log(cue)
 
           device.data.lastCueInGroup[group.uniqueID] = cue;
 
@@ -81,7 +81,7 @@ exports.data = function (device, osc) {
       }
     }
 
-    //console.log(device.data.lastCueInGroup)
+    // console.log(device.data.lastCueInGroup)
 
     device.draw();
   } else if (p[0] == 'update' && p[1] == 'workspace' && p[3] == 'cue_id') {

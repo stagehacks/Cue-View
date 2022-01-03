@@ -1,6 +1,6 @@
 const { remote } = require('electron');
 const { ipcRenderer } = require('electron');
-//let currWindow = remote.BrowserWindow.getFocusedWindow();
+// let currWindow = remote.BrowserWindow.getFocusedWindow();
 const { v4: uuid } = require('uuid');
 let ejs = require('ejs');
 
@@ -124,14 +124,14 @@ window.init = function () {
         .classList.remove('active-device');
       ipcRenderer.send('disableDeviceDropdown', '');
     } catch (err) {
-      //console.log(err)
+      // console.log(err)
     }
     try {
       document
         .getElementsByClassName('active-device-outline')[0]
         .classList.remove('active-device-outline');
     } catch (err) {
-      //console.log(err)
+      // console.log(err)
     }
 
     VIEW.switchDevice();
@@ -174,7 +174,7 @@ function switchClass(element, className) {
   try {
     document.getElementsByClassName(className)[0].classList.remove(className);
   } catch (err) {
-    //console.log(err)
+    // console.log(err)
   }
   element.classList.add(className);
 }

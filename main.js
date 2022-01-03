@@ -22,11 +22,11 @@ const createWindow = () => {
     transparent: true,
     frame: false,
     show: false,
-    //backgroundColor: "#333333",
+    // backgroundColor: "#333333",
     vibrancy: 'window',
     visualEffectState: 'followWindow',
     webPreferences: {
-      //enableRemoteModule: true,
+      // enableRemoteModule: true,
       contextIsolation: false,
       nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js'),

@@ -28,7 +28,7 @@ loadSlot = function (slotIndex) {
     var savedDevice = savedSlots[slotIndex][d];
     for (var d in DEVICE.all) {
       var device = DEVICE.all[d];
-      //if(device.addresses[0] == savedDevice.addresses[0] && device.type == savedDevice.type){
+      // if(device.addresses[0] == savedDevice.addresses[0] && device.type == savedDevice.type){
       if (device.id == savedDevice.id) {
         VIEW.pinDevice(device);
         VIEW.switchDevice(device.id);

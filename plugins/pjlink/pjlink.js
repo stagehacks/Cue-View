@@ -13,8 +13,8 @@ exports.searchOptions = {
 exports.defaultPort = 4352;
 
 exports.ready = function (device) {
-  //Power status query
-  //device.send("%1POWR ?\r");
+  // Power status query
+  // device.send("%1POWR ?\r");
 };
 var password = false;
 

@@ -20,7 +20,7 @@ searchAll = function () {
   searching = true;
   ipcRenderer.send('disableSearchAll', '');
   document.getElementById('search-button').style.opacity = 0.2;
-  //console.clear();
+  // console.clear();
 
   for (var i in DEVICE.all) {
     DEVICE.infoUpdate(DEVICE.all[i], 'status', 'refresh');
@@ -28,7 +28,7 @@ searchAll = function () {
 
   console.log('Searching...');
 
-  //findOnlineDevices();
+  // findOnlineDevices();
   allServers = getServers();
   var TCPFlag = true;
   if (allServers.length > 2046) {
@@ -62,9 +62,9 @@ searchAll = function () {
     }
   }
 
-  //searchBonjour();
-  //searchTCP();
-  //searchUDP();
+  // searchBonjour();
+  // searchTCP();
+  // searchUDP();
 
   setTimeout(function () {
     searching = false;
@@ -166,7 +166,7 @@ TCPtest = function (ip, pluginType, plugin) {
     client.end();
   });
   client.on('error', function (err) {
-    //no device here
+    // no device here
   });
 };
 
@@ -301,7 +301,7 @@ newSearchUDP = function (pluginType, plugin) {
       plugin.searchOptions.devicePort,
       '255.255.255.255',
       (err) => {
-        //console.log(err)
+        // console.log(err)
       }
     );
     setTimeout(function () {
@@ -310,7 +310,7 @@ newSearchUDP = function (pluginType, plugin) {
         plugin.searchOptions.devicePort,
         '255.255.255.255',
         (err) => {
-          //console.log(err)
+          // console.log(err)
         }
       );
     }, 100);
@@ -320,7 +320,7 @@ newSearchUDP = function (pluginType, plugin) {
         plugin.searchOptions.devicePort,
         '255.255.255.255',
         (err) => {
-          //console.log(err)
+          // console.log(err)
         }
       );
     }, 400);

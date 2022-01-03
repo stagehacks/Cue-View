@@ -39,7 +39,7 @@ registerDevice = function (newDevice) {
     }
   }
 
-  //console.log("Registered new "+newDevice.type)
+  // console.log("Registered new "+newDevice.type)
 
   var id = newDevice.id || uuid();
   devices[id] = {
@@ -92,7 +92,7 @@ initDeviceConnection = function (id) {
     });
     device.connection.open();
     device.connection.on('error', function (error) {
-      //console.error(error)
+      // console.error(error)
       device.connection.close();
     });
     device.connection.on('ready', function () {
@@ -102,7 +102,7 @@ initDeviceConnection = function (id) {
       }
     });
     device.connection.on('message', function (message) {
-      //log("OSC IN", message.address);
+      // log("OSC IN", message.address);
       plugins[type].data(device, message);
       device.lastMessage = Date.now();
     });
@@ -119,7 +119,7 @@ initDeviceConnection = function (id) {
     );
 
     device.connection.on('error', function (error) {
-      //console.error(error)
+      // console.error(error)
     });
     device.connection.on('ready', function () {
       plugins[type].ready(device);
@@ -128,13 +128,13 @@ initDeviceConnection = function (id) {
       }
     });
     device.connection.on('data', function (message) {
-      //log("SOCK IN", message);
+      // log("SOCK IN", message);
       plugins[type].data(device, message);
       device.lastMessage = Date.now();
       infoUpdate(device, 'status', 'ok');
     });
     device.send = function (data) {
-      //log("SOCK OUT", data);
+      // log("SOCK OUT", data);
       device.connection.write(data);
     };
   } else if (plugins[type].connectionType == 'UDPsocket') {
@@ -155,7 +155,7 @@ initDeviceConnection = function (id) {
         device.port,
         device.addresses[0],
         function (err) {
-          //console.log(err);
+          // console.log(err);
         }
       );
     };
@@ -186,7 +186,7 @@ module.exports.changeActiveType = function (newType) {
 
   initDeviceConnection(device.id);
   VIEW.draw(device);
-  //SAVESLOTS.saveAll();
+  // SAVESLOTS.saveAll();
 };
 
 module.exports.changeActiveIP = function (newIP) {
@@ -221,7 +221,7 @@ module.exports.changeActivePinIndex = function (newPin) {
 };
 module.exports.changePinIndex = function (device, newPin) {
   device.pinIndex = newPin;
-  //SAVESLOTS.saveAll();
+  // SAVESLOTS.saveAll();
 };
 module.exports.refreshActive = function () {
   var device = VIEW.getActiveDevice();
@@ -255,7 +255,7 @@ function heartbeat() {
         if (device.port != undefined && device.addresses.length > 0) {
           PLUGINS.all[device.type].heartbeat(device);
         } else {
-          //console.error("Invalid IP/Port on device "+device.name)
+          // console.error("Invalid IP/Port on device "+device.name)
         }
       }
       device.lastHeartbeat = Date.now();

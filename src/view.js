@@ -33,7 +33,7 @@ drawDeviceInterface = function (id) {
       ".css' rel='stylesheet' type='text/css'>";
   }
 
-  //scrollbar styles are inline to prevent the styles flickering in
+  // scrollbar styles are inline to prevent the styles flickering in
   str += '<style>';
   str += '::-webkit-scrollbar {background-color: black;width: 12px;}';
   str += '::-webkit-scrollbar-track {background-color: #2b2b2b;}';
@@ -142,13 +142,13 @@ switchDevice = function (id) {
     'repeat(' + cols + ', 1fr)';
 
   if (id == undefined) {
-    //document.getElementById('refresh-device-button').style.opacity = 0.2;
+    // document.getElementById('refresh-device-button').style.opacity = 0.2;
     document.getElementById('refresh-device-button').disabled = true;
     document.getElementById('device-settings-table').style.display = 'none';
     return true;
   } else {
     document.getElementById('refresh-device-button').disabled = false;
-    //document.getElementById('refresh-device-button').style.opacity = 1;
+    // document.getElementById('refresh-device-button').style.opacity = 1;
   }
 
   var i = DEVICE.all[id].id;
@@ -218,7 +218,7 @@ module.exports.unpinDevice = function (device) {
 module.exports.resetPinned = function () {
   pinnedDevices.length = 0;
   activeDevice = false;
-  //switchDevice();
+  // switchDevice();
   try {
     document
       .querySelector('#device-list .active-device')

@@ -13,7 +13,7 @@ exports.searchOptions = {
 };
 exports.defaultPort = 3032;
 
-//"\xc0/eos/ping\x00\x00\x2c\x00\x00\x00\xc0"
+// "\xc0/eos/ping\x00\x00\x2c\x00\x00\x00\xc0"
 
 exports.ready = function (device) {
   device.send('/eos/get/cuelist/count');
@@ -90,10 +90,10 @@ exports.data = function (device, osc) {
       ),
     };
 
-    //console.log(p[4]+" "+p[5]+" "+p[6]+" updated")
+    // console.log(p[4]+" "+p[5]+" "+p[6]+" updated")
     device.draw();
   } else if (p[1] == 'out' && p[2] == 'get' && p[3] == 'cue' && p.length == 6) {
-    //console.log("cue "+p[4]+" "+p[5]+" deleted")
+    // console.log("cue "+p[4]+" "+p[5]+" deleted")
 
     // There's no OSC notification of the deletion of a part. It just tells you to update the parent cue and remaining children.
     // So: we should fetch all the parts of a cue somehow every time there's an update to a cue.
@@ -125,7 +125,7 @@ exports.data = function (device, osc) {
     var cueNumber = osc.args[1];
 
     device.send(`/eos/get/cue/${cueList}/${cueNumber}`);
-    //console.log("SENT /eos/get/cue/"+cueList+"/"+cueNumber);
+    // console.log("SENT /eos/get/cue/"+cueList+"/"+cueNumber);
   } else if (
     p[2] == 'cmd' ||
     p[2] == 'ping' ||
@@ -135,9 +135,9 @@ exports.data = function (device, osc) {
   } else if (p[3] == 'version') {
     device.data.version = osc.args[0];
   } else {
-    //console.log(osc);
+    // console.log(osc);
   }
-  //console.log(p)
+  // console.log(p)
 };
 exports.heartbeat = function (device) {
   device.send('/eos/ping');
