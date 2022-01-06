@@ -20,48 +20,6 @@ exports.ready = function (device) {
 };
 let password = false;
 
-exports.data = function (device, message) {
-  this.deviceInfoUpdate(device, 'status', 'ok');
-  const msg = message.toString();
-
-  if (msg.substring(0, 8) == 'PJLINK 1') {
-    password = md5(`${msg.substring(9, 17)}JBMIAProjectorLink`);
-    device.send(
-      `${password}%1POWR ?\r%1INPT ?\r%1AVMT ?\r%1ERST ?\r%1LAMP ?\r%1NAME ?\r%1INF1 ?\r%1INF2 ?\r%2SNUM ?\r%2SVER ?\r`
-    );
-  }
-  if (msg.substring(0, 7) == '%1POWR=') {
-    processPJLink(device, msg, this);
-  }
-  if (msg.substring(0, 7) == '%1INPT=') {
-    processPJLink(device, msg, this);
-  }
-  if (msg.substring(0, 7) == '%1AVMT=') {
-    processPJLink(device, msg, this);
-  }
-  if (msg.substring(0, 7) == '%1ERST=') {
-    processPJLink(device, msg, this);
-  }
-  if (msg.substring(0, 7) == '%1LAMP=') {
-    processPJLink(device, msg, this);
-  }
-  if (msg.substring(0, 7) == '%1NAME=') {
-    processPJLink(device, msg, this);
-  }
-  if (msg.substring(0, 7) == '%1INF1=') {
-    processPJLink(device, msg, this);
-  }
-  if (msg.substring(0, 7) == '%1INF2=') {
-    processPJLink(device, msg, this);
-  }
-  if (msg.substring(0, 7) == '%2SNUM=') {
-    processPJLink(device, msg, this);
-  }
-  if (msg.substring(0, 7) == '%2SVER=') {
-    processPJLink(device, msg, this);
-  }
-};
-
 function processPJLink(device, str, that) {
   const arr = str.split('%');
   for (var key in arr) {
@@ -110,6 +68,48 @@ function processPJLink(device, str, that) {
   }
   device.draw();
 }
+
+exports.data = function (device, message) {
+  this.deviceInfoUpdate(device, 'status', 'ok');
+  const msg = message.toString();
+
+  if (msg.substring(0, 8) == 'PJLINK 1') {
+    password = md5(`${msg.substring(9, 17)}JBMIAProjectorLink`);
+    device.send(
+      `${password}%1POWR ?\r%1INPT ?\r%1AVMT ?\r%1ERST ?\r%1LAMP ?\r%1NAME ?\r%1INF1 ?\r%1INF2 ?\r%2SNUM ?\r%2SVER ?\r`
+    );
+  }
+  if (msg.substring(0, 7) == '%1POWR=') {
+    processPJLink(device, msg, this);
+  }
+  if (msg.substring(0, 7) == '%1INPT=') {
+    processPJLink(device, msg, this);
+  }
+  if (msg.substring(0, 7) == '%1AVMT=') {
+    processPJLink(device, msg, this);
+  }
+  if (msg.substring(0, 7) == '%1ERST=') {
+    processPJLink(device, msg, this);
+  }
+  if (msg.substring(0, 7) == '%1LAMP=') {
+    processPJLink(device, msg, this);
+  }
+  if (msg.substring(0, 7) == '%1NAME=') {
+    processPJLink(device, msg, this);
+  }
+  if (msg.substring(0, 7) == '%1INF1=') {
+    processPJLink(device, msg, this);
+  }
+  if (msg.substring(0, 7) == '%1INF2=') {
+    processPJLink(device, msg, this);
+  }
+  if (msg.substring(0, 7) == '%2SNUM=') {
+    processPJLink(device, msg, this);
+  }
+  if (msg.substring(0, 7) == '%2SVER=') {
+    processPJLink(device, msg, this);
+  }
+};
 
 exports.heartbeat = function (device) {
   if (password) {

@@ -31,6 +31,24 @@ exports.ready = function (device) {
   // device.send(Buffer.from("/subscribe\x00,si\x00/-stat/solosw/01\x001"));
 };
 
+function parseAddress(msg) {
+  const addr = msg.split('/');
+  addr.shift();
+  return addr;
+}
+
+function convertToDBTheBehringerWay(f) {
+  if (f >= 0.5) {
+    return f * 40 - 30;
+  } else if (f >= 0.25) {
+    return f * 80 - 50;
+  } else if (f >= 0.0625) {
+    return f * 160 - 70;
+  } else {
+    return f * 480 - 90;
+  }
+}
+
 exports.data = function (device, buf) {
   this.deviceInfoUpdate(device, 'status', 'ok');
   const msg = buf.toString().split('\u0000');
@@ -115,21 +133,3 @@ exports.data = function (device, buf) {
 exports.heartbeat = function (device) {
   device.send(Buffer.from('/xremote'));
 };
-
-function parseAddress(msg) {
-  const addr = msg.split('/');
-  addr.shift();
-  return addr;
-}
-
-function convertToDBTheBehringerWay(f) {
-  if (f >= 0.5) {
-    return f * 40 - 30;
-  } else if (f >= 0.25) {
-    return f * 80 - 50;
-  } else if (f >= 0.0625) {
-    return f * 160 - 70;
-  } else {
-    return f * 480 - 90;
-  }
-}

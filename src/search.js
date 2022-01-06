@@ -13,6 +13,29 @@ const PLUGINS = require('./plugins.js');
 let searching = false;
 let allServers = false;
 
+// from local-devices library
+function getServers() {
+  const interfaces = os.networkInterfaces();
+  const result = [];
+
+  for (const key in interfaces) {
+    const addresses = interfaces[key];
+    for (let i = addresses.length; i--; ) {
+      const address = addresses[i];
+      if (address.family === 'IPv4' && !address.internal) {
+        const subnet = ip.subnet(address.address, address.netmask);
+        let current = ip.toLong(subnet.firstAddress);
+        const last = ip.toLong(subnet.lastAddress) - 1;
+        while (current++ < last) result.push(ip.fromLong(current));
+      }
+    }
+  }
+
+  return result;
+}
+
+const searchSockets = [];
+
 searchAll = function () {
   if (searching) {
     return true;
@@ -166,27 +189,6 @@ TCPtest = function (ip, pluginType, plugin) {
   });
 };
 
-// from local-devices library
-function getServers() {
-  const interfaces = os.networkInterfaces();
-  const result = [];
-
-  for (const key in interfaces) {
-    const addresses = interfaces[key];
-    for (let i = addresses.length; i--; ) {
-      const address = addresses[i];
-      if (address.family === 'IPv4' && !address.internal) {
-        const subnet = ip.subnet(address.address, address.netmask);
-        let current = ip.toLong(subnet.firstAddress);
-        const last = ip.toLong(subnet.lastAddress) - 1;
-        while (current++ < last) result.push(ip.fromLong(current));
-      }
-    }
-  }
-
-  return result;
-}
-
 findOnlineDevices = function () {
   const allInterfaces = os.networkInterfaces();
   const validInterfaces = [];
@@ -286,8 +288,6 @@ const pjLinkMessage = Buffer.from([0x25, 0x32, 0x53, 0x52, 0x43, 0x48, 0x0d]);
 const xAirMessage = Buffer.from([0x2f, 0x78, 0x69, 0x6e, 0x66, 0x6f]);
 const serverUDP = dgram.createSocket('udp4');
 const serverUDP2 = dgram.createSocket('udp4');
-
-const searchSockets = [];
 
 newSearchUDP = function (pluginType, plugin) {
   const i = searchSockets.push(dgram.createSocket('udp4')) - 1;

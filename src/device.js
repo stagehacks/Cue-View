@@ -237,7 +237,6 @@ infoUpdate = function (device, param, value) {
 };
 module.exports.infoUpdate = infoUpdate;
 
-setInterval(heartbeat, 100);
 function heartbeat() {
   for (let i in devices) {
     const device = devices[i];
@@ -257,3 +256,4 @@ function heartbeat() {
     }
   }
 }
+setInterval(heartbeat, 100);

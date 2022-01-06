@@ -12,77 +12,9 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+const isMac = process.platform === 'darwin';
 let menu;
 let mainWindow;
-
-const createWindow = () => {
-  mainWindow = new BrowserWindow({
-    width: 1500,
-    height: 900,
-    titleBarStyle: 'hiddenInset',
-    transparent: true,
-    frame: false,
-    show: false,
-    // backgroundColor: "#333333",
-    vibrancy: 'window',
-    visualEffectState: 'followWindow',
-    webPreferences: {
-      // enableRemoteModule: true,
-      contextIsolation: false,
-      nodeIntegration: true,
-      preload: path.join(__dirname, 'preload.js'),
-    },
-  });
-
-  mainWindow.loadFile('index.html');
-
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show();
-  });
-
-  if (process.defaultApp) {
-    mainWindow.webContents.openDevTools();
-  }
-
-  menu = Menu.buildFromTemplate(menuTemplate);
-  Menu.setApplicationMenu(menu);
-};
-
-app.whenReady().then(() => {
-  createWindow();
-
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  });
-});
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-
-ipcMain.on('enableDeviceDropdown', (event, arg) => {
-  menu.getMenuItemById('devicePin').enabled = true;
-  menu.getMenuItemById('deviceDelete').enabled = true;
-});
-ipcMain.on('disableDeviceDropdown', (event, arg) => {
-  menu.getMenuItemById('devicePin').enabled = false;
-  menu.getMenuItemById('deviceDelete').enabled = false;
-});
-
-ipcMain.on('enableSearchAll', (event, arg) => {
-  menu.getMenuItemById('deviceSearch').enabled = true;
-});
-ipcMain.on('disableSearchAll', (event, arg) => {
-  menu.getMenuItemById('deviceSearch').enabled = false;
-});
-
-ipcMain.on('setDevicePin', (event, arg) => {
-  menu.getMenuItemById('devicePin').checked = arg;
-});
-
-const isMac = process.platform === 'darwin';
 
 const menuTemplate = [
   { role: 'appMenu' },
@@ -184,3 +116,70 @@ const menuTemplate = [
     ],
   },
 ];
+
+const createWindow = () => {
+  mainWindow = new BrowserWindow({
+    width: 1500,
+    height: 900,
+    titleBarStyle: 'hiddenInset',
+    transparent: true,
+    frame: false,
+    show: false,
+    // backgroundColor: "#333333",
+    vibrancy: 'window',
+    visualEffectState: 'followWindow',
+    webPreferences: {
+      // enableRemoteModule: true,
+      contextIsolation: false,
+      nodeIntegration: true,
+      preload: path.join(__dirname, 'preload.js'),
+    },
+  });
+
+  mainWindow.loadFile('index.html');
+
+  mainWindow.on('ready-to-show', () => {
+    mainWindow.show();
+  });
+
+  if (process.defaultApp) {
+    mainWindow.webContents.openDevTools();
+  }
+
+  menu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(menu);
+};
+
+app.whenReady().then(() => {
+  createWindow();
+
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
+});
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+ipcMain.on('enableDeviceDropdown', (event, arg) => {
+  menu.getMenuItemById('devicePin').enabled = true;
+  menu.getMenuItemById('deviceDelete').enabled = true;
+});
+ipcMain.on('disableDeviceDropdown', (event, arg) => {
+  menu.getMenuItemById('devicePin').enabled = false;
+  menu.getMenuItemById('deviceDelete').enabled = false;
+});
+
+ipcMain.on('enableSearchAll', (event, arg) => {
+  menu.getMenuItemById('deviceSearch').enabled = true;
+});
+ipcMain.on('disableSearchAll', (event, arg) => {
+  menu.getMenuItemById('deviceSearch').enabled = false;
+});
+
+ipcMain.on('setDevicePin', (event, arg) => {
+  menu.getMenuItemById('devicePin').checked = arg;
+});

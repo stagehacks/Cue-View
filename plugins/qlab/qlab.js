@@ -45,8 +45,6 @@ exports.data = function (device, osc) {
       device.data.workspaces[workspace].cueLists[d[i].uniqueID].cues =
         d[i].cues;
 
-      getMoreCueInfo(d[i], []);
-
       function getMoreCueInfo(group, groups_arg) {
         const groups = JSON.parse(JSON.stringify(groups_arg));
         groups.push(group.uniqueID);
@@ -79,6 +77,8 @@ exports.data = function (device, osc) {
           device.data.workspaces[workspace].allCues[cue.uniqueID] = cue;
         }
       }
+
+      getMoreCueInfo(d[i], []);
     }
 
     // console.log(device.data.lastCueInGroup)
