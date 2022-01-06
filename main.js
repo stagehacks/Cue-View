@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const path = require('path');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -62,7 +62,6 @@ app.on('window-all-closed', () => {
   }
 });
 
-const { ipcMain } = require('electron');
 ipcMain.on('enableDeviceDropdown', (event, arg) => {
   menu.getMenuItemById('devicePin').enabled = true;
   menu.getMenuItemById('deviceDelete').enabled = true;
