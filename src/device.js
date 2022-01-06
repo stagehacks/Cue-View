@@ -8,7 +8,7 @@ const PLUGINS = require('./plugins.js');
 const VIEW = require('./view.js');
 const SAVESLOTS = require('./saveSlots.js');
 
-var devices = {};
+const devices = {};
 module.exports.all = devices;
 
 registerDevice = function (newDevice) {
@@ -19,14 +19,14 @@ registerDevice = function (newDevice) {
     return true;
   }
 
-  var initElements = document.getElementsByClassName('init');
-  for (var i = 0; i < initElements.length; i++) {
+  const initElements = document.getElementsByClassName('init');
+  for (let i = 0; i < initElements.length; i++) {
     initElements[i].style.display = 'none';
   }
 
   // only register device if it hasn't already been added
   if (newDevice.addresses.length > 0) {
-    for (var i in devices) {
+    for (let i in devices) {
       if (
         devices[i].type == newDevice.type &&
         JSON.stringify(devices[i].addresses) ==
@@ -41,9 +41,9 @@ registerDevice = function (newDevice) {
 
   // console.log("Registered new "+newDevice.type)
 
-  var id = newDevice.id || uuid();
+  const id = newDevice.id || uuid();
   devices[id] = {
-    id: id,
+    id,
     status: 'new',
     type: newDevice.type,
     displayName: newDevice.displayName,
@@ -70,7 +70,7 @@ registerDevice = function (newDevice) {
 module.exports.registerDevice = registerDevice;
 
 initDeviceConnection = function (id) {
-  var device = devices[id];
+  const device = devices[id];
 
   infoUpdate(device, 'status', 'new');
 
@@ -82,8 +82,8 @@ initDeviceConnection = function (id) {
     device.connection.close();
   } catch (err) {}
 
-  const type = devices[id].type;
-  var plugins = PLUGINS.all;
+  const { type } = devices[id];
+  const plugins = PLUGINS.all;
 
   if (plugins[type].connectionType == 'osc') {
     device.connection = new osc.TCPSocketPort({
@@ -159,8 +159,8 @@ initDeviceConnection = function (id) {
 module.exports.initDeviceConnection = initDeviceConnection;
 
 module.exports.deleteActive = function () {
-  var device = VIEW.getActiveDevice();
-  var choice = confirm(
+  const device = VIEW.getActiveDevice();
+  const choice = confirm(
     `Are you sure you want to delete ${device.type} device "${
       device.displayName || device.defaultName
     }"?`
@@ -176,7 +176,7 @@ module.exports.deleteActive = function () {
 };
 
 module.exports.changeActiveType = function (newType) {
-  var device = VIEW.getActiveDevice();
+  const device = VIEW.getActiveDevice();
   device.type = newType;
 
   initDeviceConnection(device.id);
@@ -185,7 +185,7 @@ module.exports.changeActiveType = function (newType) {
 };
 
 module.exports.changeActiveIP = function (newIP) {
-  var device = VIEW.getActiveDevice();
+  const device = VIEW.getActiveDevice();
   device.addresses[0] = newIP;
   initDeviceConnection(device.id);
   VIEW.draw(device);
@@ -193,7 +193,7 @@ module.exports.changeActiveIP = function (newIP) {
 };
 
 module.exports.changeActivePort = function (newPort) {
-  var device = VIEW.getActiveDevice();
+  const device = VIEW.getActiveDevice();
   device.port = newPort;
 
   initDeviceConnection(device.id);
@@ -202,14 +202,14 @@ module.exports.changeActivePort = function (newPort) {
 };
 
 module.exports.changeActiveName = function (newName) {
-  var device = VIEW.getActiveDevice();
+  const device = VIEW.getActiveDevice();
   device.displayName = newName;
   infoUpdate(device, 'displayName', newName);
   VIEW.draw(device);
   SAVESLOTS.saveAll();
 };
 module.exports.changeActivePinIndex = function (newPin) {
-  var device = VIEW.getActiveDevice();
+  const device = VIEW.getActiveDevice();
   device.pinIndex = newPin;
   VIEW.draw(device);
   SAVESLOTS.saveAll();
@@ -219,7 +219,7 @@ module.exports.changePinIndex = function (device, newPin) {
   // SAVESLOTS.saveAll();
 };
 module.exports.refreshActive = function () {
-  var device = VIEW.getActiveDevice();
+  const device = VIEW.getActiveDevice();
   if (device == undefined) {
     return true;
   }
@@ -239,8 +239,8 @@ module.exports.infoUpdate = infoUpdate;
 
 setInterval(heartbeat, 100);
 function heartbeat() {
-  for (var i in devices) {
-    var device = devices[i];
+  for (let i in devices) {
+    const device = devices[i];
     if (Date.now() >= device.lastHeartbeat + device.heartbeatInterval) {
       if (device.status == 'broken') {
         initDeviceConnection(i);

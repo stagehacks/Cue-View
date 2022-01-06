@@ -1,16 +1,16 @@
 const VIEW = require('./view.js');
 const DEVICE = require('./device.js');
 
-var activeSlot = false;
-var savedSlots = [[], [], [], []];
-var savedDevices = [];
+let activeSlot = false;
+let savedSlots = [[], [], [], []];
+let savedDevices = [];
 
-var storedSlots = localStorage.getItem('savedSlots');
+const storedSlots = localStorage.getItem('savedSlots');
 if (storedSlots) {
   savedSlots = JSON.parse(storedSlots);
 }
 
-var storedDevices = localStorage.getItem('savedDevices');
+const storedDevices = localStorage.getItem('savedDevices');
 if (storedDevices) {
   savedDevices = JSON.parse(storedDevices);
 }
@@ -25,9 +25,9 @@ loadSlot = function (slotIndex) {
   VIEW.resetPinned();
 
   for (var d in savedSlots[slotIndex]) {
-    var savedDevice = savedSlots[slotIndex][d];
+    const savedDevice = savedSlots[slotIndex][d];
     for (var d in DEVICE.all) {
-      var device = DEVICE.all[d];
+      const device = DEVICE.all[d];
       // if(device.addresses[0] == savedDevice.addresses[0] && device.type == savedDevice.type){
       if (device.id == savedDevice.id) {
         VIEW.pinDevice(device);
@@ -49,7 +49,7 @@ module.exports.loadDevices = function () {
   console.log(`Loading ${savedDevices.length} saved devices...`);
   console.log(savedDevices);
 
-  for (var i = 0; i < savedDevices.length; i++) {
+  for (let i = 0; i < savedDevices.length; i++) {
     DEVICE.registerDevice({
       type: savedDevices[i].type,
       displayName: savedDevices[i].displayName,
@@ -63,10 +63,10 @@ module.exports.loadDevices = function () {
 
 module.exports.saveAll = function () {
   console.log('Saving...');
-  var currentPins = VIEW.getPinnedDevices();
+  const currentPins = VIEW.getPinnedDevices();
 
   savedSlots[activeSlot] = [];
-  for (var i = 0; i < currentPins.length; i++) {
+  for (let i = 0; i < currentPins.length; i++) {
     savedSlots[activeSlot][i] = {
       addresses: currentPins[i].addresses,
       type: currentPins[i].type,
@@ -96,9 +96,9 @@ module.exports.saveAll = function () {
 };
 
 module.exports.deleteFromSlots = function (device) {
-  for (var i = 1; i <= 3; i++) {
+  for (let i = 1; i <= 3; i++) {
     console.log(savedSlots);
-    for (var j = 0; j < savedSlots[i].length; j++) {
+    for (let j = 0; j < savedSlots[i].length; j++) {
       if (savedSlots[i][j].id == device.id) {
         delete savedSlots[i][j];
       }

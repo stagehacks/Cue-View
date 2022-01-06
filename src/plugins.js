@@ -2,15 +2,15 @@ const fs = require('fs');
 const DEVICE = require('./device.js');
 const VIEW = require('./view.js');
 
-var allPlugins = {};
+const allPlugins = {};
 module.exports.all = allPlugins;
 
 module.exports.init = function (callback) {
   console.log(`Loading plugin files... ${__dirname}/../plugins`);
 
   fs.readdir(`${__dirname}/../plugins`, (err, files) => {
-    for (var i in files) {
-      var plugin = files[i];
+    for (let i in files) {
+      const plugin = files[i];
 
       if (plugin[0] != '.') {
         console.log(`${i} ${plugin}`);

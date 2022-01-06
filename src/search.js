@@ -10,8 +10,8 @@ const DEVICE = require('./device.js');
 // const SEARCH = require('./search.js');
 const PLUGINS = require('./plugins.js');
 
-var searching = false;
-var allServers = false;
+let searching = false;
+let allServers = false;
 
 searchAll = function () {
   if (searching) {
@@ -22,7 +22,7 @@ searchAll = function () {
   document.getElementById('search-button').style.opacity = 0.2;
   // console.clear();
 
-  for (var i in DEVICE.all) {
+  for (let i in DEVICE.all) {
     DEVICE.infoUpdate(DEVICE.all[i], 'status', 'refresh');
   }
 
@@ -30,7 +30,7 @@ searchAll = function () {
 
   // findOnlineDevices();
   allServers = getServers();
-  var TCPFlag = true;
+  let TCPFlag = true;
   if (allServers.length > 2046) {
     alert(
       'Unable to search for TCP devices - subnet too large!\n\nCue View requires subnet 255.255.248.0 (/21) or smaller.'
@@ -40,8 +40,8 @@ searchAll = function () {
 
   console.log(PLUGINS);
 
-  for (var p in PLUGINS.all) {
-    var plugin = PLUGINS.all[p];
+  for (let p in PLUGINS.all) {
+    const plugin = PLUGINS.all[p];
     console.log(p);
     try {
       switch (plugin.searchOptions.type) {
@@ -70,7 +70,7 @@ searchAll = function () {
     searching = false;
     document.getElementById('search-button').style.opacity = '';
 
-    for (var i = 0; i < searchSockets.length; i++) {
+    for (let i = 0; i < searchSockets.length; i++) {
       try {
         searchSockets[i].close();
       } catch (err) {}
@@ -94,8 +94,8 @@ newSearchBonjour = function (pluginType, plugin) {
   bonjour.find({ type: plugin.searchOptions.bonjourName }, (e) => {
     console.log(pluginType);
 
-    var validAddresses = [];
-    for (var i in e.addresses) {
+    const validAddresses = [];
+    for (let i in e.addresses) {
       if (e.addresses[i].indexOf(':') == -1) {
         validAddresses.push(e.addresses[i]);
       }
@@ -135,13 +135,13 @@ newSearchBonjour = function (pluginType, plugin) {
 //    |_|  \_____|_|
 
 newSearchTCP = function (pluginType, plugin) {
-  for (var i = 0; i < allServers.length; i++) {
+  for (let i = 0; i < allServers.length; i++) {
     TCPtest(allServers[i], pluginType, plugin);
   }
 };
 
 TCPtest = function (ip, pluginType, plugin) {
-  var client = net.createConnection(plugin.searchOptions.testPort, ip, () => {
+  const client = net.createConnection(plugin.searchOptions.testPort, ip, () => {
     client.write(plugin.searchOptions.searchBuffer);
     // DEVICE.registerDevice({
     // 	type: pluginType,
@@ -168,17 +168,17 @@ TCPtest = function (ip, pluginType, plugin) {
 
 // from local-devices library
 function getServers() {
-  var interfaces = os.networkInterfaces();
-  var result = [];
+  const interfaces = os.networkInterfaces();
+  const result = [];
 
-  for (var key in interfaces) {
-    var addresses = interfaces[key];
-    for (var i = addresses.length; i--; ) {
-      var address = addresses[i];
+  for (const key in interfaces) {
+    const addresses = interfaces[key];
+    for (let i = addresses.length; i--; ) {
+      const address = addresses[i];
       if (address.family === 'IPv4' && !address.internal) {
-        var subnet = ip.subnet(address.address, address.netmask);
-        var current = ip.toLong(subnet.firstAddress);
-        var last = ip.toLong(subnet.lastAddress) - 1;
+        const subnet = ip.subnet(address.address, address.netmask);
+        let current = ip.toLong(subnet.firstAddress);
+        const last = ip.toLong(subnet.lastAddress) - 1;
         while (current++ < last) result.push(ip.fromLong(current));
       }
     }
@@ -188,11 +188,11 @@ function getServers() {
 }
 
 findOnlineDevices = function () {
-  var allInterfaces = os.networkInterfaces();
-  var validInterfaces = [];
-  for (var i in allInterfaces) {
-    for (var j = 0; j < allInterfaces[i].length; j++) {
-      var iface = allInterfaces[i][j];
+  const allInterfaces = os.networkInterfaces();
+  const validInterfaces = [];
+  for (let i in allInterfaces) {
+    for (let j = 0; j < allInterfaces[i].length; j++) {
+      const iface = allInterfaces[i][j];
 
       if (
         iface.family == 'IPv4' &&
@@ -204,15 +204,15 @@ findOnlineDevices = function () {
     }
   }
 
-  for (var i = 0; i < validInterfaces.length; i++) {
-    var block = new Netmask(validInterfaces[i].cidr);
-    var f = block.first.split('.');
-    var l = block.last.split('.');
-    var cur = [f[0], f[1], f[2], f[3]];
+  for (let i = 0; i < validInterfaces.length; i++) {
+    const block = new Netmask(validInterfaces[i].cidr);
+    const f = block.first.split('.');
+    const l = block.last.split('.');
+    const cur = [f[0], f[1], f[2], f[3]];
 
-    for (var j = Number(f[2]); j <= Number(l[2]); j++) {
+    for (let j = Number(f[2]); j <= Number(l[2]); j++) {
       cur[2] = j;
-      for (var k = Number(f[3]); k < Number(l[3]); k++) {
+      for (let k = Number(f[3]); k < Number(l[3]); k++) {
         cur[3] = k;
         allIPs.push(`${cur[0]}.${cur[1]}.${cur[2]}.${cur[3]}`);
       }
@@ -284,13 +284,13 @@ findOnlineDevices = function () {
 
 const pjLinkMessage = Buffer.from([0x25, 0x32, 0x53, 0x52, 0x43, 0x48, 0x0d]);
 const xAirMessage = Buffer.from([0x2f, 0x78, 0x69, 0x6e, 0x66, 0x6f]);
-var serverUDP = dgram.createSocket('udp4');
-var serverUDP2 = dgram.createSocket('udp4');
+const serverUDP = dgram.createSocket('udp4');
+const serverUDP2 = dgram.createSocket('udp4');
 
-var searchSockets = [];
+const searchSockets = [];
 
 newSearchUDP = function (pluginType, plugin) {
-  var i = searchSockets.push(dgram.createSocket('udp4')) - 1;
+  const i = searchSockets.push(dgram.createSocket('udp4')) - 1;
   searchSockets[i].bind(plugin.searchOptions.listenPort, () => {
     searchSockets[i].send(
       plugin.searchOptions.searchBuffer,

@@ -33,7 +33,7 @@ exports.ready = function (device) {
 
 exports.data = function (device, buf) {
   this.deviceInfoUpdate(device, 'status', 'ok');
-  var msg = buf.toString().split('\u0000\u0000');
+  const msg = buf.toString().split('\u0000\u0000');
 
   if (msg[0] == '/xinfo') {
     this.deviceInfoUpdate(device, 'defaultName', msg[4]);
@@ -45,7 +45,7 @@ exports.data = function (device, buf) {
     device.send(Buffer.from('/lr/mix/fader\u0000\u0000\u0000\u0000'));
     device.send(Buffer.from('/lr/mix/on\u0000\u0000\u0000\u0000'));
 
-    for (var i = 0; i <= 32; i++) {
+    for (let i = 0; i <= 32; i++) {
       device.send(
         Buffer.from(
           `/ch/${i
@@ -58,8 +58,8 @@ exports.data = function (device, buf) {
   } else if (msg[0] == '/meters/0') {
     // console.log(msg)
   } else if (msg[0].indexOf('/mix/fader') >= 0) {
-    var addr = parseAddress(msg[0]);
-    var channel = Number(addr[1]);
+    const addr = parseAddress(msg[0]);
+    const channel = Number(addr[1]);
 
     if (addr[0] == 'ch') {
       device.data.channelFaders[channel - 1] = buf.readFloatBE(24);
@@ -75,8 +75,8 @@ exports.data = function (device, buf) {
 
     device.draw();
   } else if (msg[0].indexOf('/mix/on') >= 0) {
-    var addr = parseAddress(msg[0]);
-    var channel = Number(addr[1]);
+    const addr = parseAddress(msg[0]);
+    const channel = Number(addr[1]);
 
     if (addr[0] == 'ch') {
       device.data.channelMutes[channel - 1] = buf[23];
@@ -88,16 +88,16 @@ exports.data = function (device, buf) {
       Buffer.from(`/ch/${addr[1]}/mix/fader\u0000\u0000\u0000\u0000`)
     );
   } else if (msg[0].indexOf('/config/name') > 0) {
-    var addr = parseAddress(msg[0]);
-    var channel = Number(addr[1]);
+    const addr = parseAddress(msg[0]);
+    const channel = Number(addr[1]);
     device.data.channelNames[channel - 1] = msg[2];
     device.draw();
     device.send(
       Buffer.from(`/ch/${addr[1]}/config/color\u0000\u0000\u0000\u0000`)
     );
   } else if (msg[0].indexOf('/config/color') > 0) {
-    var addr = parseAddress(msg[0]);
-    var channel = Number(addr[1]);
+    const addr = parseAddress(msg[0]);
+    const channel = Number(addr[1]);
     device.data.channelColors[channel - 1] = buf.readInt8(27);
     device.draw();
     device.send(Buffer.from(`/ch/${addr[1]}/mix/on\u0000\u0000\u0000\u0000`));
@@ -112,7 +112,7 @@ exports.heartbeat = function (device) {
 };
 
 function parseAddress(msg) {
-  var addr = msg.split('/');
+  const addr = msg.split('/');
   addr.shift();
   return addr;
 }

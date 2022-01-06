@@ -16,15 +16,15 @@ exports.ready = function (device) {
 };
 
 exports.data = function (device, message) {
-  var msg = message.toString();
+  const msg = message.toString();
   if (msg.substring(0, 5) == 'Ready') {
     device.send('getStatus\n');
   }
   if (msg.substring(0, 5) == 'Reply') {
-    var arr = msg.split(' ');
+    const arr = msg.split(' ');
 
     device.data.showName = '';
-    var i = 0;
+    let i = 0;
     while (arr[i][arr[i].length - 1] != '"') {
       i++;
       device.data.showName += `${arr[i]} `;

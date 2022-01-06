@@ -22,8 +22,8 @@ exports.ready = function (device) {
 };
 
 exports.data = function (device, osc) {
-  var address = osc.address;
-  var p = osc.address.split('/');
+  const address = osc.address;
+  const p = osc.address.split('/');
   p.shift();
 
   if (p[1] == 'out' && p[2] == 'show' && p[3] == 'name') {
@@ -31,7 +31,7 @@ exports.data = function (device, osc) {
     device.data.cuelists = {};
     this.deviceInfoUpdate(device, 'defaultName', osc.args[0]);
   } else if (osc.address == '/eos/out/get/cuelist/count') {
-    for (var i = 0; i < osc.args[0]; i++) {
+    for (let i = 0; i < osc.args[0]; i++) {
       device.send(`/eos/get/cuelist/index/${i}`);
     }
   } else if (
@@ -48,7 +48,7 @@ exports.data = function (device, osc) {
     p[3] == 'cue' &&
     p[5] == 'count'
   ) {
-    for (var i = 0; i < osc.args[0]; i++) {
+    for (let i = 0; i < osc.args[0]; i++) {
       device.send(`'/eos/get/cue/${p[4]}/index/${i}`);
     }
   } else if (
@@ -119,10 +119,10 @@ exports.data = function (device, osc) {
     device.data.activeCue = p[5];
     device.draw();
   } else if (p[1] == 'out' && p[2] == 'notify' && p[3] == 'cue') {
-    var cueList = p[4];
-    var listIndex = p[6];
-    var listCount = p[7];
-    var cueNumber = osc.args[1];
+    const cueList = p[4];
+    const listIndex = p[6];
+    const listCount = p[7];
+    const cueNumber = osc.args[1];
 
     device.send(`/eos/get/cue/${cueList}/${cueNumber}`);
     // console.log("SENT /eos/get/cue/"+cueList+"/"+cueNumber);

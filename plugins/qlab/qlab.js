@@ -10,8 +10,8 @@ exports.ready = function (device) {
 };
 
 exports.data = function (device, osc) {
-  var address = osc.address;
-  var p = osc.address.split('/');
+  const address = osc.address;
+  const p = osc.address.split('/');
   p.shift();
 
   // console.log(address)
@@ -19,7 +19,7 @@ exports.data = function (device, osc) {
   if (osc.address == '/reply/workspaces') {
     const d = JSON.parse(osc.args[0]).data;
     device.data.workspaces = {};
-    for (var i = 0; i < d.length; i++) {
+    for (let i = 0; i < d.length; i++) {
       device.data.workspaces[d[i].uniqueID] = {
         displayName: d[i].displayName,
         selectionIsPlayhead: true,
@@ -33,14 +33,14 @@ exports.data = function (device, osc) {
       device.send(`/workspace/${d[i].uniqueID}/selectionIsPlayhead`);
     }
   } else if (p[1] == 'workspace' && p[3] == 'cueLists') {
-    var workspace = p[2];
-    var d = JSON.parse(osc.args[0]).data;
+    const workspace = p[2];
+    const d = JSON.parse(osc.args[0]).data;
     device.data.workspaces[workspace].cueLists = {};
     device.data.workspaces[workspace].allCues = {};
     device.data.workspaces[workspace].allCuesOrdered = [];
     device.data.lastCueInGroup = {};
 
-    for (var i in d) {
+    for (let i in d) {
       device.data.workspaces[workspace].cueLists[d[i].uniqueID] = d[i];
       device.data.workspaces[workspace].cueLists[d[i].uniqueID].cues =
         d[i].cues;
@@ -48,11 +48,11 @@ exports.data = function (device, osc) {
       getMoreCueInfo(d[i], []);
 
       function getMoreCueInfo(group, groups_arg) {
-        var groups = JSON.parse(JSON.stringify(groups_arg));
+        const groups = JSON.parse(JSON.stringify(groups_arg));
         groups.push(group.uniqueID);
 
-        for (var cueIndex in group.cues) {
-          var cue = group.cues[cueIndex];
+        for (let cueIndex in group.cues) {
+          const cue = group.cues[cueIndex];
           // console.log(cue)
 
           device.data.lastCueInGroup[group.uniqueID] = cue;
@@ -99,19 +99,19 @@ exports.data = function (device, osc) {
       // response to /cue/playbackPosition/uniqueID
       device.data.playbackPosition = JSON.parse(osc.args[0]).data;
     } else if (p[3] == 'mode') {
-      var cueID = p[2];
-      var mode = JSON.parse(osc.args[0]).data;
-      var workspaceID = JSON.parse(osc.args[0]).workspace_id;
+      const cueID = p[2];
+      const mode = JSON.parse(osc.args[0]).data;
+      const workspaceID = JSON.parse(osc.args[0]).workspace_id;
 
       device.data.workspaces[workspaceID].allCues[cueID].mode = mode;
     } else if (p[3] == 'valuesForKeys') {
       this.deviceInfoUpdate(device, 'status', 'ok');
 
-      var d = JSON.parse(osc.args[0]);
+      const d = JSON.parse(osc.args[0]);
 
-      var cueID = p[2];
-      var workspace = d.workspace_id;
-      var cueList = d.data.parent;
+      const cueID = p[2];
+      const workspace = d.workspace_id;
+      const cueList = d.data.parent;
 
       device.data.workspaces[workspace].allCues[cueID].mode = d.data.mode;
       device.data.workspaces[workspace].allCues[cueID].preWait = d.data.preWait;

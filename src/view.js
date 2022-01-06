@@ -3,7 +3,7 @@ const DEVICE = require('./device.js');
 const PLUGINS = require('./plugins.js');
 // const _ = require('lodash/function');
 
-var pinnedDevices = [];
+const pinnedDevices = [];
 module.exports.pinnedDevices = pinnedDevices;
 let activeDevice = false;
 
@@ -14,8 +14,8 @@ module.exports.init = function () {
 drawDeviceInterface = function (id) {
   // console.log("DRAW")
 
-  var $deviceDrawArea = document.getElementById(`device-${id}-draw-area`);
-  var $devicePinned = document.getElementById(`device-${id}-pinned`);
+  const $deviceDrawArea = document.getElementById(`device-${id}-draw-area`);
+  const $devicePinned = document.getElementById(`device-${id}-pinned`);
 
   if ($deviceDrawArea == null) {
     return true;
@@ -23,7 +23,7 @@ drawDeviceInterface = function (id) {
 
   d = DEVICE.all[id];
 
-  var str = '<html><head>';
+  let str = '<html><head>';
   if (d.status == 'ok') {
     str +=
       "<link href='./plugins/" +

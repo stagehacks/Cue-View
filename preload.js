@@ -75,7 +75,7 @@ window.init = function () {
 
   document.getElementById('device-list').onclick = function (e) {
     e.stopPropagation();
-    var deviceID = e.srcElement.id;
+    const deviceID = e.srcElement.id;
     if (e.srcElement.id != 'device-list') {
       VIEW.switchDevice(deviceID);
     }

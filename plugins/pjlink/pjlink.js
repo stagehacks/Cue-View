@@ -1,3 +1,5 @@
+const md5 = require('md5');
+
 exports.defaultName = 'PJLink Projector';
 exports.connectionType = 'TCPsocket';
 exports.heartbeatInterval = 5000;
@@ -16,13 +18,11 @@ exports.ready = function (device) {
   // Power status query
   // device.send("%1POWR ?\r");
 };
-var password = false;
+let password = false;
 
 exports.data = function (device, message) {
   this.deviceInfoUpdate(device, 'status', 'ok');
-  var msg = message.toString();
-
-  const md5 = require('md5');
+  const msg = message.toString();
 
   if (msg.substring(0, 8) == 'PJLINK 1') {
     password = md5(`${msg.substring(9, 17)}JBMIAProjectorLink`);
@@ -63,7 +63,7 @@ exports.data = function (device, message) {
 };
 
 function processPJLink(device, str, that) {
-  var arr = str.split('%');
+  const arr = str.split('%');
   for (var key in arr) {
     var split = arr[key].split('=');
     var key = split[0];

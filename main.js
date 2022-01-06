@@ -12,7 +12,7 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-var menu;
+let menu;
 let mainWindow;
 
 const createWindow = () => {
