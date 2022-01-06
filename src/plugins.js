@@ -1,4 +1,5 @@
 const fs = require('fs');
+const ejs = require('ejs');
 const DEVICE = require('./device.js');
 const VIEW = require('./view.js');
 
