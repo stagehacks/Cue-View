@@ -1,7 +1,7 @@
 const { ipcRenderer } = require('electron');
 const DEVICE = require('./device.js');
 const PLUGINS = require('./plugins.js');
-const _ = require('lodash/function');
+// const _ = require('lodash/function');
 
 var pinnedDevices = [];
 module.exports.pinnedDevices = pinnedDevices;

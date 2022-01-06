@@ -1,5 +1,5 @@
 const { ipcRenderer } = require('electron');
-const netmask = require('netmask').Netmask;
+const { Netmask } = require('netmask');
 const dgram = require('dgram');
 const bonjour = require('bonjour')();
 const net = require('net');
@@ -7,7 +7,7 @@ const os = require('os');
 const ip = require('ip');
 
 const DEVICE = require('./device.js');
-const SEARCH = require('./search.js');
+// const SEARCH = require('./search.js');
 const PLUGINS = require('./plugins.js');
 
 var searching = false;
@@ -188,7 +188,7 @@ function getServers() {
 }
 
 findOnlineDevices = function () {
-  var allInterfaces = require('os').networkInterfaces();
+  var allInterfaces = os.networkInterfaces();
   var validInterfaces = [];
   for (var i in allInterfaces) {
     for (var j = 0; j < allInterfaces[i].length; j++) {
@@ -205,7 +205,7 @@ findOnlineDevices = function () {
   }
 
   for (var i = 0; i < validInterfaces.length; i++) {
-    var block = new netmask(validInterfaces[i].cidr);
+    var block = new Netmask(validInterfaces[i].cidr);
     var f = block.first.split('.');
     var l = block.last.split('.');
     var cur = [f[0], f[1], f[2], f[3]];

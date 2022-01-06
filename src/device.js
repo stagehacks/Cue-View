@@ -2,7 +2,7 @@ const { v4: uuid } = require('uuid');
 const osc = require('osc');
 const net = require('net');
 const udp = require('dgram');
-const _ = require('lodash/function');
+const { debounce } = require('lodash/function');
 
 const PLUGINS = require('./plugins.js');
 const VIEW = require('./view.js');
@@ -55,7 +55,7 @@ registerDevice = function (newDevice) {
     lastDrawn: 0,
     lastHeartbeat: 0,
     heartbeatInterval: PLUGINS.all[newDevice.type].heartbeatInterval,
-    draw: _.debounce(
+    draw: debounce(
       function () {
         VIEW.draw(this);
       },

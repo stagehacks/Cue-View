@@ -1,14 +1,14 @@
-const { remote } = require('electron');
+// const { remote } = require('electron');
 const { ipcRenderer } = require('electron');
 // let currWindow = remote.BrowserWindow.getFocusedWindow();
-const { v4: uuid } = require('uuid');
-const ejs = require('ejs');
+// const { v4: uuid } = require('uuid');
+// const ejs = require('ejs');
 
-const net = require('net');
+// const net = require('net');
 
 const DEVICE = require('./src/device.js');
 const PLUGINS = require('./src/plugins.js');
-const SEARCH = require('./src/search.js');
+// const SEARCH = require('./src/search.js');
 const VIEW = require('./src/view.js');
 const SAVESLOTS = require('./src/saveSlots.js');
 
@@ -167,8 +167,6 @@ ipcRenderer.on('doSlots2', (event, message) => {
 ipcRenderer.on('doSlots3', (event, message) => {
   SAVESLOTS.loadSlot(3);
 });
-
-function log(type, message) {}
 
 function switchClass(element, className) {
   try {
