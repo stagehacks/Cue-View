@@ -61,11 +61,9 @@ searchAll = function () {
     TCPFlag = false;
   }
 
-  console.log(PLUGINS);
-
   for (let p in PLUGINS.all) {
     const plugin = PLUGINS.all[p];
-    console.log(p);
+    
     try {
       switch (plugin.searchOptions.type) {
         case 'TCPport':
