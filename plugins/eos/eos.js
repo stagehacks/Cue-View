@@ -49,7 +49,7 @@ exports.data = function (device, osc) {
     p[5] == 'count'
   ) {
     for (let i = 0; i < osc.args[0]; i++) {
-      device.send(`'/eos/get/cue/${p[4]}/index/${i}`);
+      device.send(`/eos/get/cue/${p[4]}/index/${i}`);
     }
   } else if (
     p[1] == 'out' &&
