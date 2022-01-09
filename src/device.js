@@ -12,7 +12,6 @@ const devices = {};
 module.exports.all = devices;
 
 registerDevice = function (newDevice) {
-  console.log(PLUGINS.all);
 
   if (PLUGINS.all[newDevice.type] == undefined) {
     console.error(`Plugin for device ${newDevice.type} does not exist.`);
