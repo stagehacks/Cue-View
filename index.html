@@ -1,73 +1,101 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Cue View</title>
-    <link rel="stylesheet" href="src/index.css">
-
+    <link rel="stylesheet" href="src/index.css" />
   </head>
   <body>
-
-
     <div id="main">
-
-        <div class="col" id="device-list-col">
-
-            <div id="view-buttons-bar">
-                <button id="save-slot-1" class="save-slot" title="Window arrangement 1">1</button>
-                <button id="save-slot-2" class="save-slot" title="Window arrangement 2">2</button>
-                <button id="save-slot-3" class="save-slot" title="Window arrangement 3">3</button>
-                
-            </div>
-
-            <div id="device-list">
-              <h3 class="init">Click the Search button to find devices on the network.</h3>
-            </div>
-
-            <div id="device-tools">
-                <select class="left button" id="add-device-button" title="Add Device..."></select>
-                <button class="left" id="search-button" title="Search network for devices"><img src="src/img/outline_search_white_18dp.png"></button>
-                <button class="left" id="refresh-device-button" title="Refresh Device" disabled><img src="src/img/outline_refresh_white_18dp.png"></button>
-            </div>
-
-
-
-            <div id="device-settings">
-                <table id="device-settings-table">
-                    <tr>
-                        <th>Name:</th>
-                        <td colspan="3"><input id="device-settings-name" type="text" maxlength="30"></td>
-                    </tr>
-                    <tr>
-                        <th>Type:</th>
-                        <td colspan="3"><select id="device-settings-plugin-dropdown"></select></td>
-                    </tr>
-                    <tr>
-                        <th>Addr:</th>
-                        <td colspan="3"><input id="device-settings-ip" type="text" maxlength="30"></td>
-                    </tr>
-                    <tr>
-                        <th>Port:</th>
-                        <td><input id="device-settings-port" type="number" value="53000" maxlength="5"></td>
-                        <th>Pin:</th>
-                        <td><input id="device-settings-pin" type="checkbox"></td>
-                </table>
-                <h3>No Device Selected</h3>
-
-            </div>
-
-
+      <div class="col" id="device-list-col">
+        <div id="view-buttons-bar">
+          <button
+            id="save-slot-1"
+            class="save-slot"
+            title="Window arrangement 1">
+            1
+          </button>
+          <button
+            id="save-slot-2"
+            class="save-slot"
+            title="Window arrangement 2">
+            2
+          </button>
+          <button
+            id="save-slot-3"
+            class="save-slot"
+            title="Window arrangement 3">
+            3
+          </button>
         </div>
 
-        <div id="all-devices">
-
-            
-
+        <div id="device-list">
+          <h3 class="init">
+            Click the Search button to find devices on the network.
+          </h3>
         </div>
 
+        <div id="device-tools">
+          <select
+            class="left button"
+            id="add-device-button"
+            title="Add Device..."></select>
+          <button
+            class="left"
+            id="search-button"
+            title="Search network for devices">
+            <img src="src/img/outline_search_white_18dp.png" />
+          </button>
+          <button
+            class="left"
+            id="refresh-device-button"
+            title="Refresh Device"
+            disabled>
+            <img src="src/img/outline_refresh_white_18dp.png" />
+          </button>
+        </div>
+
+        <div id="device-settings">
+          <table id="device-settings-table">
+            <tr>
+              <th>Name:</th>
+              <td colspan="3">
+                <input id="device-settings-name" type="text" maxlength="30" />
+              </td>
+            </tr>
+            <tr>
+              <th>Type:</th>
+              <td colspan="3">
+                <select id="device-settings-plugin-dropdown"></select>
+              </td>
+            </tr>
+            <tr>
+              <th>Addr:</th>
+              <td colspan="3">
+                <input id="device-settings-ip" type="text" maxlength="30" />
+              </td>
+            </tr>
+            <tr>
+              <th>Port:</th>
+              <td>
+                <input
+                  id="device-settings-port"
+                  type="number"
+                  value="53000"
+                  maxlength="5" />
+              </td>
+              <th>Pin:</th>
+              <td><input id="device-settings-pin" type="checkbox" /></td>
+            </tr>
+          </table>
+
+          <h3>No Device Selected</h3>
+        </div>
+      </div>
+
+      <div id="all-devices"></div>
     </div>
 
     <script src="src/index.js"></script>
-
   </body>
 </html>
