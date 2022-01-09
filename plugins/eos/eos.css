@@ -1,69 +1,68 @@
-table{
-	background-color: #141414;
-	border: #404040 1px solid;
-	border-radius: 4px;
-	color: #a59baa;
+table {
+  background-color: #141414;
+  border: #404040 1px solid;
+  border-radius: 4px;
+  color: #a59baa;
 }
-th{
-	font-size: 14px;
-	font-weight: normal;
-	padding: 5px;
+th {
+  font-size: 14px;
+  font-weight: normal;
+  padding: 5px;
 }
-td{
-	text-align: center;
-	padding: 6px;
+td {
+  text-align: center;
+  padding: 6px;
 }
-td:first-child{
-	text-align: left;
+td:first-child {
+  text-align: left;
 }
-td.black{
-	background-color: black;
-	border-right: #212021 1px solid;
+td.black {
+  background-color: black;
+  border-right: #212021 1px solid;
 }
-td.num{
-	color: white;
-	font-weight: 600;
-	font-size: 16px;
+td.num {
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
 }
-.scene{
-	background-color: black;
-	border-top: #141414 2px solid;
-	border-bottom: #141414 2px solid;
+.scene {
+  background-color: black;
+  border-top: #141414 2px solid;
+  border-bottom: #141414 2px solid;
 }
-.scene hr{
-	border: #001f10 4px solid;
+.scene hr {
+  border: #001f10 4px solid;
 }
-.scene span{
-	display: table;
-	margin: 0px auto;
-	margin-top: -25px;
-	padding: 4px;
-	background-color: black;
-	font-weight: bold;
-	font-size: 14px;
+.scene span {
+  display: table;
+  margin: 0px auto;
+  margin-top: -25px;
+  padding: 4px;
+  background-color: black;
+  font-weight: bold;
+  font-size: 14px;
 }
-.time{
-	border: #2f2b35 2px solid;
-	border-radius: 5px;
+.time {
+  border: #2f2b35 2px solid;
+  border-radius: 5px;
 }
-tr.active-cue{
-	color: #d49800;
+tr.active-cue {
+  color: #d49800;
 }
-	tr.active-cue td.num{
-		color: #d49800;
-	}
-	tr.active-cue .time{
-		border-color: #d49800;
-	}
+tr.active-cue td.num {
+  color: #d49800;
+}
+tr.active-cue .time {
+  border-color: #d49800;
+}
 
-	
 @media screen and (min-width: 0px) and (max-width: 750px) {
-	.hide-medium{
-		display: none;
-	}
+  .hide-medium {
+    display: none;
+  }
 }
 @media screen and (min-width: 0px) and (max-width: 550px) {
-	.hide-small{
-		display: none;
-	}
+  .hide-small {
+    display: none;
+  }
 }
