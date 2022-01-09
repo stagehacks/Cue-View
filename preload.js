@@ -4,11 +4,11 @@ const { ipcRenderer } = require('electron');
 // const { v4: uuid } = require('uuid');
 // const ejs = require('ejs');
 
-// const net = require('net');
+//const net = require('net');
 
 const DEVICE = require('./src/device.js');
 const PLUGINS = require('./src/plugins.js');
-// const SEARCH = require('./src/search.js');
+const SEARCH = require('./src/search.js');
 const VIEW = require('./src/view.js');
 const SAVESLOTS = require('./src/saveSlots.js');
 
