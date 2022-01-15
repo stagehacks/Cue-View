@@ -1,23 +1,19 @@
 {
-  "name": "Cue View",
-  "version": "0.9.3-pre",
+  "name": "Cue-View",
+  "productName": "Cue View",
+  "version": "0.9.4-pre",
   "description": "A dashboard for everything in your show",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "makeWin": "electron-forge make --platform=win32"
+    "start": "electron .",
+    "buildAll": "electron-builder -m -w -l"
   },
-  "author": "Stage Hacks LLC",
+  "author": "Cue View",
   "license": "CC BY-SA 4.0",
+  "homepage": "https://github.com/stagehacks/Cue-View",
+  "repository": "https://github.com/stagehacks/Cue-View",
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.0-beta.61",
-    "@electron-forge/maker-deb": "^6.0.0-beta.61",
-    "@electron-forge/maker-rpm": "^6.0.0-beta.61",
-    "@electron-forge/maker-squirrel": "^6.0.0-beta.61",
-    "@electron-forge/maker-zip": "^6.0.0-beta.61",
     "electron": "^15.2.0",
     "eslint": "^8.6.0",
     "eslint-config-prettier": "^8.3.0",
@@ -26,41 +22,27 @@
   "dependencies": {
     "bonjour": "^3.5.0",
     "ejs": "^3.1.5",
-    "electron-reload": "^1.5.0",
-    "electron-squirrel-startup": "^1.0.0",
     "lodash": "^4.17.20",
     "md5": "^2.3.0",
     "netmask": "^1.0.6",
     "osc": "^2.4.1",
     "uuid": "^8.3.2"
   },
-  "config": {
-    "forge": {
-      "packagerConfig": {
-        "icon": "./src/img/icon.icns"
-      },
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "Cue-View"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin", "win32"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ]
+  "build": {
+    "appId": "com.electron.cueview",
+    "icon": "./src/img/",
+    "artifactName": "${productName} ${os} v${version}.${ext}",
+    "mac": {
+      "target": "zip",
+      "category": "utility",
+      "icon": "./src/img/icon.icns"
+    },
+    "win": {
+      "target": "zip",
+      "icon": "./src/img/icon.ico"
+    },
+    "linux": {
+      "target": "zip"
     }
   }
 }
