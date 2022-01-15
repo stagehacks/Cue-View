@@ -170,6 +170,61 @@ tr.playback-position .q-gray-text {
   color: #424242;
 }
 
+.cart{
+  position: relative;
+  height:  600px;
+  width:  100%;
+  background-color: #2c2b2a;
+}
+.cartCueWrapper{
+  display:  block;
+  position: absolute;
+  box-sizing: border-box;
+  padding:  3px;
+}
+.cartCue{
+  height:  100%;
+  box-sizing: border-box;
+
+  border:  3px solid;
+  border-radius:  6px;
+  color:  white;
+  font-size:  1.2em;
+}
+.cartCue p{
+  margin:  10px;
+}
+.cartCueIcon{
+  position: absolute;
+  right:  13px;
+  top:  13px;
+}
+.cartColor-red{
+  border-color:  #ff4242;
+  background-color:  #9b3726;
+}
+.cartColor-orange{
+  border-color:  #ffa500;
+  background-color: #ad6026;
+}
+.cartColor-green{
+  border-color:  #01d52f;
+  background-color: #397f27;
+}
+.cartColor-blue{
+  border-color:  #536de0;
+  background-color: #304893;
+}
+.cartColor-purple{
+  border-color:  #a601c0;
+  background-color: #592d74;
+}
+.cartBlank{
+  border-color:  #1f1f1f;
+  background-color: #1f1f1f;
+}
+
+
 @media screen and (min-width: 0px) and (max-width: 750px) {
   .hide-medium {
     display: none;

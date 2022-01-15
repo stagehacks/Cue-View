@@ -9,17 +9,19 @@
 
 				<td></td> <!-- playhead/color indicator -->
 
+				<td><center>
 				<% if(cue.broken){ %>
-					<td><center><img src="plugins/qlab/img/status_broken.png" height="18px"></center></td>
+					<img src="plugins/qlab/img/status_broken.png" height="18px">
 				<% }else if(cue.running){ %>
-					<td><center><img src="plugins/qlab/img/status_running.png" height="18px"></center></td>
+					<img src="plugins/qlab/img/status_running.png" height="18px">
 				<% }else if(cue.loaded){ %>
-					<td><center><img src="plugins/qlab/img/status_loaded.png" height="18px"></center></td>
+					<img src="plugins/qlab/img/status_loaded.png" height="18px">
 				<% }else if(cue.flagged){ %>
-					<td><center><img src="plugins/qlab/img/status_flagged.png" height="20px"></center></td>
+					<img src="plugins/qlab/img/status_flagged.png" height="20px">
 				<% }else{ %>
-					<td></td>
+					
 				<% } %>
+				</center></td>
 
 
 				<td><img src="plugins/qlab/img/<%= cue.type.toLowerCase() %>.png" height="20px"></td>
@@ -132,6 +134,10 @@
 	<% groupModes.pop(); %>
 <% } %>
 
+<% function cartTemplate(cueList, groupModes, depth, workspace){ %>
+
+<% } %>
+
 <header>
 	<h1><%= listName %></h1>
 	<h2><%= data.version || "" %></h2>
@@ -140,8 +146,79 @@
 
 <% for(var i in data.workspaces){ %>
 	<% for(var j in data.workspaces[i].cueLists){ %>
-		<% let cueList = data.workspaces[i].cueLists[j] %>
+		<%
+			let cueList = data.workspaces[i].cueLists[j];
+			let width = 100/cueList.cartRows;
+			let height = 600/(cueList.cartColumns+1);
+		%>
+
 		<h3><%= cueList.listName %> - <%= data.workspaces[i].displayName %></h3>
+
+		
+
+		<% if(cueList.type=="Cart"){ %>
+
+			<div class="cart">
+
+			<% for(let r=0; r<cueList.cartRows; r++){ %>
+				<% for(let c=0; c<cueList.cartColumns; c++){ %>
+					<div class="cartCueWrapper" style="
+						left: <%= width*c %>%;
+						top: <%=height*r%>px;
+						width: <%=width%>%;
+						height: <%=height%>px;
+					"><div class="cartCue cartBlank"></div></div>
+				<% } %>
+			<% } %>
+
+
+			<% for(var c in cueList.cues){ 
+				let cue = cueList.cues[c];
+
+				if(!cue.cartPosition){
+					continue;
+				}
+
+				let row = cue.cartPosition[0]-1;
+				let col = cue.cartPosition[1]-1;
+
+				let colPos = width*col;
+				let rowPos = height*row;
+
+				if(col>=cueList.cartColumns || row>=cueList.cartRows){
+					continue;
+				}
+			%>
+
+			<div class="cartCueWrapper " style="
+				left: <%=colPos%>%;
+				top: <%=rowPos%>px;
+				width: <%=width%>%;
+				height: <%=height%>px;
+			">
+
+				<div class="cartCueIcon">
+					<% if(cue.broken){ %>
+						<img src="plugins/qlab/img/status_broken_white.png" height="18px">
+					<% }else if(cue.running){ %>
+						<img src="plugins/qlab/img/pause_circled.png" height="24px">
+					<% }else{ %>
+						<img src="plugins/qlab/img/play_circled.png" height="24px">
+					<% } %>
+				</div>
+				<div class="cartCue cartColor-<%= cue.colorName %>">
+					<p><%= cue.number %> &bull;  <%= cue.displayName %></p>
+				</div>
+
+			</div>
+
+			<% } %>
+
+			</div>
+				
+
+			
+		<% }else{ %>
 
 		<% cueListOffset = 0 %>
 		<table cellspacing="0">
@@ -169,18 +246,14 @@
 					<img src="plugins/qlab/img/auto_continue_stubby.png" height="20px">
 				</th>
 			</tr>
-			<% cueTemplate(cueList, [], [], data.workspaces[i]) %>
+			<% cueTemplate(cueList, [], [], data.workspaces[i]); %>
 		</table>
+
+		<% } %>
 	<% } %>
 
 <% } %>
 
-<script>
-	var $scrollTo = document.getElementsByClassName("scroll-position");
-	if($scrollTo.length==1){
-		window.scroll({top: $scrollTo[0].offsetTop-200, behavior: 'smooth'});
-	}
-</script>
 
 <%
 	function prettyFormatTime(seconds){

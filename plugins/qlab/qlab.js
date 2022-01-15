@@ -14,7 +14,7 @@ exports.data = function (device, osc) {
   const p = osc.address.split('/');
   p.shift();
 
-  // console.log(address)
+  //console.log(address)
 
   if (osc.address == '/reply/workspaces') {
     const d = JSON.parse(osc.args[0]).data;
@@ -45,13 +45,20 @@ exports.data = function (device, osc) {
       device.data.workspaces[workspace].cueLists[d[i].uniqueID].cues =
         d[i].cues;
 
+      device.data.workspaces[workspace].allCues[d[i].uniqueID] = d[i];
+
+      if(d[i].type=="Cart"){
+        device.send(`/cue_id/${d[i].uniqueID}/cartColumns`);
+        device.send(`/cue_id/${d[i].uniqueID}/cartRows`);
+      }
+
       function getMoreCueInfo(group, groups_arg) {
         const groups = JSON.parse(JSON.stringify(groups_arg));
         groups.push(group.uniqueID);
 
         for (let cueIndex in group.cues) {
           const cue = group.cues[cueIndex];
-          // console.log(cue)
+           //console.log(cue)
 
           device.data.lastCueInGroup[group.uniqueID] = cue;
 
@@ -62,7 +69,7 @@ exports.data = function (device, osc) {
               {
                 type: 's',
                 value:
-                  '["mode", "parent", "isBroken", "preWait", "duration", "postWait", "continueMode", "cueTargetNumber", "isLoaded", "isRunning"]',
+                  '["mode", "parent", "isBroken", "preWait", "duration", "postWait", "continueMode", "cueTargetNumber", "isLoaded", "isRunning", "cartPosition", "displayName"]',
               },
             ]
           );
@@ -75,10 +82,14 @@ exports.data = function (device, osc) {
           }
 
           device.data.workspaces[workspace].allCues[cue.uniqueID] = cue;
+
+          
         }
       }
 
       getMoreCueInfo(d[i], []);
+
+
     }
 
     // console.log(device.data.lastCueInGroup)
@@ -91,27 +102,25 @@ exports.data = function (device, osc) {
     p[1] == 'workspace' &&
     p[5] == 'playbackPosition'
   ) {
-    console.log('pb move');
+    //console.log('pb move');
     device.data.playbackPosition = osc.args[0];
     device.draw();
   } else if (p[0] == 'reply' && p[1] == 'cue_id') {
+
+    const d = JSON.parse(osc.args[0]);
+    const cueID = p[2];
+    const workspace = d.workspace_id;
+    const cueList = d.data.parent;
+
     if (p[3] == 'uniqueID') {
       // response to /cue/playbackPosition/uniqueID
-      device.data.playbackPosition = JSON.parse(osc.args[0]).data;
-    } else if (p[3] == 'mode') {
-      const cueID = p[2];
-      const mode = JSON.parse(osc.args[0]).data;
-      const workspaceID = JSON.parse(osc.args[0]).workspace_id;
+      device.data.playbackPosition = d.data;
 
-      device.data.workspaces[workspaceID].allCues[cueID].mode = mode;
+    } else if (p[3] == 'mode') {
+      device.data.workspaces[workspace].allCues[cueID].mode = d.data;
+
     } else if (p[3] == 'valuesForKeys') {
       this.deviceInfoUpdate(device, 'status', 'ok');
-
-      const d = JSON.parse(osc.args[0]);
-
-      const cueID = p[2];
-      const workspace = d.workspace_id;
-      const cueList = d.data.parent;
 
       device.data.workspaces[workspace].allCues[cueID].mode = d.data.mode;
       device.data.workspaces[workspace].allCues[cueID].preWait = d.data.preWait;
@@ -127,6 +136,14 @@ exports.data = function (device, osc) {
       device.data.workspaces[workspace].allCues[cueID].broken = d.data.isBroken;
       device.data.workspaces[workspace].allCues[cueID].running =
         d.data.isRunning;
+      device.data.workspaces[workspace].allCues[cueID].cartPosition =
+        d.data.cartPosition;
+      device.data.workspaces[workspace].allCues[cueID].displayName =
+        d.data.displayName;
+    }else if(p[3] == 'cartColumns'){
+      device.data.workspaces[workspace].allCues[cueID].cartColumns = d.data;
+    }else if(p[3] == 'cartRows'){
+      device.data.workspaces[workspace].allCues[cueID].cartRows = d.data;
     }
     device.draw();
   } else if (p[1] == 'workspace' && p[3] == 'selectionIsPlayhead') {
