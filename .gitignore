@@ -1,7 +1,5 @@
 
 .DS_Store
 node_modules
-out/Cue View-darwin-x64
-out/Cue View-win32-x64
-out/make/squirrel.windows
 .vscode
+/dist
