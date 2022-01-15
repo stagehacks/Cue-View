@@ -29,7 +29,7 @@ exports.data = function (device, osc) {
       device.send(`/workspace/${d[i].uniqueID}/updates`, [
         { type: 'i', value: 1 },
       ]);
-      device.send('/cue/playbackPosition/uniqueID');
+      device.send(`/cue/playbackPosition/uniqueID`);
       device.send(`/workspace/${d[i].uniqueID}/selectionIsPlayhead`);
     }
   } else if (p[1] == 'workspace' && p[3] == 'cueLists') {
