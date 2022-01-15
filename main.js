@@ -7,17 +7,12 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-// eslint-disable-next-line global-require
-if (require('electron-squirrel-startup')) {
-  app.quit();
-}
-
 const isMac = process.platform === 'darwin';
 let menu;
 let mainWindow;
 
 const menuTemplate = [
-  { role: 'appMenu' },
+  isMac ? { role: 'appMenu' } : {},
   {
     label: 'File',
     submenu: [
@@ -117,9 +112,8 @@ const menuTemplate = [
   },
 ];
 
-const createWindow = () => {
-  mainWindow = new BrowserWindow({
-    width: 1500,
+const windowMac = {
+  width: 1500,
     height: 900,
     titleBarStyle: 'hiddenInset',
     transparent: true,
@@ -129,12 +123,29 @@ const createWindow = () => {
     vibrancy: 'window',
     visualEffectState: 'followWindow',
     webPreferences: {
-      // enableRemoteModule: true,
       contextIsolation: false,
       nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js'),
     },
-  });
+}
+
+const windowWin = {
+  width: 1500,
+  height: 900,
+  backgroundColor: "#333333",
+  webPreferences: {
+    contextIsolation: false,
+    nodeIntegration: true,
+    preload: path.join(__dirname, 'preload.js'),
+  },
+}
+
+const createWindow = () => {
+  if(isMac){
+    mainWindow = new BrowserWindow(windowMac);
+  }else{
+    mainWindow = new BrowserWindow(windowWin);
+  }
 
   mainWindow.loadFile('index.html');
 
@@ -152,7 +163,7 @@ const createWindow = () => {
 
 app.whenReady().then(() => {
   createWindow();
-
+  
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
