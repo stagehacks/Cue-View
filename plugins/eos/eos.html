@@ -41,7 +41,7 @@
 				<% } %>
 
 				<% if(cues[j]==data.activeCue+""){ %>
-					<tr class="active-cue">
+					<tr class="active-cue scroll-position">
 				<% }else{ %>
 					<tr>
 				<% } %>
@@ -97,12 +97,6 @@
 
 <% } %>
 
-<script>
-	var $scrollTo = document.getElementsByClassName("active-cue");
-	if($scrollTo.length==1){
-		window.scroll({top: $scrollTo[0].offsetTop-200, behavior: 'smooth'});
-	}
-</script>
 
 <%
 	function prettyDuration(milliseconds, box){
