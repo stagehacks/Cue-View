@@ -30,6 +30,57 @@ A dashboard for everything in your show.
 - d&b DS100, amps
 - Hog
 
-## Known Issues
 
-- QLab Cue Carts are not supported yet.
+
+# Plugins
+A Cue View "plugin" is a system for communicating with a type of device, for example QLab or Watchout. It consists of a JS file that describes how to communicate with the device, an HTML template for displaying the device's data, and a CSS file to style the HTML.
+
+### plugin.js
+exports.defaultName = 'Example Plugin';
+exports.connectionType = 'osc' or 'TCPsocket' or 'UDPsocket'
+exports.searchOptions = {
+	type: 'Bonjour',
+	bonjourNane: 'device'
+}
+exports.searchOptions = {
+	type: 'UDPsocket',
+	searchBuffer: Buffer.from([0x00, 0x01, 0x02]),
+	devicePort: 1234, // port the device receives messages on
+	listenPort: 2345, // port Cue View should listen for responses on
+	validateResponse: function(msg, info){
+		// if this function returns true, Cue View adds the responding IP address to the list
+	}
+}
+exports.searchOptions = {
+	type: 'TCPport',
+	searchBuffer: Buffer.from('are you there'),
+	testPort: 1234, // port the device receives messages on
+	validateResponse: function(msg, info){
+		// if this function returns true, Cue View adds the responding IP address to the list
+	}
+}
+exports.defaultPort = 1234; // only available for TCPsocket and UDPsocket devices
+exports.heartbeatInterval = 5000; // how frequently, in ms, to send the heartbeat message
+
+exports.ready = function (device){
+	// runs when Cue View identifies a new device. send all data requests here
+	device.send(); // method for sending a message to the device requesting more info. arguments change based on connectionType
+
+	device.send(`/this/is/osc`); // osc
+	device.send(`/this/is/osc`, [{ type: 'i', value: 20 }, { type: 's', value: 'foo' }]); // osc with arguments
+
+	device.send(Buffer.from(`hello`)); // UDPsocket
+
+	device.send(`hello`); // TCPsocket
+}
+
+exports.data = function (device, buf){
+	// runs when Cue View receives a message from the device.
+	device.draw(); // flag for QLab to update the device's view
+	device.send();
+}
+
+exports.heartbeat = function (device){
+	// runs every n milliseconds, defined by exports.heartbeatInterval
+	devide.send();
+}
