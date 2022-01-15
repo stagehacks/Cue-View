@@ -17,7 +17,7 @@ header {
   width: 100%;
   box-sizing: content-box;
 
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: #111111;
   border-bottom: black 1px solid;
   -webkit-app-region: drag;
 }
