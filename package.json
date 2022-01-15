@@ -7,9 +7,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
-    "buildAll": "electron-builder -m -w -l"
+    "build": "electron-builder -m -w -l",
+    "buildARM": "electron-builder -l --arm64"
   },
-  "author": "Cue View",
+  "author": "alec@stagehacks.com",
   "license": "CC BY-SA 4.0",
   "homepage": "https://github.com/stagehacks/Cue-View",
   "repository": "https://github.com/stagehacks/Cue-View",
@@ -34,15 +35,17 @@
     "artifactName": "${productName} ${os} v${version}.${ext}",
     "mac": {
       "target": "zip",
-      "category": "utility",
+      "category": "Utilities",
       "icon": "./src/img/icon.icns"
     },
     "win": {
-      "target": "zip",
+      "target": "portable",
       "icon": "./src/img/icon.ico"
     },
     "linux": {
-      "target": "zip"
+      "target": "deb",
+      "maintainer": "alec@stagehacks.com",
+      "category": "Utility"
     }
   }
 }
