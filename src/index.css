@@ -234,6 +234,11 @@ select {
   font-size: 16px;
   font-weight: 500;
 }
+select option{
+  /* these styles don't affect macOS but are important for Windows! */
+  text-align: left;
+  background-color: #333333; 
+}
 input:focus,
 select:focus {
   outline: #fdea08 2px solid;
