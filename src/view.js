@@ -37,7 +37,7 @@ drawDeviceFrame = function (id) {
   // scrollbar styles are inline to prevent the styles flickering in
   str += '<style>';
   str += '::-webkit-scrollbar {background-color: black;width: 12px;}';
-  str += '::-webkit-scrollbar-track {background-color: #2b2b2b;}';
+  str += '::-webkit-scrollbar-track, ::-webkit-scrollbar-corner {background-color: #2b2b2b;}';
   str +=
     '::-webkit-scrollbar-thumb {background-color: #6b6b6b;border-radius: 16px;border: 3px solid #2b2b2b;}';
   str += '::-webkit-scrollbar-button {display:none;}';
