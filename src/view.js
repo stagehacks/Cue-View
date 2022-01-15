@@ -6,12 +6,13 @@ const PLUGINS = require('./plugins.js');
 const pinnedDevices = [];
 module.exports.pinnedDevices = pinnedDevices;
 let activeDevice = false;
+let drawCount = 0;
 
 module.exports.init = function () {
   populatePluginLists();
 };
 
-drawDeviceInterface = function (id) {
+drawDeviceFrame = function (id) {
   // console.log("DRAW")
 
   const $deviceDrawArea = document.getElementById(`device-${id}-draw-area`);
@@ -45,6 +46,23 @@ drawDeviceInterface = function (id) {
   str += "<link href='src/defaultPlugin.css' rel='stylesheet' type='text/css'>";
   str += '</head><body>';
 
+  str += generateBodyHTML(d);
+
+  str += '</body></html>';
+
+  $deviceDrawArea.setAttribute('class', `${d.type} draw-area`);
+  $deviceDrawArea.contentWindow.document.open();
+  $deviceDrawArea.contentWindow.document.write(str);
+
+  if (d.pinIndex) {
+    $devicePinned.style.display = 'block';
+  } else {
+    $devicePinned.style.display = 'none';
+  }
+};
+
+generateBodyHTML = function(d){
+  let str = "";
   if (d.status == 'ok') {
     try {
       str += PLUGINS.all[d.type].template({
@@ -65,25 +83,27 @@ drawDeviceInterface = function (id) {
     str += '<h3>IP <em>' + d.addresses[0] + '</em></h3>';
     str += '<h3>Port <em>' + d.port + '</em></h3></div>';
   }
-
-  str += '</body></html>';
-
-  $deviceDrawArea.setAttribute('class', `${d.type} draw-area`);
-  $deviceDrawArea.contentWindow.document.open();
-  $deviceDrawArea.contentWindow.document.write(str);
-
-  if (d.pinIndex) {
-    $devicePinned.style.display = 'block';
-  } else {
-    $devicePinned.style.display = 'none';
-  }
-};
+  return str;
+}
 
 module.exports.draw = function (device) {
-  if (device == undefined) {
+  if (device == undefined || device.status=="new") {
     return true;
   }
-  drawDeviceInterface(device.id);
+  
+  if(drawCount==0){
+    drawDeviceFrame(device.id);
+  }else{
+    let $deviceDrawArea = document.getElementById(`device-${device.id}-draw-area`).contentDocument.body;
+    $deviceDrawArea.innerHTML = generateBodyHTML(DEVICE.all[device.id]);
+
+    let $scrollTo = $deviceDrawArea.getElementsByClassName("scroll-position");
+    if($scrollTo.length==1){
+      document.getElementById(`device-${device.id}-draw-area`).contentWindow.scroll({top: $scrollTo[0].offsetTop-200, behavior: 'smooth'});
+    }
+  }
+  drawCount++;
+  
 };
 
 module.exports.addDeviceToList = function (device) {
@@ -164,7 +184,7 @@ switchDevice = function (id) {
   }
 
   switchClass(document.getElementById(id), 'active-device');
-  drawDeviceInterface(id);
+  drawDeviceFrame(id);
   switchClass(document.getElementById(`device-${id}`), 'active-device-outline');
 
   document.getElementById('device-settings-table').style.display = 'block';
