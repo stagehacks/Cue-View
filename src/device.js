@@ -149,7 +149,7 @@ initDeviceConnection = function (id) {
     });
 
     device.send = function (data) {
-      device.connection.send(data, device.port, device.addresses[0], (err) => {
+      device.connection.send(Buffer.from(data), device.port, device.addresses[0], (err) => {
         // console.log(err);
       });
     };

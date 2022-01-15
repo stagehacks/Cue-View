@@ -23,7 +23,7 @@ exports.ready = function (device) {
   device.data.stereoFaderDB = 0;
   device.data.stereoMute = 0;
 
-  device.send(Buffer.from('/xinfo'));
+  device.send('/xinfo');
 
   // device.send(Buffer.from("\x2f\x62\x61\x74\x63\x68\x73\x75\x62\x73\x63\x72\x69\x62\x65\x00\x2c\x73\x73\x69\x69\x69\x00\x00\x6d\x65\x74\x65\x72\x73\x2f\x30\x00\x00\x00\x00\x2f\x6d\x65\x74\x65\x72\x73\x2f\x30\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01"));
   // device.send(Buffer.from("/batchsubscribe\x00,ssiii\x00\x00meters/0\x00\x00\x00\x00/meters/0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01"));
@@ -65,8 +65,8 @@ exports.data = function (device, buf) {
     device.data.model = msg[9];
     this.deviceInfoUpdate(device, 'defaultName', device.data.name);
 
-    device.send(Buffer.from('/lr/mix/fader\u0000\u0000\u0000\u0000'));
-    device.send(Buffer.from('/lr/mix/on\u0000\u0000\u0000\u0000'));
+    device.send('/lr/mix/fader\u0000\u0000\u0000\u0000');
+    device.send('/lr/mix/on\u0000\u0000\u0000\u0000');
 
     for (let i = 0; i <= 32; i++) {
       device.send(
@@ -107,23 +107,19 @@ exports.data = function (device, buf) {
       device.data.stereoMute = buf[19];
     }
     device.draw();
-    device.send(
-      Buffer.from(`/ch/${addr[1]}/mix/fader\u0000\u0000\u0000\u0000`)
-    );
+    device.send(`/ch/${addr[1]}/mix/fader\u0000\u0000\u0000\u0000`);
   } else if (msg[0].indexOf('/config/name') > 0) {
     const addr = parseAddress(msg[0]);
     const channel = Number(addr[1]);
     device.data.channelNames[channel - 1] = msg[4];
     device.draw();
-    device.send(
-      Buffer.from(`/ch/${addr[1]}/config/color\u0000\u0000\u0000\u0000`)
-    );
+    device.send(`/ch/${addr[1]}/config/color\u0000\u0000\u0000\u0000`);
   } else if (msg[0].indexOf('/config/color') > 0) {
     const addr = parseAddress(msg[0]);
     const channel = Number(addr[1]);
     device.data.channelColors[channel - 1] = buf.readInt8(27);
     device.draw();
-    device.send(Buffer.from(`/ch/${addr[1]}/mix/on\u0000\u0000\u0000\u0000`));
+    device.send(`/ch/${addr[1]}/mix/on\u0000\u0000\u0000\u0000`);
   } else {
     // console.log(msg)
   }
@@ -131,5 +127,5 @@ exports.data = function (device, buf) {
 };
 
 exports.heartbeat = function (device) {
-  device.send(Buffer.from('/xremote'));
+  device.send('/xremote');
 };

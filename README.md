@@ -36,7 +36,7 @@ A dashboard for everything in your show.
 A Cue View "plugin" is a system for communicating with a type of device, for example QLab or Watchout. It consists of a JS file that describes how to communicate with the device, an HTML template for displaying the device's data, and a CSS file to style the HTML.
 
 ### plugin.js
-```
+```js
 exports.defaultName = 'Example Plugin';
 exports.connectionType = 'osc' or 'TCPsocket' or 'UDPsocket'
 exports.searchOptions = {
@@ -70,9 +70,8 @@ exports.ready = function (device){
 	device.send(`/this/is/osc`); // osc
 	device.send(`/this/is/osc`, [{ type: 'i', value: 20 }, { type: 's', value: 'foo' }]); // osc with arguments
 
-	device.send(Buffer.from(`hello`)); // UDPsocket
+	device.send(`hello`); // UDPsocket and TCPsocket
 
-	device.send(`hello`); // TCPsocket
 }
 
 exports.data = function (device, buf){
