@@ -6,14 +6,12 @@ const PLUGINS = require('./plugins.js');
 const pinnedDevices = [];
 module.exports.pinnedDevices = pinnedDevices;
 let activeDevice = false;
-let drawCount = 0;
 
 module.exports.init = function () {
   populatePluginLists();
 };
 
 drawDeviceFrame = function (id) {
-  // console.log("DRAW")
 
   const $deviceDrawArea = document.getElementById(`device-${id}-draw-area`);
   const $devicePinned = document.getElementById(`device-${id}-pinned`);
@@ -25,14 +23,7 @@ drawDeviceFrame = function (id) {
   d = DEVICE.all[id];
 
   let str = '<html><head>';
-  if (d.status == 'ok') {
-    str +=
-      "<link href='./plugins/" +
-      d.type +
-      '/' +
-      d.type +
-      ".css' rel='stylesheet' type='text/css'>";
-  }
+  str += "<link href='./plugins/" +d.type +'/' +d.type +".css' rel='stylesheet' type='text/css'>";
 
   // scrollbar styles are inline to prevent the styles flickering in
   str += '<style>';
@@ -59,22 +50,25 @@ drawDeviceFrame = function (id) {
   } else {
     $devicePinned.style.display = 'none';
   }
+
 };
 
 generateBodyHTML = function(d){
   let str = "";
+
   if (d.status == 'ok') {
+
     try {
       str += PLUGINS.all[d.type].template({
         data: d.data,
-        listName: d.displayName || d.defaultName,
+        listName: (d.displayName || d.defaultName)
       });
     } catch (err) {
       console.log(err);
       str += '<h3>Plugin Template Error</h3>';
     }
   } else {
-    str += '<header><h1>' + (d.displayName || d.defaultName) + '</h1></header>';
+    str += '<header><h1>' + (d.displayName || d.defaultName) + d.status + '</h1></header>';
     str += "<div class='not-responding'>";
     str +=
       '<h2><em>' +
@@ -83,28 +77,26 @@ generateBodyHTML = function(d){
     str += '<h3>IP <em>' + d.addresses[0] + '</em></h3>';
     str += '<h3>Port <em>' + d.port + '</em></h3></div>';
   }
+  
   return str;
 }
 
 module.exports.draw = function (device) {
-  if (device == undefined || device.status=="new") {
-    return true;
-  }
-  
-  if(drawCount==0){
-    drawDeviceFrame(device.id);
-  }else{
-    let $deviceDrawArea = document.getElementById(`device-${device.id}-draw-area`).contentDocument.body;
-    $deviceDrawArea.innerHTML = generateBodyHTML(DEVICE.all[device.id]);
 
-    let $scrollTo = $deviceDrawArea.getElementsByClassName("scroll-position");
-    if($scrollTo.length==1){
-      document.getElementById(`device-${device.id}-draw-area`).contentWindow.scroll({top: $scrollTo[0].offsetTop-200, behavior: 'smooth'});
-    }
+  let $deviceDrawArea = document.getElementById(`device-${device.id}-draw-area`);
+
+  if($deviceDrawArea){
+    $deviceDrawArea.contentDocument.body.innerHTML = generateBodyHTML(device);
+  }else{
+    drawDeviceFrame(device.id);
   }
-  drawCount++;
-  
+
 };
+
+module.exports.update = function(device, type, data){
+  let $iframe = document.getElementById(`device-${device.id}-draw-area`);
+  $iframe.contentWindow.updateElement(type, data);
+}
 
 module.exports.addDeviceToList = function (device) {
   var d = device;

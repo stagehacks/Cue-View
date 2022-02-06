@@ -1,7 +1,7 @@
 const fs = require('fs');
-const ejs = require('ejs');
 const DEVICE = require('./device.js');
 const VIEW = require('./view.js');
+const _ = require('lodash');
 
 const allPlugins = {};
 module.exports.all = allPlugins;
@@ -13,32 +13,41 @@ module.exports.init = function (callback) {
     for (let i in files) {
       const plugin = files[i];
 
-      if (plugin[0] != '.') {
+      if (plugin[0] != '.' && plugin!= "qlab-old") {
+        
         console.log(`${i} ${plugin}`);
-        allPlugins[
-          plugin
-        ] = require(`${__dirname}/../plugins/${plugin}/${plugin}.js`);
+        allPlugins[plugin] = require(`${__dirname}/../plugins/${plugin}/${plugin}.js`);
 
-        allPlugins[plugin].deviceInfoUpdate = function (device, param, value) {
+        let p = allPlugins[plugin];
+
+        p.deviceInfoUpdate = function (device, param, value) {
           DEVICE.infoUpdate(device, param, value);
         };
-        allPlugins[plugin].draw = function (device) {
+        p.draw = function (device) {
           VIEW.draw(device);
         };
 
-        allPlugins[plugin].template = ejs.compile(
+        p.template = _.template(
           fs.readFileSync(
             `${__dirname}/../plugins/${plugin}/${plugin}.html`,
             'utf8'
           )
         );
 
-        if (
-          allPlugins[plugin].heartbeatInterval == undefined ||
-          allPlugins[plugin].heartbeatInterval < 50
-        ) {
-          allPlugins[plugin].heartbeatInterval = 5000;
+
+
+        if (p.heartbeatTimeout == undefined || p.heartbeatTimeout < 50) {
+          if(p.heartbeatInterval){
+            p.heartbeatTimeout = p.heartbeatInterval*1.5;
+          }else{
+            p.heartbeatTimeout = 10000;
+          }
         }
+
+        if (p.heartbeatInterval == undefined || p.heartbeatInterval < 50) {
+          p.heartbeatInterval = 5000;
+        }
+
       }
     }
     callback();

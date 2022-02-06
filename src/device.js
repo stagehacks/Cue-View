@@ -54,19 +54,23 @@ registerDevice = function (newDevice) {
     lastDrawn: 0,
     lastHeartbeat: 0,
     heartbeatInterval: PLUGINS.all[newDevice.type].heartbeatInterval,
-    draw: debounce(
-      function () {
-        VIEW.draw(this);
-      },
-      30,
-      { leading: true, trailing: true }
-    ),
+    draw: async function(){
+      VIEW.draw(this);
+    },
+    update: function(type, data){
+      if(this.drawn){
+        VIEW.update(this, type, data);
+      }else{
+        this.draw();
+      }
+    }
   };
 
   VIEW.addDeviceToList(devices[id]);
   initDeviceConnection(id);
 };
 module.exports.registerDevice = registerDevice;
+
 
 initDeviceConnection = function (id) {
   const device = devices[id];
@@ -101,8 +105,12 @@ initDeviceConnection = function (id) {
       }
     });
     device.connection.on('message', (message) => {
-      // log("OSC IN", message.address);
-      plugins[type].data(device, message);
+      try{
+        plugins[type].data(device, message);
+      }catch(err){
+        console.error("Error with plugin 'data' function");
+        console.error(err)
+      }
       device.lastMessage = Date.now();
     });
     device.send = function (address, args) {
@@ -242,7 +250,7 @@ function heartbeat() {
     if (Date.now() >= device.lastHeartbeat + device.heartbeatInterval) {
       if (device.status == 'broken') {
         initDeviceConnection(i);
-      } else if (Date.now() - device.lastMessage > 10000) {
+      } else if (Date.now() - device.lastMessage > device.heartbeatTimeout) {
         infoUpdate(device, 'status', 'broken');
       } else {
         if (device.port != undefined && device.addresses.length > 0) {

@@ -47,7 +47,6 @@ module.exports.loadSlot = loadSlot;
 
 module.exports.loadDevices = function () {
   console.log(`Loading ${savedDevices.length} saved devices...`);
-  console.log(savedDevices);
 
   for (let i = 0; i < savedDevices.length; i++) {
     DEVICE.registerDevice({
