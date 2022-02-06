@@ -1,0 +1,47 @@
+<div id="<%= cueList.uniqueID %>">
+
+<h3><%= cueList.displayName %></h3>
+<%
+  let width = 100/cueList.cartColumns;
+  let height = 600/(cueList.cartRows);
+%>
+
+<div class="cart">
+
+<% for(let r=0; r<cueList.cartRows; r++){ %>
+  <% for(let c=0; c<cueList.cartColumns; c++){ %>
+    <div class="cartCueWrapper" style="
+      left: <%= width*c %>%;
+      top: <%=height*r%>px;
+      width: <%=width%>%;
+      height: <%=height%>px;
+    "><div class="cartCue cartBlank"></div></div>
+  <% } %>
+<% } %>
+
+
+<% for(var c in cueList.cues){ 
+  let cue = cueList.cues[c];
+
+  if(!cue.cartPosition){
+    cue.cartPosition = [0, 0];
+  }
+
+  let row = cue.cartPosition[0]-1;
+  let col = cue.cartPosition[1]-1;
+
+  let colPos = width*col;
+  let rowPos = height*row;
+
+  if(col>=cueList.cartColumns || row>=cueList.cartRows){
+    continue;
+  } 
+%>
+ 
+<%= tileTemplate({cue: allCues[cue.uniqueID], allCues: allCues}) %>
+
+<% } %>
+
+</div>
+
+</div>
