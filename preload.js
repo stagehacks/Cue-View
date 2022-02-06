@@ -2,7 +2,6 @@
 const { ipcRenderer } = require('electron');
 // let currWindow = remote.BrowserWindow.getFocusedWindow();
 // const { v4: uuid } = require('uuid');
-// const ejs = require('ejs');
 
 //const net = require('net');
 
