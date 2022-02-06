@@ -15,6 +15,8 @@ header {
   height: 36px;
   width: 100%;
   box-sizing: content-box;
+  white-space: nowrap;
+  overflow:  hidden;
 
   background-color: #111111;
   border-bottom: black 1px solid;
