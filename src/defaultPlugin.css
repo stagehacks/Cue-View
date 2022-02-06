@@ -2,9 +2,8 @@ body {
   color: #6e6c6f;
   font-family: sans-serif;
   margin: 0px;
-  margin-top: 40px;
+  margin-top:  40px;
   user-select: none;
-  /*overflow-x: hidden;*/
   visibility: visible !important;
   max-width: 100%;
   padding: 10px;
