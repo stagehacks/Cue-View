@@ -3,6 +3,7 @@ const md5 = require('md5');
 exports.defaultName = 'PJLink Projector';
 exports.connectionType = 'TCPsocket';
 exports.heartbeatInterval = 5000;
+exports.heartbeatTimeout = 15000;
 exports.searchOptions = {
   type: 'UDPsocket',
   searchBuffer: Buffer.from([0x25, 0x32, 0x53, 0x52, 0x43, 0x48, 0x0d]),
