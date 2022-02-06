@@ -22,7 +22,7 @@ A dashboard for everything in your show.
 
 #### Future Devices
 
-- Spikemark
+- Spikemark (not possible until additional OSC methods are added)
 - ATEM Video Mixers
 - Art-Net, sACN Universes
 - Epson Pro series Projectors
