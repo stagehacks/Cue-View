@@ -1,269 +1,101 @@
-<% function cueTemplate(cueList, groupModes, depth, workspace){ %>
-
-	<% depth++ %>
-
-	<% for(var c in cueList.cues){ %>
-
-		<% var cue = cueList.cues[c] %>
-			<tr class="q-<%= cue.colorName %> q-armed-<%= cue.armed %> <%if(data.playbackPosition==cue.uniqueID){ %>playback-position scroll-position<% } %>" id="<%= cue.uniqueID %>">
-
-				<td></td> <!-- playhead/color indicator -->
-
-				<td><center>
-				<% if(cue.broken){ %>
-					<img src="plugins/qlab/img/status_broken.png" height="18px">
-				<% }else if(cue.running){ %>
-					<img src="plugins/qlab/img/status_running.png" height="18px">
-				<% }else if(cue.loaded){ %>
-					<img src="plugins/qlab/img/status_loaded.png" height="18px">
-				<% }else if(cue.flagged){ %>
-					<img src="plugins/qlab/img/status_flagged.png" height="20px">
-				<% }else{ %>
-					
-				<% } %>
-				</center></td>
-
-
-				<td><img src="plugins/qlab/img/<%= cue.type.toLowerCase() %>.png" height="20px"></td>
-				<td><center><%- cue.number || "&nbsp;" %></center></td>
-
-				<%
-				var nextCueDepth = 0;
-				if(workspace.allCuesOrdered[cue.index+1]!=undefined){
-					nextCueDepth = workspace.allCuesOrdered[cue.index+1].groups.length-1;
-				}
-
-				%>
-				
-				
-
-				<!-- spacer cells before cue name --> 
-				<% for(var i=0; i<depth; i++){ %>
-
-					<% if(i==depth-1 && cue.type=="Group"){ %>
-
-						<% if(cue.cues.length==0){ %>
-							<td width="15px" class="group-arrow gMode-<%= cue.mode %> gLeft gTop gBot"></td>
-
-						<% }else{ %>
-							<td width="15px" class="group-arrow gMode-<%= cue.mode %> gLeft gTop"></td>
-
-						<% } %>
-
-					<% }else if(i<nextCueDepth){ %>
-						<td width="15px" class="gMode-<%= groupModes[i] %> gLeft"></td>
-
-					<% }else if(i>=nextCueDepth && i<depth-1 ){ %>
-						<td width="15px" class="gMode-<%= groupModes[i] %> gLeft gBot"></td>
-
-					<% }else if(i==depth-1 && i>nextCueDepth){ %>
-						<td width="15px" class="gMode-<%= groupModes[groupModes.length-1] %> gBot"></td>
-
-					<% }else{ %>
-						<td width="15px" ></td>
-
-					<% } %>
-
-				<% } %>
-
-				
-
-				<!-- cue name -->
-				<% if(cue.type=="Group"){ %>
-					<% if(cue.cues.length==0){ %>
-						<td colspan="<%= 11-depth %>" class="gMode-<%= cue.mode %> gTop gBot gRight"><%= cue.listName %></td>
-
-					<% }else{ %>
-						<td colspan="<%= 11-depth %>" class="gMode-<%= cue.mode %> gTop gRight"><%= cue.listName %></td>
-
-					<% } %>
-				<% }else if(depth>nextCueDepth+1){ %>
-					<td colspan="<%= 11-depth %>" class="gMode-<%= groupModes[groupModes.length-1] %> gBot gRight"><%= cue.listName %></td>
-
-				<% }else if(depth>1){ %>
-					<td colspan="<%= 11-depth %>" class="gMode-<%= groupModes[groupModes.length-1] %> gRight"><%= cue.listName %></td>
-
-				<% }else{ %>
-					<td colspan="<%= 11-depth %>"><%= cue.listName %></td>
-
-				<% } %>
-
-				<td class="q-time hide-medium"><%= cue.target %></td>
-
-				<% if(cue.preWait){ %>
-					<td class="q-time hide-small"><%= prettyFormatTime(cue.preWait) %></td>
-				<% }else{ %>
-					<td class="q-time q-gray-text hide-small">00:00.00</td>
-				<% } %>
-
-				<% if(cue.duration || (cue.type=="Group" && cue.mode==3)){ %>
-					<% %>
-					<td class="q-time hide-medium"><%= prettyFormatTime(cue.duration) %></td>
-				<% }else{ %>
-					<td class="hide-medium"></td>
-				<% } %>
-
-				<% if(cue.postWait){ %>
-					<td class="q-time q-gray-text hide-medium"><%= prettyFormatTime(cue.postWait) %></td>
-				<% }else{ %>
-					<td class="q-time q-gray-text hide-medium">00:00.00</td>
-				<% } %>
-
-				<% if(cue.continueMode==2){ %>
-					<td class="hide-small"><center><img src="plugins/qlab/img/auto_follow.png" height="20px"></center></td>
-				<% }else if(cue.continueMode==1){ %>
-					<td class="hide-small"><center><img src="plugins/qlab/img/auto_continue.png" height="20px"></center></td>
-				<% }else{ %>
-					<td class="hide-small"></td>
-				<% } %>
-
-				
-
-				
-				
-			
-
-
-			</tr>
-		<% if(cue.cues){ %>
-			<% groupModes.push(cue.mode) %>
-			<% cueTemplate(cue, groupModes, depth, workspace) %>
-		<% } %>
-
-	<% } %>
-	<% groupModes.pop(); %>
-<% } %>
-
-<% function cartTemplate(cueList, groupModes, depth, workspace){ %>
-
-<% } %>
-
 <header>
-	<h1><%= listName %></h1>
-	<h2><%= data.version || "" %></h2>
+  <h1><%= listName %></h1>
+  <h2><%= data.version || "" %></h2>
 </header>
 
+<%
+  const fs = require('fs');
+  let _ = require('lodash');
 
-<% for(var i in data.workspaces){ %>
-	<% for(var j in data.workspaces[i].cueLists){ %>
-		<%
-			let cueList = data.workspaces[i].cueLists[j];
-			let width = 100/cueList.cartRows;
-			let height = 600/(cueList.cartColumns+1);
-		%>
+  let cueTemplate = _.template(fs.readFileSync(`./plugins/qlab/cue.ejs`));
+  let tileTemplate = _.template(fs.readFileSync(`./plugins/qlab/tile.ejs`));
+  let cartTemplate = _.template(fs.readFileSync(`./plugins/qlab/cart.ejs`));
+  let listTemplate = _.template(fs.readFileSync(`./plugins/qlab/cuelist.ejs`));
 
-		<h3><%= cueList.listName %> - <%= data.workspaces[i].displayName %></h3>
+%>
 
-		
-
-		<% if(cueList.type=="Cart"){ %>
-
-			<div class="cart">
-
-			<% for(let r=0; r<cueList.cartRows; r++){ %>
-				<% for(let c=0; c<cueList.cartColumns; c++){ %>
-					<div class="cartCueWrapper" style="
-						left: <%= width*c %>%;
-						top: <%=height*r%>px;
-						width: <%=width%>%;
-						height: <%=height%>px;
-					"><div class="cartCue cartBlank"></div></div>
-				<% } %>
-			<% } %>
-
-
-			<% for(var c in cueList.cues){ 
-				let cue = cueList.cues[c];
-
-				if(!cue.cartPosition){
-					continue;
-				}
-
-				let row = cue.cartPosition[0]-1;
-				let col = cue.cartPosition[1]-1;
-
-				let colPos = width*col;
-				let rowPos = height*row;
-
-				if(col>=cueList.cartColumns || row>=cueList.cartRows){
-					continue;
-				}
-			%>
-
-			<div class="cartCueWrapper " style="
-				left: <%=colPos%>%;
-				top: <%=rowPos%>px;
-				width: <%=width%>%;
-				height: <%=height%>px;
-			">
-
-				<div class="cartCueIcon">
-					<% if(cue.broken){ %>
-						<img src="plugins/qlab/img/status_broken_white.png" height="18px">
-					<% }else if(cue.running){ %>
-						<img src="plugins/qlab/img/pause_circled.png" height="24px">
-					<% }else{ %>
-						<img src="plugins/qlab/img/play_circled.png" height="24px">
-					<% } %>
-				</div>
-				<div class="cartCue cartColor-<%= cue.colorName %>">
-					<p><%= cue.number %> &bull;  <%= cue.displayName %></p>
-				</div>
-
-			</div>
-
-			<% } %>
-
-			</div>
-				
-
-			
-		<% }else{ %>
-
-		<% cueListOffset = 0 %>
-		<table cellspacing="0">
-			<tr>
-				<th width="1px" style="border-left: none; border-right: none;"></th>
-				<th width="20px" style="border-left: none; border-right: none;"></th>
-				<th width="20px" style="border-left: none;"></th>
-				<th width="55px">Number</th>
-				<th width="25px" style="padding: 0px"></th>
-				<th width="25px" class="no-border">Q</th>
-				<th width="25px" class="no-border"></th>
-				<th width="25px" class="no-border"></th>
-				<th width="25px" class="no-border"></th>
-				<th width="25px" class="no-border"></th>
-				<th width="25px" class="no-border"></th>
-				<th width="25px" class="no-border"></th>
-				<th width="25px" class="no-border"></th>
-				<th width="25px" class="no-border"></th>
-				<th class="no-border"></th>
-				<th width="55px" class="hide-medium">Target</th>
-				<th width="80px" class="hide-small"style="border-right: none;">Pre Wait</th>
-				<th width="80px" class="hide-medium" style="border-left: none; border-right: none;">Action</th>
-				<th width="80px" class="hide-medium" style="border-left: none; border-right: none;">Post Wait</th>
-				<th width="20px" class="hide-small" style="border-left: none; border-right: none;">
-					<img src="plugins/qlab/img/auto_continue_stubby.png" height="20px">
-				</th>
-			</tr>
-			<% cueTemplate(cueList, [], [], data.workspaces[i]); %>
-		</table>
-
-		<% } %>
-	<% } %>
-
-<% } %>
 
 
 <%
-	function prettyFormatTime(seconds){
-		var startIndex = 14;
-		if(seconds>=3600){
-			startIndex = 11;
-		}
-		var string = new Date(seconds * 1000).toISOString()
-		return string.substring(startIndex, string.length-2)
-	}
+  for(const workspace_id in data.workspaces){
+  const workspace = data.workspaces[workspace_id];
 
-
+  for(const cueList_id in workspace.cueLists){
+  const ql = workspace.cueLists[cueList_id];
 %>
+
+
+
+  <% if(ql.type=="Cue List"){ %>
+
+    <%= listTemplate({cueList: ql, allCues: workspace.cues, rowTemplate: cueTemplate}) %>
+
+  <% }else if(ql.type=="Cart"){ %>
+
+    <%= cartTemplate({cueList: ql, allCues: workspace.cues, tileTemplate: tileTemplate}) %>
+
+
+  <% } %>
+
+
+
+<% }} %>
+
+
+
+<script src="node_modules/lodash/core.min.js"></script>
+
+<script>
+let cueTemplate = <%= cueTemplate.source %>;
+let tileTemplate = <%= tileTemplate.source %>;
+let cartTemplate = <%= cartTemplate.source %>;
+
+function updateElement(type, data){
+
+
+  if(type=="updateCueData"){
+    $elem = document.getElementById(data.cue.uniqueID);
+
+    if($elem){
+
+      if(data.cue.type=="Cue List"){
+        $elem.outerHTML = '<h3>'+data.workspace.displayName+' - '+data.cue.name+'</h3>';
+
+      }else if(data.cue.type=="Cart"){
+
+        $elem.outerHTML = cartTemplate({cueList: data.cue, allCues: data.workspace.cues});
+        
+      }else if(data.cue.cartPosition[0]!=0){
+        $elem.outerHTML = tileTemplate(data);
+        
+      }else{
+        $elem.outerHTML = cueTemplate(data);
+      }
+    }
+
+  }else if(type=="updatePlaybackPosition"){
+
+    Array.from(document.getElementsByClassName("playback-position")).forEach(
+    function($elem, index, array) {
+        $elem.classList.remove("playback-position");
+    });
+
+    document.getElementById(data.cue.uniqueID).classList.add("playback-position");
+  }
+  
+}
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,54 @@
+<h3 id="<%= cueList.uniqueID %>">&nbsp;</h3>
+
+<table cellspacing="0">
+  <tr>
+    <th width="1px" style="border-left: none; border-right: none;"></th>
+    <th width="20px" style="border-left: none; border-right: none;"></th>
+    <th width="20px" style="border-left: none;"></th>
+    <th width="55px">Number</th>
+    <th width="25px" style="padding: 0px"></th>
+    <th width="25px" class="no-border">Q</th>
+    <th width="25px" class="no-border"></th>
+    <th width="25px" class="no-border"></th>
+    <th width="25px" class="no-border"></th>
+    <th width="25px" class="no-border"></th>
+    <th width="25px" class="no-border"></th>
+    <th width="25px" class="no-border"></th>
+    <th width="25px" class="no-border"></th>
+    <th width="25px" class="no-border"></th>
+    <th class="no-border"></th>
+    <th width="55px" class="hide-medium">Target</th>
+    <th width="80px" class="hide-small"style="border-right: none;">Pre Wait</th>
+    <th width="80px" class="hide-medium" style="border-left: none; border-right: none;">Action</th>
+    <th width="80px" class="hide-medium" style="border-left: none; border-right: none;">Post Wait</th>
+    <th width="20px" class="hide-small" style="border-left: none; border-right: none;">
+      <img src="plugins/qlab/img/auto_continue_stubby.png" height="20px">
+    </th>
+  </tr>
+  <tbody id="">
+    
+    <% for(const cue_id in cueList.cues){ %>
+      <%= displayCueRow(cueList.cues[cue_id]) %>
+    <% } %>
+
+  </tbody>
+</table>
+
+
+<% 
+
+
+
+function displayCueRow(q){
+  let html = "";
+
+  html+= rowTemplate({cue: allCues[q.uniqueID], allCues: allCues});
+
+  if(q.cues){
+    q.cues.forEach(q =>{
+      html+=displayCueRow(q);
+    })
+  }
+  return html;
+}
+%>
