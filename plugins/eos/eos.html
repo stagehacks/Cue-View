@@ -56,15 +56,15 @@
 
 						<!-- Int Up/Int Down -->
 						<% if(p.uptimeduration == p.downtimeduration || p.downtimeduration==-1){ %>
-							<td class="black" colspan="2"><%- prettyDuration(p.uptimedelay) || "" %><%- prettyDuration(p.uptimeduration, true) %></td>
+							<td class="black" colspan="2"><%= prettyDuration(p.uptimedelay) || "" %><%= prettyDuration(p.uptimeduration, true) %></td>
 						<% }else{ %>
-							<td class="black"><%- prettyDuration(p.uptimedelay) || "" %><%- prettyDuration(p.uptimeduration, true) %></td>
-							<td class="black "><%- prettyDuration(p.downtimeduration, true) %></td>
+							<td class="black"><%= prettyDuration(p.uptimedelay) || "" %><%= prettyDuration(p.uptimeduration, true) %></td>
+							<td class="black "><%= prettyDuration(p.downtimeduration, true) %></td>
 						<% } %>
 
-						<td class="black hide-medium"><%- prettyDuration(p.focustimeduration, true) %></td>
-						<td class="black hide-medium"><%- prettyDuration(p.colortimeduration, true) %></td>
-						<td class="black hide-medium"><%- prettyDuration(p.beamtimeduration, true) %></td>
+						<td class="black hide-medium"><%= prettyDuration(p.focustimeduration, true) %></td>
+						<td class="black hide-medium"><%= prettyDuration(p.colortimeduration, true) %></td>
+						<td class="black hide-medium"><%= prettyDuration(p.beamtimeduration, true) %></td>
 						<td class="hide-small"><%= prettyDuration(p.duration) %></td>
 
 					<% }else{ %>
@@ -84,7 +84,7 @@
 						<%= (p.hang>=0)? "H"+prettyDuration(p.hang) : "" %>
 					</td>
 					<td class="black" style="text-align: left">
-						<%- (partNumber==0 ? "": "&nbsp;&nbsp;&nbsp;") %>
+						<%= (partNumber==0 ? "": "&nbsp;&nbsp;&nbsp;") %>
 						<%= p.label %>
 					</td>
 					<td class="black hide-medium"><%= p.extlinks %></td>
