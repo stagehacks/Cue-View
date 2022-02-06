@@ -189,11 +189,12 @@ a {
   right: 15px;
   top: 8px;
   height: 20px;
+  padding: inherit;
 }
 .device-wrapper {
   box-sizing: border-box;
-  border-top: rgba(0, 0, 0, 0) 2px solid;
-  border-bottom: rgba(0, 0, 0, 0) 2px solid;
+  border:  black 1px solid;
+  padding:  2px;
 }
 .draw-area {
   height: 100%;
@@ -203,9 +204,8 @@ a {
   border: 0;
 }
 .active-device-outline {
-  outline: #fdea08 2px solid;
-  border-top: #fdea08 2px solid;
-  border-bottom: #fdea08 2px solid;
+  padding:  0px;
+  border: #fdea08 3px solid;
 }
 
 input {
