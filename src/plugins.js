@@ -13,10 +13,10 @@ module.exports.init = function (callback) {
     for (let i in files) {
       const plugin = files[i];
 
-      if (plugin[0] != '.' && plugin!= "qlab-old") {
+      if (plugin[0] != '.') {
         
         console.log(`${i} ${plugin}`);
-        allPlugins[plugin] = require(`${__dirname}/../plugins/${plugin}/${plugin}.js`);
+        allPlugins[plugin] = require(`${__dirname}/../plugins/${plugin}/main.js`);
 
         let p = allPlugins[plugin];
 
@@ -29,11 +29,10 @@ module.exports.init = function (callback) {
 
         p.template = _.template(
           fs.readFileSync(
-            `${__dirname}/../plugins/${plugin}/${plugin}.html`,
+            `${__dirname}/../plugins/${plugin}/template.ejs`,
             'utf8'
           )
         );
-
 
 
         if (p.heartbeatTimeout == undefined || p.heartbeatTimeout < 50) {
