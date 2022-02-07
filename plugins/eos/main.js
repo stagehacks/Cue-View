@@ -149,7 +149,6 @@ exports.data = function (device, osc) {
     const listIndex = p[6];
     const listCount = p[7];
     const cueNumber = osc.args[1];
-    console.log(cueNumber+" changed")
 
     device.send(`/eos/get/cue/${cueList}/${cueNumber}`);
     
