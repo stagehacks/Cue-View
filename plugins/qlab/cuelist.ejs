@@ -42,7 +42,7 @@
 function displayCueRow(q){
   let html = "";
 
-  html+= rowTemplate({cue: allCues[q.uniqueID], allCues: allCues});
+  html+= rowTemplate({cue: allCues[q.uniqueID], allCues: allCues, workspace: workspace});
 
   if(q.cues){
     q.cues.forEach(q =>{

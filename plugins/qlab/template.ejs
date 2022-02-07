@@ -1,0 +1,45 @@
+<header>
+  <h1><%= listName %></h1>
+  <h2>QLab <%= data.version || "" %></h2>
+</header>
+
+<%
+  const fs = require('fs');
+  let _ = require('lodash');
+
+  let cueTemplate = _.template(fs.readFileSync(`./plugins/qlab/cue.ejs`));
+  let tileTemplate = _.template(fs.readFileSync(`./plugins/qlab/tile.ejs`));
+  let cartTemplate = _.template(fs.readFileSync(`./plugins/qlab/cart.ejs`));
+  let listTemplate = _.template(fs.readFileSync(`./plugins/qlab/cuelist.ejs`));
+
+%>
+
+
+
+<%
+  for(const workspace_id in data.workspaces){
+  const workspace = data.workspaces[workspace_id];
+
+  for(const cueList_id in workspace.cueLists){
+  const ql = workspace.cueLists[cueList_id];
+%>
+
+
+
+  <% if(ql.type=="Cue List"){ %>
+
+    <%= listTemplate({cueList: ql, allCues: workspace.cues, rowTemplate: cueTemplate, workspace: workspace}) %>
+
+  <% }else if(ql.type=="Cart"){ %>
+
+    <%= cartTemplate({cueList: ql, allCues: workspace.cues, tileTemplate: tileTemplate}) %>
+
+
+  <% } %>
+
+
+
+<% }} %>
+
+
+

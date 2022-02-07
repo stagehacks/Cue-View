@@ -22,21 +22,21 @@ th.no-border {
 }
 
 td {
-  padding: 0px;
+  padding: -1px;
   height: 25px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 td img {
-  padding-top: 4px;
+  padding-top: 2px;
 }
 
 tr:nth-child(even) {
-  background: #2c2c2c;
+  background: #323232;
 }
 tr:nth-child(odd) {
-  background: #323232;
+  background: #2c2c2c;
 }
 
 tr:nth-child(even).q-red {
@@ -169,6 +169,14 @@ tr.playback-position .q-gray-text {
 .q-gray-text {
   color: #424242;
 }
+.q-time-elapsed {
+  margin:  0px 2px;
+  outline:  #49c042 1px solid;
+  line-height: 18px;
+}
+
+
+
 
 .cart{
   position: relative;

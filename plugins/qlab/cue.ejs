@@ -1,4 +1,5 @@
-<tr class="q-<%= cue.colorName %> q-armed-<%= cue.armed %>" id="<%= cue.uniqueID %>">
+<% let playbackPosition = workspace.playbackPosition==cue.uniqueID ? "playback-position" : "" %>
+<tr class="q-<%= cue.colorName %> q-armed-<%= cue.armed %> <%= playbackPosition %>" id="<%= cue.uniqueID %>">
 
   <td></td> <!-- playhead/color indicator -->
 
@@ -8,6 +9,9 @@
 
   <% }else if(cue.running){ %>
     <img src="plugins/qlab/img/status_running.png" height="18px">
+
+  <% }else if(cue.paused){ %>
+    <img src="plugins/qlab/img/status_paused.png" height="18px">
 
   <% }else if(cue.loaded){ %>
     <img src="plugins/qlab/img/status_loaded.png" height="18px">
@@ -79,7 +83,7 @@
 
 
   <% if(cue.preWait){ %>
-    <td class="q-time hide-small"><%= prettyFormatTime(cue.preWait) %></td>
+    <td class="q-time hide-medium"><%= elapsedTime(cue.preWait, cue.preWaitElapsed, "preWait", cue) %></td>
 
   <% }else{ %>
     <td class="q-time q-gray-text hide-small">00:00.00</td>
@@ -87,9 +91,9 @@
   <% } %>
 
 
-
-  <% if(cue.duration || (cue.type=="Group" && cue.mode==3)){ %>
-    <td class="q-time hide-medium"><%= prettyFormatTime(cue.duration) %></td>
+  <% let cueTypesWithAction = ["Audio", "Mic", "Video", "Camera", "Text", "Light", "Fade", "Network", "MIDI File", "Timecode", "Wait"]; %>
+  <% if((cue.type=="Group" && cue.groupMode==3) || cueTypesWithAction.indexOf(cue.type)>=0){ %>
+    <td class="q-time hide-medium"><%= elapsedTime(cue.duration, cue.actionElapsed, "action", cue) %></td>
 
   <% }else{ %>
     <td class="hide-medium"></td>
@@ -99,7 +103,7 @@
 
 
   <% if(cue.postWait){ %>
-    <td class="q-time q-gray-text hide-medium"><%= prettyFormatTime(cue.postWait) %></td>
+    <td class="q-time hide-medium"><%= elapsedTime(cue.postWait, cue.postWaitElapsed, "postWait", cue) %></td>
 
   <% }else{ %>
     <td class="q-time q-gray-text hide-medium">00:00.00</td>
@@ -124,11 +128,50 @@
 
 <% 
   function prettyFormatTime(seconds){
+    if(!seconds){
+      return "00:00.00";
+    }
     var startIndex = 14;
     if(seconds>=3600){
       startIndex = 11;
     }
     var string = new Date(seconds * 1000).toISOString()
     return string.substring(startIndex, string.length-2)
+  }
+
+  function elapsedTime(def, value, type, cue){
+
+    if(type=="action" && cue.paused){
+      value-=cue.preWait;
+    }
+
+    let border, fill;
+    if(cue.paused){
+      border = "#f6e737";
+      fill = "rgba(255, 240, 60, 0.7)";
+    }else{
+      border = "#48ba41";
+      fill = "rgba(0, 200, 50, 0.5)";
+    }
+
+
+    if(value>0){
+      let percent = value/def*100;
+      let bg = "background: black; background: linear-gradient(90deg, "+fill+" "+percent+"%, transparent "+percent+"%);";
+
+      if(cue.paused){
+        bg+= "outline-color: "+border+";";
+        bg+= "color: white;";
+      }
+      
+      return "<div class='q-time-elapsed' style='"+bg+"'>"+prettyFormatTime(Math.min(def, value))+"</span>";
+
+    }else if(type=="postWait" || type=="action"){
+      return "<span class='q-gray-text'>"+prettyFormatTime(def)+"</span>";
+
+    }else{
+      return prettyFormatTime(def);
+
+    }
   }
 %>
