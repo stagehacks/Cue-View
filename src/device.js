@@ -44,6 +44,7 @@ registerDevice = function (newDevice) {
   devices[id] = {
     id,
     status: 'new',
+    drawn: false,
     type: newDevice.type,
     displayName: newDevice.displayName,
     defaultName: newDevice.defaultName,
@@ -54,7 +55,7 @@ registerDevice = function (newDevice) {
     lastDrawn: 0,
     lastHeartbeat: 0,
     heartbeatInterval: PLUGINS.all[newDevice.type].heartbeatInterval,
-    draw: async function(){
+    draw: function(){
       VIEW.draw(this);
     },
     update: function(type, data){
@@ -108,7 +109,6 @@ initDeviceConnection = function (id) {
       try{
         plugins[type].data(device, message);
       }catch(err){
-        console.error("Error with plugin 'data' function");
         console.error(err)
       }
       device.lastMessage = Date.now();
