@@ -23,7 +23,7 @@ drawDeviceFrame = function (id) {
   d = DEVICE.all[id];
 
   let str = '<html><head>';
-  str += "<link href='./plugins/" +d.type +'/' +d.type +".css' rel='stylesheet' type='text/css'>";
+  str += "<link href='./plugins/" +d.type +"/styles.css' rel='stylesheet' type='text/css'>";
 
   // scrollbar styles are inline to prevent the styles flickering in
   str += '<style>';
@@ -39,17 +39,24 @@ drawDeviceFrame = function (id) {
 
   str += generateBodyHTML(d);
 
+  // str += "<script src='node_modules/lodash/core.min.js'></script>";
+  // str += "<script src='./plugins/" +d.type +"/update.js'></script>";
+
   str += '</body></html>';
 
   $deviceDrawArea.setAttribute('class', `${d.type} draw-area`);
   $deviceDrawArea.contentWindow.document.open();
   $deviceDrawArea.contentWindow.document.write(str);
+  $deviceDrawArea.contentWindow.document.close();
+
 
   if (d.pinIndex) {
     $devicePinned.style.display = 'block';
   } else {
     $devicePinned.style.display = 'none';
   }
+
+
 
 };
 
@@ -83,19 +90,26 @@ generateBodyHTML = function(d){
 
 module.exports.draw = function (device) {
 
-  let $deviceDrawArea = document.getElementById(`device-${device.id}-draw-area`);
+  let $deviceDrawArea = document.getElementById(`device-${device.id}-draw-area`).contentWindow.document;
 
   if($deviceDrawArea){
-    $deviceDrawArea.contentDocument.body.innerHTML = generateBodyHTML(device);
+    const scriptEl = $deviceDrawArea.createRange().createContextualFragment(generateBodyHTML(device));
+    $deviceDrawArea.body.replaceChildren(scriptEl);
+
+
   }else{
     drawDeviceFrame(device.id);
+
   }
+  device.drawn = true;
+
 
 };
 
 module.exports.update = function(device, type, data){
-  let $iframe = document.getElementById(`device-${device.id}-draw-area`);
-  $iframe.contentWindow.updateElement(type, data);
+  let doc = document.getElementById(`device-${device.id}-draw-area`).contentWindow.document;
+  PLUGINS.all[device.type].update(device, doc, type, data);
+
 }
 
 module.exports.addDeviceToList = function (device) {
@@ -167,7 +181,7 @@ switchDevice = function (id) {
 
   var $deviceWrapper = document.getElementById('device-' + i);
   if (!$deviceWrapper) {
-    var html = `<div class="col device-wrapper" id="device-${i}"><img id="device-${i}-pinned" class="device-pin" src="src/img/outline_push_pin_white_18dp.png"><iframe id="device-${i}-draw-area" class="draw-area"></iframe><div id="device-${i}-settings"></div></div>`;
+    var html = `<div class="col device-wrapper" id="device-${i}"><img id="device-${i}-pinned" class="device-pin" src="src/img/outline_push_pin_white_18dp.png"><iframe id="device-${i}-draw-area" class="draw-area"></iframe></div>`;
     document
       .getElementById('all-devices')
       .insertAdjacentHTML('afterbegin', html);
