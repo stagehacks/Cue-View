@@ -90,11 +90,12 @@ generateBodyHTML = function(d){
 
 module.exports.draw = function (device) {
 
-  let $deviceDrawArea = document.getElementById(`device-${device.id}-draw-area`).contentWindow.document;
+
+  let $deviceDrawArea = document.getElementById(`device-${device.id}-draw-area`);
 
   if($deviceDrawArea){
-    const scriptEl = $deviceDrawArea.createRange().createContextualFragment(generateBodyHTML(device));
-    $deviceDrawArea.body.replaceChildren(scriptEl);
+    const scriptEl = $deviceDrawArea.contentWindow.document.createRange().createContextualFragment(generateBodyHTML(device));
+    $deviceDrawArea.contentWindow.document.body.replaceChildren(scriptEl);
 
 
   }else{
@@ -107,8 +108,11 @@ module.exports.draw = function (device) {
 };
 
 module.exports.update = function(device, type, data){
-  let doc = document.getElementById(`device-${device.id}-draw-area`).contentWindow.document;
-  PLUGINS.all[device.type].update(device, doc, type, data);
+  let doc = document.getElementById(`device-${device.id}-draw-area`);
+  if(doc){
+    PLUGINS.all[device.type].update(device, doc.contentWindow.document, type, data);
+  }
+  
 
 }
 
