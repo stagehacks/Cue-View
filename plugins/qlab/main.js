@@ -280,8 +280,10 @@ exports.update = function(device, doc, updateType, data){
     function($elem, index, array) {
         $elem.classList.remove("playback-position");
     });
-    
-    doc.getElementById(data.cue.uniqueID).classList.add("playback-position");
+
+    $elem = doc.getElementById(data.cue.uniqueID);
+    $elem.classList.add("playback-position");
+    $elem.scrollIntoView({behavior: "smooth", block: "center"});
 
   }
 }
