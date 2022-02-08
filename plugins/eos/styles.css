@@ -11,7 +11,7 @@ th {
 }
 td {
   text-align: center;
-  padding: 6px;
+  padding: 4px 6px;
 }
 td:first-child {
   text-align: left;
@@ -25,6 +25,7 @@ td.num {
   font-weight: 600;
   font-size: 16px;
 }
+  
 .scene {
   background-color: black;
   border-top: #141414 2px solid;
@@ -46,14 +47,19 @@ td.num {
   border: #2f2b35 2px solid;
   border-radius: 5px;
 }
+
 tr.active-cue {
-  color: #d49800;
+  color: #c78b07;
 }
-tr.active-cue td.num {
-  color: #d49800;
-}
+tr.active-cue td.num div{
+    margin:  0px;
+    padding:  1px 6px;
+    background-color: #c78b07;
+    border-radius: 4px;
+    color:  black;
+  }
 tr.active-cue .time {
-  border-color: #d49800;
+  border-color: #c78b07;
 }
 
 @media screen and (min-width: 0px) and (max-width: 750px) {

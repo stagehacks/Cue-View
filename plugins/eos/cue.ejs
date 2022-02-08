@@ -19,9 +19,9 @@
 <% } %>
 
 	<% if(partNumber!=0){ %>
-		<td class="num">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P<%= partNumber %></td>
+		<td class="num" style="padding-left: 20px;"><div>P<%= partNumber %></div></td>
 	<% }else{ %>
-		<td class="num">&nbsp;<%= cueNumber %></td>
+		<td class="num"><div><%= cueNumber %></div></td>
 	<% } %>
 
 	<% if(partNumber!=0 || part.partcount==0){ %>
