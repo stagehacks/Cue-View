@@ -37,9 +37,10 @@ exports.data = function (device, oscData) {
   }else if(match(osc, ["reply", "workspaces"])){
     
     let json = JSON.parse(oscData.args[0]);
-    json.data.forEach(wksp => {
-      device.data.workspaces = {};
+    device.data.workspaces = {};
 
+    json.data.forEach(wksp => {
+    
       device.data.workspaces[wksp.uniqueID] = {
         uniqueID: wksp.uniqueID,
         displayName: wksp.displayName,
@@ -50,6 +51,8 @@ exports.data = function (device, oscData) {
       device.send(`/workspace/${wksp.uniqueID}/connect`);
 
     });
+
+    console.log(device.data.workspaces);
 
 
   }else if(match(osc, ["reply", "workspace", "*", "connect"])){
@@ -66,6 +69,7 @@ exports.data = function (device, oscData) {
 
     this.deviceInfoUpdate(device, 'status', 'ok');
 
+
     let workspace = device.data.workspaces[osc[2]];
     let json = JSON.parse(oscData.args[0]);
 
@@ -78,7 +82,6 @@ exports.data = function (device, oscData) {
       addChildrenToWorkspace(workspace, ql);
     });
 
-    console.log("total device draw 2");
     device.draw();
     
 
@@ -206,18 +209,21 @@ exports.data = function (device, oscData) {
   }else if(match(osc, ["update", "workspace", "*", "cue_id", "*"])){
 
     let workspace = device.data.workspaces[osc[2]];
-    let cueLists = Object.keys(workspace.cueLists);
-    let cue_id = osc[4];
+    
+    if(workspace){
+      let cueLists = Object.keys(workspace.cueLists);
+      let cue_id = osc[4];
 
-    if(cue_id!="[root group of cue lists"){
-      if(cueLists.includes(cue_id)){
-        device.send(`/workspace/${workspace.uniqueID}/cue_id/${cue_id}/children`);
+      if(cue_id!="[root group of cue lists"){
+        if(cueLists.includes(cue_id)){
+          device.send(`/workspace/${workspace.uniqueID}/cue_id/${cue_id}/children`);
+        }
+
+        device.send(`/workspace/${osc[2]}/cue_id/${cue_id}/valuesForKeys`, [
+          {type: 's', value: valuesForKeysString}
+        ]);
+
       }
-
-      device.send(`/workspace/${osc[2]}/cue_id/${cue_id}/valuesForKeys`, [
-        {type: 's', value: valuesForKeysString}
-      ]);
-
     }
 
   
@@ -227,21 +233,36 @@ exports.data = function (device, oscData) {
 
 
   }else if(match(osc, ["update", "workspace", "*", "dashboard"])){
-    // nothing here yet
+    //this workspace might be new, let's check
+
+    if(device.data.workspaces[osc[2]]){
+
+    }else{
+      console.log("new workspace!");
+      device.send('/workspaces');
+    }
 
 
   }else if(match(osc, ["update", "workspace", "*", "cueList", "*", "playbackPosition"])){
 
     let workspace = device.data.workspaces[osc[2]];
-    let cue = workspace.cues[oscData.args[0]];
-    workspace.playbackPosition = oscData.args[0] ? cue.uniqueID : "";
 
-    if(cue){
-      device.update("updatePlaybackPosition", {cue: cue});
+    if(workspace){
+      let cue = workspace.cues[oscData.args[0]];
+      
+      if(cue){
+        workspace.playbackPosition = oscData.args[0] ? cue.uniqueID : "";
+        device.update("updatePlaybackPosition", {cue: cue});
+      }
     }
 
+  }else if(match(osc, ["update", "workspace", "*", "disconnect"])){
+
+    delete device.data.workspaces[osc[2]];
+    device.draw();
+
   }else{
-    console.log(address)
+    //console.log(address)
   }
 
 
@@ -262,7 +283,7 @@ exports.update = function(device, doc, updateType, data){
     if($elem){
 
       if(data.cue.type=="Cue List"){
-        $elem.outerHTML = '<h3>'+data.cue.name+'</h3>';
+        $elem.outerHTML = '<h3>'+data.workspace.displayName+' &mdash; '+data.cue.name+'</h3>';
 
       }else if(data.cue.type=="Cart"){
         $elem.outerHTML = cartTemplate({tileTemplate: tileTemplate, cueList: data.cue, allCues: data.workspace.cues});
