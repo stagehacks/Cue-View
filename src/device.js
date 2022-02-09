@@ -117,6 +117,8 @@ initDeviceConnection = function (id) {
       device.connection.send({ address: address, args: args });
     };
     device.plugin = plugins[type];
+
+
   } else if (plugins[type].connectionType == 'TCPsocket') {
     device.connection = new net.Socket();
 
@@ -144,6 +146,8 @@ initDeviceConnection = function (id) {
       // log("SOCK OUT", data);
       device.connection.write(data);
     };
+
+
   } else if (plugins[type].connectionType == 'UDPsocket') {
     device.connection = udp.createSocket('udp4');
 
@@ -162,6 +166,8 @@ initDeviceConnection = function (id) {
       });
     };
   }
+
+  
 };
 module.exports.initDeviceConnection = initDeviceConnection;
 
