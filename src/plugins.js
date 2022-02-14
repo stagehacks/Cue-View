@@ -34,6 +34,13 @@ module.exports.init = function (callback) {
           )
         );
 
+        p.info = _.template(
+          fs.readFileSync(
+            `${__dirname}/../plugins/${plugin}/info.html`,
+            'utf8'
+          )
+        );
+
 
         if (p.heartbeatTimeout == undefined || p.heartbeatTimeout < 50) {
           if(p.heartbeatInterval){
