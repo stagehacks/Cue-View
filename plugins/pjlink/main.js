@@ -27,7 +27,6 @@ function processPJLink(device, str, that) {
   const d = device;
 
   arr.forEach((s) => {
-    console.log(s)
     const split = s.split('=');
     const key = split[0];
     const value = split[1];
