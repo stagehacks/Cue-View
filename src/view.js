@@ -82,7 +82,10 @@ generateBodyHTML = function(d){
       d.type +
       '</em> is not responding to requests for data.</h2>';
     str += '<h3>IP <em>' + d.addresses[0] + '</em></h3>';
-    str += '<h3>Port <em>' + d.port + '</em></h3></div>';
+    str += '<h3>Port <em>' + d.port + '</em></h3>';
+    str += '<hr></div>';
+    str += '<div class="device-info">'+PLUGINS.all[d.type].info()+'<div>';
+    
   }
   
   return str;
