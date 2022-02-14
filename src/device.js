@@ -151,7 +151,7 @@ initDeviceConnection = function (id) {
   } else if (plugins[type].connectionType == 'UDPsocket') {
     device.connection = udp.createSocket('udp4');
 
-    device.connection.bind(() => {
+    device.connection.bind({port: plugins[type].defaultPort}, () => {
       plugins[type].ready(device);
 
       device.connection.on('message', (msg, info) => {
@@ -165,6 +165,21 @@ initDeviceConnection = function (id) {
         // console.log(err);
       });
     };
+  
+
+  } else if (plugins[type].connectionType == 'multicast') {
+    device.connection = udp.createSocket('udp4');
+
+    device.connection.bind(device.port, () => {
+      plugins[type].ready(device);
+
+      device.connection.on('message', (msg, info) => {
+        plugins[type].data(device, msg);
+        infoUpdate(device, 'status', 'ok');
+      });
+    });
+
+    device.send = function (data) {};
   }
 
   
