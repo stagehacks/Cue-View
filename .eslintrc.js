@@ -16,5 +16,9 @@ module.exports = {
     'no-alert': 'off',
     'no-plusplus': 'off',
     'import/extensions': 'off',
+    'prefer-destructuring': 'off',
+    'no-use-before-define': 'off',
+    'space-infix-ops': 'warn',
+    'no-bitwise': 'off',
   },
 };
