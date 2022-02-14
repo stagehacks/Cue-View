@@ -1,0 +1,29 @@
+table {
+  margin-bottom: 50px;
+  background-color: #333;
+}
+td,
+th {
+  width: 35px;
+}
+td {
+  background-color: black;
+  text-align: center;
+  border-radius: 3px;
+  color: white;
+  font-size: 13px;
+}
+th {
+  background-color: #222;
+  color: #ccc;
+  font-size: 11px;
+}
+td.data {
+  padding: 7px;
+  font-size: 12px;
+  text-align: left;
+}
+td.data em {
+  font-size: 14px;
+  color: #008bd2;
+}

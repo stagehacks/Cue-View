@@ -25,7 +25,7 @@ td.num {
   font-weight: 600;
   font-size: 16px;
 }
-  
+
 .scene {
   background-color: black;
   border-top: #141414 2px solid;
@@ -51,13 +51,13 @@ td.num {
 tr.active-cue {
   color: #c78b07;
 }
-tr.active-cue td.num div{
-    margin:  0px;
-    padding:  1px 6px;
-    background-color: #c78b07;
-    border-radius: 4px;
-    color:  black;
-  }
+tr.active-cue td.num div {
+  margin: 0px;
+  padding: 1px 6px;
+  background-color: #c78b07;
+  border-radius: 4px;
+  color: black;
+}
 tr.active-cue .time {
   border-color: #c78b07;
 }

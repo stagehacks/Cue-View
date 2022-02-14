@@ -1,6 +1,5 @@
-let _ = require('lodash');
+const _ = require('lodash');
 const fs = require('fs');
-
 
 exports.defaultName = 'ETC Eos';
 exports.connectionType = 'osc';
@@ -11,71 +10,55 @@ exports.searchOptions = {
     'ascii'
   ),
   testPort: 3032,
-  validateResponse: function (msg, info) {
+  validateResponse (msg, info) {
     return msg.toString().indexOf('/eos/out');
   },
 };
-exports.defaultPort = 3032;
+exports.defaultPort = 3037;
 
-// "\xc0/eos/ping\x00\x00\x2c\x00\x00\x00\xc0"
 
-exports.ready = function (device) {
+exports.ready = function ready(device) {
   device.send('/eos/get/cuelist/count');
   device.send('/eos/get/version');
   device.send('/eos/subscribe', [{ type: 'i', value: 1 }]);
 };
 
-exports.data = function (device, osc) {
-  const address = osc.address;
+exports.data = function data(device, osc) {
   const p = osc.address.split('/');
+  const d = device;
   p.shift();
 
-  //console.log(address)
+  // console.log(osc.address)
 
-  if (p[1] == 'out' && p[2] == 'show' && p[3] == 'name') {
-    device.data.showName = osc.args[0];
-    device.data.cuelists = {};
+  if (match(p, ['eos','out','show','name'])) {
+    d.data.showName = osc.args[0];
+    d.data.cuelists = {};
     this.deviceInfoUpdate(device, 'defaultName', osc.args[0]);
 
 
-  } else if (osc.address == '/eos/out/get/cuelist/count') {
+  } else if (match(p, ['eos','out','get','cuelist','count'])) {
     for (let i = 0; i < osc.args[0]; i++) {
-      device.send(`/eos/get/cuelist/index/${i}`);
+      d.send(`/eos/get/cuelist/index/${i}`);
     }
 
 
-  } else if (
-    p[1] == 'out' &&
-    p[2] == 'get' &&
-    p[3] == 'cuelist' &&
-    p[5] == 'list'
-  ) {
-    device.data.cuelists[p[4]] = {};
-    device.send(`/eos/get/cue/${p[4]}/count`);
+  } else if (match(p, ['eos','out','get','cuelist','*','list','*','*'])) {
+    d.data.cuelists[p[4]] = {};
+    d.send(`/eos/get/cue/${p[4]}/count`);
 
 
-  } else if (
-    p[1] == 'out' &&
-    p[2] == 'get' &&
-    p[3] == 'cue' &&
-    p[5] == 'count'
-  ) {
+  } else if (match(p, ['eos','out','get','cue','*','count'])) {
     for (let i = 0; i < osc.args[0]; i++) {
       device.send(`/eos/get/cue/${p[4]}/index/${i}`);
     }
 
 
-  } else if (
-    p[1] == 'out' &&
-    p[2] == 'get' &&
-    p[3] == 'cue' &&
-    p[7] == 'list'
-  ) {
+  } else if (match(p, ['eos','out','get','cue','*','*','*','list','*','*'])) {
     this.deviceInfoUpdate(device, 'status', 'ok');
-    if (device.data.cuelists[p[4]][p[5]] == undefined) {
-      device.data.cuelists[p[4]][p[5]] = {};
+    if (d.data.cuelists[p[4]][p[5]] === undefined) {
+      d.data.cuelists[p[4]][p[5]] = {};
     }
-    device.data.cuelists[p[4]][p[5]][p[6]] = {
+    d.data.cuelists[p[4]][p[5]][p[6]] = {
       uid: osc.args[1],
       label: osc.args[2],
       uptimeduration: osc.args[3],
@@ -111,56 +94,34 @@ exports.data = function (device, osc) {
     });
 
 
-  } else if (p[1] == 'out' && p[2] == 'get' && p[3] == 'cue' && p.length == 6) {
-    // console.log("cue "+p[4]+" "+p[5]+" deleted")
-
+  } else if (match(p, ['eos','out','get','cue','*','*'])) {
     // There's no OSC notification of the deletion of a part. It just tells you to update the parent cue and remaining children.
     // So: we should fetch all the parts of a cue somehow every time there's an update to a cue.
+    delete d.data.cuelists[p[4]][p[5]];
+    d.draw();
 
-    delete device.data.cuelists[p[4]][p[5]];
-    device.draw();
 
-
-  } else if (
-    p[1] == 'out' &&
-    p[2] == 'get' &&
-    p[3] == 'cue' &&
-    p[7] == 'actions'
-  ) {
-    if (osc.args.length == 3) {
-      device.data.cuelists[p[4]][p[5]][0].extlinks = osc.args[2];
+  } else if (match(p, ['eos','out','get','cue','*','*','*','actions','list','*','*'])) {
+    if (osc.args.length === 3) {
+      d.data.cuelists[p[4]][p[5]][0].extlinks = osc.args[2];
     }
 
 
-  } else if (
-    p[1] == 'out' &&
-    p[2] == 'event' &&
-    p[3] == 'cue' &&
-    p[6] == 'fire'
-  ) {
-    device.data.activeCue = p[5];
-
-    device.draw();
-    device.update("activeCue", {uid: device.data.cuelists[p[4]][p[5]][0].uid});
+  } else if (match(p, ['eos','out','event','cue','*','*','fire'])) {
+    d.data.activeCue = p[5];
+    d.draw();
+    d.update("activeCue", {uid: device.data.cuelists[p[4]][p[5]][0].uid});
 
 
-  } else if (p[1] == 'out' && p[2] == 'notify' && p[3] == 'cue') {
+  } else if (match(p, ['eos','out','notify','cue','*','*','*','*'])) {
     const cueList = p[4];
-    const listIndex = p[6];
-    const listCount = p[7];
     const cueNumber = osc.args[1];
 
-    device.send(`/eos/get/cue/${cueList}/${cueNumber}`);
+    d.send(`/eos/get/cue/${cueList}/${cueNumber}`);
     
 
-  } else if (
-    p[2] == 'cmd' ||
-    p[2] == 'ping' ||
-    p[2] == 'user' ||
-    p[2] == 'softkey'
-  ) {
-  } else if (p[3] == 'version') {
-    device.data.version = osc.args[0];
+  } else if (match(p, ['eos','out','get','version'])) {
+    d.data.version = osc.args[0];
 
 
   } else {
@@ -170,12 +131,13 @@ exports.data = function (device, osc) {
   // console.log(p)
 };
 
-let cueTemplate = _.template(fs.readFileSync(`./plugins/eos/cue.ejs`));
 
-exports.update = function(device, doc, updateType, data){
+const cueTemplate = _.template(fs.readFileSync(`./plugins/eos/cue.ejs`));
 
-  if(updateType == "cueData"){
-    $elem = doc.getElementById(data.uid);
+exports.update = function update(device, doc, updateType, data){
+
+  if(updateType === "cueData"){
+    const $elem = doc.getElementById(data.uid);
 
     if($elem){
       $elem.outerHTML = cueTemplate({
@@ -189,8 +151,8 @@ exports.update = function(device, doc, updateType, data){
 
     }
 
-  }else if(updateType == "activeCue"){
-    $elem = doc.getElementById(data.uid);
+  }else if(updateType === "activeCue"){
+    const $elem = doc.getElementById(data.uid);
     $elem.scrollIntoView({behavior: "smooth", block: "center"});
 
   }
@@ -199,6 +161,20 @@ exports.update = function(device, doc, updateType, data){
 }
 
 
-exports.heartbeat = function (device) {
+exports.heartbeat = function heartbeat(device) {
   device.send('/eos/ping');
 };
+
+
+function match(osc, array){
+  let out = true;
+  if(osc.length !== array.length){
+    return false;
+  }
+  array.forEach((m, i)=> {
+    if(osc[i] !== m && m !== "*"){
+      out = false;
+    }
+  });
+  return out;
+}

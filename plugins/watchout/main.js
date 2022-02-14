@@ -5,47 +5,49 @@ exports.searchOptions = {
   type: 'TCPport',
   searchBuffer: Buffer.from('authenticate 1\n', 'ascii'),
   testPort: 3040,
-  validateResponse: function (msg, info) {
-    return msg.toString().substring(0, 5) == 'Ready';
+  validateResponse (msg, info) {
+    return msg.toString().substring(0, 5) === 'Ready';
   },
 };
 exports.defaultPort = 3040;
 
-exports.ready = function (device) {
+exports.ready = function ready(device) {
   device.send('authenticate 1\n');
 };
 
-exports.data = function (device, message) {
+exports.data = function data(device, message) {
   const msg = message.toString();
-  if (msg.substring(0, 5) == 'Ready') {
-    device.send('getStatus\n');
-  }
-  if (msg.substring(0, 5) == 'Reply') {
+  const d = device;
+
+  if (msg.substring(0, 5) === 'Ready') {
+    d.send('getStatus\n');
+
+  }else if (msg.substring(0, 5) === 'Reply') {
     const arr = msg.split(' ');
 
-    device.data.showName = '';
+    d.data.showName = '';
     let i = 0;
-    while (arr[i][arr[i].length - 1] != '"') {
+    while (arr[i][arr[i].length - 1] !== '"') {
       i++;
-      device.data.showName += `${arr[i]} `;
+      d.data.showName += `${arr[i]} `;
     }
-    device.data.showName = device.data.showName.substring(
+    d.data.showName = d.data.showName.substring(
       1,
-      device.data.showName.length - 2
+      d.data.showName.length - 2
     );
 
     i--;
-    device.data.busy = arr[i + 2];
-    device.data.health = arr[i + 3];
-    device.data.displayOpen = arr[i + 4];
-    device.data.showActive = arr[i + 5];
-    device.data.programmerOnline = arr[i + 6];
-    device.data.position = Number(arr[i + 7]).toFixed(2);
-    device.data.rate = arr[i + 8];
-    device.data.standby = arr[i + 9];
+    d.data.busy = arr[i + 2];
+    d.data.health = arr[i + 3];
+    d.data.displayOpen = arr[i + 4];
+    d.data.showActive = arr[i + 5];
+    d.data.programmerOnline = arr[i + 6];
+    d.data.position = Number(arr[i + 7]).toFixed(2);
+    d.data.rate = arr[i + 8];
+    d.data.standby = arr[i + 9];
 
-    this.deviceInfoUpdate(device, 'defaultName', device.data.showName);
-    device.draw();
+    this.deviceInfoUpdate(d, 'defaultName', d.data.showName);
+    d.draw();
   }
   // if(msg.substring(0, 5)=="Error"){
   // 	device.data.error = msg.substring(6, 7);
@@ -53,6 +55,6 @@ exports.data = function (device, message) {
   // console.log(msg)
 };
 
-exports.heartbeat = function (device) {
+exports.heartbeat = function heartbeat(device) {
   device.send('getStatus\n');
 };

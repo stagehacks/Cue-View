@@ -1,0 +1,64 @@
+<header>
+  <h1><%= data.source %> Art-Net</h1>
+</header>
+
+
+<div id="universes">
+<% data.orderedUniverses.forEach(univ => { 
+  let universe = data.universes[univ];
+%>
+
+  <table id="universe-<%= univ %>">
+  <tr>
+    <td class="data" colspan="2">
+      Universe
+      <br><em><%= univ %></em>
+    </td>
+    <td class="data" colspan="2">
+      Sub-Net
+      <br><em><%= universe.net %></em>
+    </td>
+    <td class="data" colspan="2">
+      Sequence
+      <br><em id="universe-<%= univ %>-sequence"><%= universe.sequence %></em>
+    </td>
+    <td class="data" colspan="2">
+      OpCode
+      <br><em><%= universe.opCode %></em>
+    </td>
+    <td class="data" colspan="2">
+      Version
+      <br><em><%= universe.version %></em>
+    </td>
+    <td class="data" colspan="4">
+      IP
+      <br><em><%= data.ip %></em>
+    </td>
+    <td class="data" colspan="3"></td>
+
+  </tr>
+
+  <tr>
+    <th></th>
+    <% for(col=1; col<=16; col++){ %>
+      <th><%= col %></th>
+    <% } %>
+  </tr>
+
+  <% let slot = 0; %>
+  <% for(row=0; row<32; row++){ %>
+    <tr>
+      <th><%= row*16+1 %></th>
+    <% for(col=0; col<16; col++){ %>
+      <% slot++%>
+      <td id="<%= univ %>-<%= row*16+col %>" title="<%= univ %>/<%= slot %>"><%= universe.slots[slot-1] %></td>
+    <% } %>
+    </tr>
+  <% } %>
+
+  
+</table>
+
+<% }); %>
+
+</div>

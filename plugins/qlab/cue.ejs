@@ -157,17 +157,18 @@
 
     if(value>0){
       let percent = value/def*100;
-      let bg = "background: black; background: linear-gradient(90deg, "+fill+" "+percent+"%, transparent "+percent+"%);";
+      let bg = `style='background: black; background: linear-gradient(90deg, ${fill} ${percent}%, transparent ${percent}%);`;
 
       if(cue.paused){
         bg+= "outline-color: "+border+";";
         bg+= "color: white;";
       }
+      bg+="'";
       
-      return "<div class='q-time-elapsed' style='"+bg+"'>"+prettyFormatTime(Math.min(def, value))+"</span>";
+      return `<div class='q-time-elapsed' ${bg}>"+prettyFormatTime(Math.min(def, value))+"</span>`;
 
     }else if(type=="postWait" || type=="action"){
-      return "<span class='q-gray-text'>"+prettyFormatTime(def)+"</span>";
+      return `<span class='q-gray-text'>${prettyFormatTime(def)}</span>`;
 
     }else{
       return prettyFormatTime(def);
