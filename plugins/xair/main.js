@@ -6,7 +6,7 @@ exports.searchOptions = {
   searchBuffer: Buffer.from([0x2f, 0x78, 0x69, 0x6e, 0x66, 0x6f]),
   devicePort: 10024,
   listenPort: 0,
-  validateResponse (msg, info) {
+  validateResponse(msg, info) {
     return msg.toString().indexOf('/xinfo') === 0;
   },
 };
@@ -81,7 +81,6 @@ exports.data = function data(device, buf) {
       );
     }
     d.draw();
-
   } else if (msg[0] === '/meters/0') {
     // console.log(msg)
   } else if (msg[0].indexOf('/mix/fader') >= 0) {
@@ -95,13 +94,10 @@ exports.data = function data(device, buf) {
       );
     } else if (addr[0] === 'lr') {
       d.data.stereoFader = buf.readFloatBE(20);
-      d.data.stereoFaderDB = convertToDBTheBehringerWay(
-        buf.readFloatBE(20)
-      );
+      d.data.stereoFaderDB = convertToDBTheBehringerWay(buf.readFloatBE(20));
     }
 
     d.draw();
-
   } else if (msg[0].indexOf('/mix/on') >= 0) {
     const addr = parseAddress(msg[0]);
     const channel = Number(addr[1]);
@@ -113,21 +109,18 @@ exports.data = function data(device, buf) {
     }
     device.draw();
     device.send(`/ch/${addr[1]}/mix/fader\u0000\u0000\u0000\u0000`);
-
   } else if (msg[0].indexOf('/config/name') > 0) {
     const addr = parseAddress(msg[0]);
     const channel = Number(addr[1]);
     d.data.channelNames[channel - 1] = msg[4];
     d.draw();
     d.send(`/ch/${addr[1]}/config/color\u0000\u0000\u0000\u0000`);
-
   } else if (msg[0].indexOf('/config/color') > 0) {
     const addr = parseAddress(msg[0]);
     const channel = Number(addr[1]);
     d.data.channelColors[channel - 1] = buf.readInt8(27);
     d.draw();
     d.send(`/ch/${addr[1]}/mix/on\u0000\u0000\u0000\u0000`);
-
   } else {
     // console.log(msg)
   }
