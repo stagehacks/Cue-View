@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-exports.defaultName = 'sACN Universe';
+exports.defaultName = 'sACN';
 exports.connectionType = 'multicast';
 exports.defaultPort = 5568;
 exports.heartbeatInterval = 5000;
