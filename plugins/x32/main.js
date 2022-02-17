@@ -23,6 +23,8 @@ exports.ready = function ready(device) {
   d.data.stereoFader = 0;
   d.data.stereoFaderDB = 0;
   d.data.stereoMute = 0;
+  d.data.stereoName = "LR";
+  d.data.stereoColor = 7;
 
   d.send(Buffer.from('/xinfo'));
 
@@ -53,18 +55,20 @@ function convertToDBTheBehringerWay(f) {
 
 exports.data = function data(device, buf) {
   this.deviceInfoUpdate(device, 'status', 'ok');
-  const msg = buf.toString().split('\u0000\u0000');
+
+  //replace one or more nulls with new line then split on that
+  const msg = buf.toString().replace(/(\0+)/gm, '\n').split('\n');
+
   const d = device;
 
   if (msg[0] === '/xinfo') {
-    this.deviceInfoUpdate(device, 'defaultName', msg[4]);
-    d.data.name = msg[4];
+    this.deviceInfoUpdate(device, 'defaultName', msg[3]);
+    d.data.name = msg[3];
     d.data.ip = msg[2];
-    d.data.firmware = msg[7];
-    d.data.model = msg[5];
+    d.data.firmware = msg[5];
+    d.data.model = msg[4];
 
-    d.send(Buffer.from('/lr/mix/fader\u0000\u0000\u0000\u0000'));
-    d.send(Buffer.from('/lr/mix/on\u0000\u0000\u0000\u0000'));
+    d.send(Buffer.from('/main/st/config/name\u0000\u0000\u0000\u0000'));
 
     for (let i = 0; i <= 32; i++) {
       d.send(
@@ -87,10 +91,10 @@ exports.data = function data(device, buf) {
       d.data.channelFadersDB[channel - 1] = convertToDBTheBehringerWay(
         buf.readFloatBE(24)
       );
-    } else if (addr[0] === 'lr') {
-      d.data.stereoFader = buf.readFloatBE(20);
+    } else if (addr[0] === 'main') {
+      d.data.stereoFader = buf.readFloatBE(24);
       d.data.stereoFaderDB = convertToDBTheBehringerWay(
-        buf.readFloatBE(20)
+        buf.readFloatBE(24)
       );
     }
 
@@ -101,27 +105,49 @@ exports.data = function data(device, buf) {
 
     if (addr[0] === 'ch') {
       d.data.channelMutes[channel - 1] = buf[23];
-    } else if (addr[0] === 'lr') {
-      d.data.stereoMute = buf[19];
+      d.send(
+        Buffer.from(`/ch/${addr[1]}/mix/fader\u0000\u0000\u0000\u0000`)
+      );
+    } else if (addr[0] === 'main') {
+      d.data.stereoMute = buf.slice(-1)[0] ;
+      d.send(
+        Buffer.from(`/main/${addr[1]}/mix/fader\u0000\u0000\u0000\u0000`)
+      );
     }
     d.draw();
-    d.send(
-      Buffer.from(`/ch/${addr[1]}/mix/fader\u0000\u0000\u0000\u0000`)
-    );
+    
   } else if (msg[0].indexOf('/config/name') > 0) {
     const addr = parseAddress(msg[0]);
-    const channel = Number(addr[1]);
-    d.data.channelNames[channel - 1] = msg[2];
+    if(addr[0] === "main"){
+      if(addr[1] === "st"){
+        d.data.stereoName = msg[2]
+        if(d.data.stereoName === ""){
+          d.data.stereoName = "LR";
+        }
+        d.send(
+          Buffer.from(`/main/${addr[1]}/config/color\u0000\u0000\u0000\u0000`)
+        );
+      }
+    } else if (addr[0] === "ch"){
+      const channel = Number(addr[1]);
+      d.data.channelNames[channel - 1] = msg[2];
+      d.send(
+        Buffer.from(`/ch/${addr[1]}/config/color\u0000\u0000\u0000\u0000`)
+      );
+    }
     d.draw();
-    d.send(
-      Buffer.from(`/ch/${addr[1]}/config/color\u0000\u0000\u0000\u0000`)
-    );
   } else if (msg[0].indexOf('/config/color') > 0) {
     const addr = parseAddress(msg[0]);
-    const channel = Number(addr[1]);
-    d.data.channelColors[channel - 1] = buf.readInt8(27);
+    if (addr[0] === "main"){
+      d.data.stereoColor = Buffer.from(msg[2]).readInt8();
+      d.send(Buffer.from(`/main/${addr[1]}/mix/on\u0000\u0000\u0000\u0000`));
+      
+    } else if (addr[0] === "ch"){
+      const channel = Number(addr[1]);
+      d.data.channelColors[channel - 1] = buf.readInt8(27);
+      d.send(Buffer.from(`/ch/${addr[1]}/mix/on\u0000\u0000\u0000\u0000`));
+    }
     d.draw();
-    d.send(Buffer.from(`/ch/${addr[1]}/mix/on\u0000\u0000\u0000\u0000`));
   } else {
     // console.log(msg)
   }
