@@ -56,7 +56,7 @@ function convertToDBTheBehringerWay(f) {
 exports.data = function data(device, buf) {
   this.deviceInfoUpdate(device, 'status', 'ok');
 
-  //replace one or more nulls with new line then split on that
+  // replace one or more nulls with new line then split on that
   const msg = buf.toString().replace(/(\0+)/gm, '\n').split('\n');
 
   const d = device;
