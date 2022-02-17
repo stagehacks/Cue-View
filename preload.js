@@ -1,9 +1,4 @@
-// const { remote } = require('electron');
 const { ipcRenderer } = require('electron');
-// let currWindow = remote.BrowserWindow.getFocusedWindow();
-// const { v4: uuid } = require('uuid');
-
-//const net = require('net');
 
 const DEVICE = require('./src/device.js');
 const PLUGINS = require('./src/plugins.js');
@@ -12,8 +7,9 @@ const VIEW = require('./src/view.js');
 const SAVESLOTS = require('./src/saveSlots.js');
 
 window.addDevice = DEVICE.addDevice;
+window.searchAll = SEARCH.searchAll;
 
-window.init = function () {
+window.init = function init() {
   console.log('init!');
 
   ipcRenderer.send('enableDeviceDropdown');
@@ -25,27 +21,35 @@ window.init = function () {
     SAVESLOTS.loadSlot(1);
   });
 
-  document.getElementById('device-settings-table').onclick = function (e) {
+  document.getElementById('search-button').onclick = (e) => {
+    SEARCH.searchAll();
+  };
+
+  document.getElementById('device-settings-table').onclick = function settingsClick(e) {
     e.stopPropagation();
   };
-  document.getElementById('device-settings-name').onchange = function (e) {
+  
+  document.getElementById('device-settings-name').onchange = function nameChange(e) {
     e.stopPropagation();
     DEVICE.changeActiveName(e.target.value);
   };
-  document.getElementById('device-settings-plugin-dropdown').onchange =
-    function (e) {
-      e.stopPropagation();
-      DEVICE.changeActiveType(e.target.value);
-    };
-  document.getElementById('device-settings-ip').onchange = function (e) {
+  
+  document.getElementById('device-settings-plugin-dropdown').onchange = function dropdownChange(e) {
+    e.stopPropagation();
+    DEVICE.changeActiveType(e.target.value);
+  };
+
+  document.getElementById('device-settings-ip').onchange = function ipChange(e) {
     e.stopPropagation();
     DEVICE.changeActiveIP(e.target.value);
   };
-  document.getElementById('device-settings-port').onchange = function (e) {
+
+  document.getElementById('device-settings-port').onchange = function portChange(e) {
     e.stopPropagation();
     DEVICE.changeActivePort(e.target.value);
   };
-  document.getElementById('device-settings-pin').onchange = function (e) {
+
+  document.getElementById('device-settings-pin').onchange = function pinChange(e) {
     e.stopPropagation();
     if (e.target.checked) {
       VIEW.pinActiveDevice();
@@ -54,33 +58,35 @@ window.init = function () {
     }
   };
 
-  document.getElementById('save-slot-1').onclick = function (e) {
+  document.getElementById('save-slot-1').onclick = function slot1click(e) {
     e.stopPropagation();
     SAVESLOTS.loadSlot(1);
   };
-  document.getElementById('save-slot-2').onclick = function (e) {
+
+  document.getElementById('save-slot-2').onclick = function slot2click(e) {
     e.stopPropagation();
     SAVESLOTS.loadSlot(2);
   };
-  document.getElementById('save-slot-3').onclick = function (e) {
+
+  document.getElementById('save-slot-3').onclick = function slot3click(e) {
     e.stopPropagation();
     SAVESLOTS.loadSlot(3);
   };
 
-  document.getElementById('refresh-device-button').onclick = function (e) {
+  document.getElementById('refresh-device-button').onclick = function refreshClick(e) {
     e.stopPropagation();
     DEVICE.refreshActive();
   };
 
-  document.getElementById('device-list').onclick = function (e) {
+  document.getElementById('device-list').onclick = function listClick(e) {
     e.stopPropagation();
     const deviceID = e.srcElement.id;
-    if (e.srcElement.id != 'device-list') {
+    if (e.srcElement.id !== 'device-list') {
       VIEW.switchDevice(deviceID);
     }
   };
 
-  document.getElementById('add-device-button').onchange = function (e) {
+  document.getElementById('add-device-button').onchange = function addDeviceClick(e) {
     DEVICE.registerDevice({
       type: e.target.value,
       defaultName: 'New Device',
@@ -92,31 +98,25 @@ window.init = function () {
     SAVESLOTS.saveAll();
   };
 
-  document.onkeyup = function (e) {
-    switch (e.key) {
-      case 'ArrowUp':
-        VIEW.selectPreviousDevice();
-        break;
-      case 'ArrowDown':
-        VIEW.selectNextDevice();
-        break;
-      case 'Tab':
-        if (
-          document.activeElement.tagName != 'INPUT' &&
-          document.activeElement.tagName != 'SELECT'
-        ) {
-          document.getElementById('device-settings-name').select();
-        }
-        break;
+  document.onkeyup = function keyUp(e) {
+    if(e.key === 'ArrowUp'){
+      VIEW.selectPreviousDevice();
+    
+    }else if(e.key === 'ArrowDown'){
+      VIEW.selectNextDevice();
+
+    }else if(e.key === 'Tab'){
+      if (
+        document.activeElement.tagName !== 'INPUT' &&
+        document.activeElement.tagName !== 'SELECT'
+      ) {
+        document.getElementById('device-settings-name').select();
+      }
     }
+
   };
 
-  // document.getElementById("device-settings-delete").onclick = function(e){
-  //  e.stopPropagation();
-  //  confirm("Are you sure you want to delete device \n\""+VIEW.getActiveDevice().name+"\"?")
-  // }
-
-  document.getElementById('device-list-col').onclick = function (e) {
+  document.getElementById('device-list-col').onclick = function deviceListClick(e) {
     try {
       document
         .querySelector('#device-list .active-device')
@@ -160,9 +160,11 @@ ipcRenderer.on('resetViews', (event, message) => {
 ipcRenderer.on('doSlots1', (event, message) => {
   SAVESLOTS.loadSlot(1);
 });
+
 ipcRenderer.on('doSlots2', (event, message) => {
   SAVESLOTS.loadSlot(2);
 });
+
 ipcRenderer.on('doSlots3', (event, message) => {
   SAVESLOTS.loadSlot(3);
 });
@@ -175,6 +177,4 @@ function switchClass(element, className) {
   }
   element.classList.add(className);
 }
-window.switchClass = function (element, className) {
-  switchClass(element, className);
-};
+window.switchClass = switchClass;

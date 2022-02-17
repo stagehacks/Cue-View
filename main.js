@@ -13,7 +13,7 @@ const menuTemplate = [
       {
         label: 'Clear Saved Data',
         id: 'resetViews',
-        click: function (menuItem, window, event) {
+        click (menuItem, window, event) {
           mainWindow.webContents.send('resetViews');
         }
       },
@@ -36,7 +36,7 @@ const menuTemplate = [
         accelerator: 'CommandOrControl+1',
         id: 'window1',
         enabled: true,
-        click: function (menuItem, window, event) {
+        click (menuItem, window, event) {
           mainWindow.webContents.send('doSlots1');
         }
       },
@@ -45,7 +45,7 @@ const menuTemplate = [
         accelerator: 'CommandOrControl+2',
         id: 'window2',
         enabled: true,
-        click: function (menuItem, window, event) {
+        click (menuItem, window, event) {
           mainWindow.webContents.send('doSlots2');
         }
       },
@@ -54,7 +54,7 @@ const menuTemplate = [
         accelerator: 'CommandOrControl+3',
         id: 'window3',
         enabled: true,
-        click: function (menuItem, window, event) {
+        click (menuItem, window, event) {
           mainWindow.webContents.send('doSlots3');
         }
       },
@@ -70,7 +70,7 @@ const menuTemplate = [
         accelerator: 'CommandOrControl+F',
         id: 'deviceSearch',
         enabled: true,
-        click: function (menuItem, window, event) {
+        click (menuItem, window, event) {
           mainWindow.webContents.send('doSearch');
         }
       },
@@ -82,7 +82,7 @@ const menuTemplate = [
         accelerator: 'CommandOrControl+P',
         id: 'devicePin',
         enabled: false,
-        click: function (menuItem, window, event) {
+        click (menuItem, window, event) {
           mainWindow.webContents.send(
             'setActiveDevicePinned',
             menuItem.checked
@@ -94,7 +94,7 @@ const menuTemplate = [
         accelerator: 'CommandOrControl+Backspace',
         id: 'deviceDelete',
         enabled: false,
-        click: function (menuItem, window, event) {
+        click (menuItem, window, event) {
           mainWindow.webContents.send('doDelete');
         }
       }

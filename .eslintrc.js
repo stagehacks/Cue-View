@@ -20,5 +20,6 @@ module.exports = {
     'no-use-before-define': 'off',
     'space-infix-ops': 'warn',
     'no-bitwise': 'off',
+    'no-restricted-globals': 'off'
   },
 };

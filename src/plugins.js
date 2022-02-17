@@ -1,29 +1,32 @@
+/* eslint-disable global-require */
 const fs = require('fs');
+const _ = require('lodash');
+
 const DEVICE = require('./device.js');
 const VIEW = require('./view.js');
-const _ = require('lodash');
 
 const allPlugins = {};
 module.exports.all = allPlugins;
 
-module.exports.init = function (callback) {
+module.exports.init = function init(callback) {
   console.log(`Loading plugin files... ${__dirname}/../plugins`);
 
   fs.readdir(`${__dirname}/../plugins`, (err, files) => {
-    for (let i in files) {
-      const plugin = files[i];
-
-      if (plugin[0] != '.') {
+    
+    files.forEach((plugin)=>{
+      if (plugin[0] !== '.') {
         
-        console.log(`${i} ${plugin}`);
+        console.log(`${plugin} started`);
+
+        // eslint-disable-next-line import/no-dynamic-require
         allPlugins[plugin] = require(`${__dirname}/../plugins/${plugin}/main.js`);
 
-        let p = allPlugins[plugin];
+        const p = allPlugins[plugin];
 
-        p.deviceInfoUpdate = function (device, param, value) {
+        p.deviceInfoUpdate = function deviceInfoUpdate(device, param, value) {
           DEVICE.infoUpdate(device, param, value);
         };
-        p.draw = function (device) {
+        p.draw = (device) => {
           VIEW.draw(device);
         };
 
@@ -42,20 +45,22 @@ module.exports.init = function (callback) {
         );
 
 
-        if (p.heartbeatTimeout == undefined || p.heartbeatTimeout < 50) {
+        if (p.heartbeatTimeout === undefined || p.heartbeatTimeout < 50) {
           if(p.heartbeatInterval){
-            p.heartbeatTimeout = p.heartbeatInterval*1.5;
+            p.heartbeatTimeout = p.heartbeatInterval * 1.5;
           }else{
             p.heartbeatTimeout = 10000;
           }
         }
 
-        if (p.heartbeatInterval == undefined || p.heartbeatInterval < 50) {
+        if (p.heartbeatInterval === undefined || p.heartbeatInterval < 50) {
           p.heartbeatInterval = 5000;
         }
 
       }
-    }
+    });
+
     callback();
+
   });
 };

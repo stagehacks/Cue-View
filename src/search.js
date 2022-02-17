@@ -1,5 +1,4 @@
 const { ipcRenderer } = require('electron');
-const { Netmask } = require('netmask');
 const dgram = require('dgram');
 const bonjour = require('bonjour')();
 const net = require('net');
@@ -13,12 +12,11 @@ const PLUGINS = require('./plugins.js');
 let searching = false;
 let allServers = false;
 
-// from local-devices library
 function getServers() {
   const interfaces = os.networkInterfaces();
   const result = [];
-
-  for (const key in interfaces) {
+  
+  Object.keys(interfaces).forEach((key) => {
     const addresses = interfaces[key];
     for (let i = addresses.length; i--; ) {
       const address = addresses[i];
@@ -29,29 +27,26 @@ function getServers() {
         while (current++ < last) result.push(ip.fromLong(current));
       }
     }
-  }
-
+  });
   return result;
+
 }
 
 const searchSockets = [];
-
-searchAll = function () {
+function searchAll() {
   if (searching) {
-    return true;
+    return;
   }
   searching = true;
   ipcRenderer.send('disableSearchAll', '');
   document.getElementById('search-button').style.opacity = 0.2;
-  //== console.clear();
 
-  for (let i in DEVICE.all) {
+  Object.keys(DEVICE.all).forEach((i) => {
     DEVICE.infoUpdate(DEVICE.all[i], 'status', 'refresh');
-  }
+  });
 
   console.log('Searching...');
 
-  // findOnlineDevices();
   allServers = getServers();
   let TCPFlag = true;
   if (allServers.length > 2046) {
@@ -61,34 +56,32 @@ searchAll = function () {
     TCPFlag = false;
   }
 
-  for (let p in PLUGINS.all) {
+  Object.keys(PLUGINS.all).forEach((p) => {
     const plugin = PLUGINS.all[p];
     
     try {
-      switch (plugin.searchOptions.type) {
-        case 'TCPport':
-          if (TCPFlag) {
-            newSearchTCP(p, plugin);
-          }
-          break;
-        case 'Bonjour':
-          newSearchBonjour(p, plugin);
-          break;
-        case 'UDPsocket':
-          newSearchUDP(p, plugin);
-          break;
-        case 'multicast':
-          newSearchMulticast(p, plugin);
-          break;
+      const t = plugin.searchOptions.type;
+
+      if(t === 'TCPport'){
+        if (TCPFlag) {
+          searchTCP(p, plugin);
+        }
+
+      }else if(t === 'Bonjour'){
+        searchBonjour(p, plugin);
+
+      }else if(t === 'UDPsocket'){
+        searchUDP(p, plugin);
+
+      }else if(t === 'multicast'){
+        searchMulticast(p, plugin);
+
       }
+
     } catch (err) {
       console.error(`Unable to search for plugin ${p}`);
     }
-  }
-
-  // searchBonjour();
-  // searchTCP();
-  // searchUDP();
+  });
 
   setTimeout(() => {
     searching = false;
@@ -97,7 +90,9 @@ searchAll = function () {
     for (let i = 0; i < searchSockets.length; i++) {
       try {
         searchSockets[i].close();
-      } catch (err) {}
+      } catch (err) {
+        //
+      }
     }
 
     ipcRenderer.send('enableSearchAll', '');
@@ -107,15 +102,15 @@ module.exports.searchAll = searchAll;
 
 
 
-newSearchBonjour = function (pluginType, plugin) {
+function searchBonjour(pluginType, plugin) {
   bonjour.find({ type: plugin.searchOptions.bonjourName }, (e) => {
 
     const validAddresses = [];
-    for (let i in e.addresses) {
-      if (e.addresses[i].indexOf(':') == -1) {
-        validAddresses.push(e.addresses[i]);
+    e.addresses.forEach((address) => {
+      if (address.indexOf(':') === -1) {
+        validAddresses.push(address);
       }
-    }
+    });
 
     DEVICE.registerDevice({
       type: pluginType,
@@ -124,24 +119,19 @@ newSearchBonjour = function (pluginType, plugin) {
       addresses: validAddresses,
     });
   });
+
 };
 
 
-newSearchTCP = function (pluginType, plugin) {
+function searchTCP(pluginType, plugin) {
   for (let i = 0; i < allServers.length; i++) {
     TCPtest(allServers[i], pluginType, plugin);
   }
 };
 
-TCPtest = function (ip, pluginType, plugin) {
-  const client = net.createConnection(plugin.searchOptions.testPort, ip, () => {
+function TCPtest(ipAddr, pluginType, plugin) {
+  const client = net.createConnection(plugin.searchOptions.testPort, ipAddr, () => {
     client.write(plugin.searchOptions.searchBuffer);
-    // DEVICE.registerDevice({
-    // 	type: pluginType,
-    // 	defaultName: plugin.defaultName,
-    // 	port: plugin.defaultPort,
-    // 	addresses: [ip]
-    // })
   });
   client.on('data', (data) => {
     if (plugin.searchOptions.validateResponse(data)) {
@@ -149,7 +139,7 @@ TCPtest = function (ip, pluginType, plugin) {
         type: pluginType,
         defaultName: plugin.defaultName,
         port: plugin.defaultPort,
-        addresses: [ip],
+        addresses: [ipAddr],
       });
     }
     client.end();
@@ -159,47 +149,8 @@ TCPtest = function (ip, pluginType, plugin) {
   });
 };
 
-findOnlineDevices = function () {
-  const allInterfaces = os.networkInterfaces();
-  const validInterfaces = [];
-  for (let i in allInterfaces) {
-    for (let j = 0; j < allInterfaces[i].length; j++) {
-      const iface = allInterfaces[i][j];
 
-      if (
-        iface.family == 'IPv4' &&
-        iface.internal == false &&
-        iface.address.split('.')[0] != '169'
-      ) {
-        validInterfaces.push(iface);
-      }
-    }
-  }
-
-  for (let i = 0; i < validInterfaces.length; i++) {
-    const block = new Netmask(validInterfaces[i].cidr);
-    const f = block.first.split('.');
-    const l = block.last.split('.');
-    const cur = [f[0], f[1], f[2], f[3]];
-
-    for (let j = Number(f[2]); j <= Number(l[2]); j++) {
-      cur[2] = j;
-      for (let k = Number(f[3]); k < Number(l[3]); k++) {
-        cur[3] = k;
-        allIPs.push(`${cur[0]}.${cur[1]}.${cur[2]}.${cur[3]}`);
-      }
-    }
-  }
-};
-
-
-
-//const pjLinkMessage = Buffer.from([0x25, 0x32, 0x53, 0x52, 0x43, 0x48, 0x0d]);
-//const xAirMessage = Buffer.from([0x2f, 0x78, 0x69, 0x6e, 0x66, 0x6f]);
-//const serverUDP = dgram.createSocket('udp4');
-//const serverUDP2 = dgram.createSocket('udp4');
-
-newSearchUDP = function (pluginType, plugin) {
+function searchUDP(pluginType, plugin) {
   const i = searchSockets.push(dgram.createSocket('udp4')) - 1;
 
   searchSockets[i].bind(plugin.searchOptions.listenPort, () => {
@@ -260,8 +211,8 @@ newSearchUDP = function (pluginType, plugin) {
 };
 
 
-newSearchMulticast = function (pluginType, plugin) {
-  let socket = dgram.createSocket('udp4');
+function searchMulticast(pluginType, plugin) {
+  const socket = dgram.createSocket('udp4');
   socket.on('message', (msg, info) => {
     if (plugin.searchOptions.validateResponse(msg, info)) {
       socket.close();
@@ -273,7 +224,7 @@ newSearchMulticast = function (pluginType, plugin) {
       });
     }
   });
-  socket.bind(plugin.searchOptions.port, function(){
+  socket.bind(plugin.searchOptions.port, () => {
     socket.addMembership(plugin.searchOptions.address);
   });
 }

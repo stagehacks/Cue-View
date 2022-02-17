@@ -1,7 +1,7 @@
 body {
   font-family: sans-serif;
   margin: 0px;
-  margin-top:  40px;
+  margin-top: 40px;
   user-select: none;
   visibility: visible !important;
   max-width: 100%;
@@ -15,7 +15,7 @@ header {
   width: 100%;
   box-sizing: content-box;
   white-space: nowrap;
-  overflow:  hidden;
+  overflow: hidden;
 
   background-color: #111111;
   border-bottom: black 1px solid;
@@ -63,20 +63,20 @@ table.cv-table tr:nth-child(odd) {
 }
 table.cv-table tr td:first-child {
   padding-left: 10px;
-  -webkit-border-top-left-radius: 10px;
-  -webkit-border-bottom-left-radius: 10px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
 }
 table.cv-table tr td:last-child {
   padding-right: 10px;
-  -webkit-border-top-right-radius: 10px;
-  -webkit-border-bottom-right-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 table.cv-table td {
   padding: 7px 16px;
 }
 
 .not-responding {
-  color:  white;
+  color: white;
 }
 .not-responding em {
   background-color: #3f3f3f;
@@ -84,22 +84,23 @@ table.cv-table td {
   display: inline-block;
   border-radius: 5px;
 }
-.not-responding hr{
-  margin-top:  100px;
-  border-color:  #333;
+.not-responding hr {
+  margin-top: 100px;
+  border-color: #333;
 }
 
-.device-info{
-  color:  #AAA;
+.device-info {
+  color: #aaa;
 }
-.device-info h4, .device-info h2{
-  color:  #BBB;
+.device-info h4,
+.device-info h2 {
+  color: #bbb;
 }
-.device-info em{
+.device-info em {
   background-color: #3f3f3f;
   padding: 2px 5px;
   display: inline-block;
   border-radius: 5px;
-  color:  #fdea08;
-  margin:  1px;
+  color: #fdea08;
+  margin: 1px;
 }

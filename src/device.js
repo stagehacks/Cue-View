@@ -2,7 +2,7 @@ const { v4: uuid } = require('uuid');
 const osc = require('osc');
 const net = require('net');
 const udp = require('dgram');
-const { debounce } = require('lodash/function');
+const _ = require('lodash');
 
 const PLUGINS = require('./plugins.js');
 const VIEW = require('./view.js');
@@ -11,9 +11,9 @@ const SAVESLOTS = require('./saveSlots.js');
 const devices = {};
 module.exports.all = devices;
 
-registerDevice = function (newDevice) {
+function registerDevice(newDevice) {
 
-  if (PLUGINS.all[newDevice.type] == undefined) {
+  if (PLUGINS.all[newDevice.type] === undefined) {
     console.error(`Plugin for device ${newDevice.type} does not exist.`);
     return true;
   }
@@ -25,17 +25,17 @@ registerDevice = function (newDevice) {
 
   // only register device if it hasn't already been added
   if (newDevice.addresses.length > 0) {
-    for (let i in devices) {
-      if (
-        devices[i].type == newDevice.type &&
-        JSON.stringify(devices[i].addresses) ==
-          JSON.stringify(newDevice.addresses)
-      ) {
-        // This device has already been added
-        infoUpdate(devices[i], 'status', 'ok');
-        return false;
-      }
+    
+    const existing = _.find(devices, (e) => {
+      const typeMatch = e.type === newDevice.type;
+      const addressMatch = JSON.stringify(e.addresses) === JSON.stringify(newDevice.addresses);
+      return typeMatch && addressMatch;
+    });
+
+    if(existing){
+      return false;
     }
+
   }
 
   // console.log("Registered new "+newDevice.type)
@@ -55,10 +55,10 @@ registerDevice = function (newDevice) {
     lastDrawn: 0,
     lastHeartbeat: 0,
     heartbeatInterval: PLUGINS.all[newDevice.type].heartbeatInterval,
-    draw: function(){
+    draw(){
       VIEW.draw(this);
     },
-    update: function(type, data){
+    update(type, data){
       if(this.drawn){
         VIEW.update(this, type, data);
       }else{
@@ -69,27 +69,30 @@ registerDevice = function (newDevice) {
 
   VIEW.addDeviceToList(devices[id]);
   initDeviceConnection(id);
+  return true;
 };
 module.exports.registerDevice = registerDevice;
 
 
-initDeviceConnection = function (id) {
+function initDeviceConnection(id) {
   const device = devices[id];
 
   infoUpdate(device, 'status', 'new');
 
-  if (device.port == undefined || device.addresses.length == 0) {
+  if (device.port === undefined || device.addresses.length === 0) {
     return true;
   }
   try {
     // mostly only useful for UDP
     device.connection.close();
-  } catch (err) {}
+  } catch (err){
+    //
+  }
 
   const { type } = devices[id];
   const plugins = PLUGINS.all;
 
-  if (plugins[type].connectionType == 'osc') {
+  if (plugins[type].connectionType === 'osc') {
     device.connection = new osc.TCPSocketPort({
       address: device.addresses[0],
       port: device.port,
@@ -101,7 +104,7 @@ initDeviceConnection = function (id) {
     });
     device.connection.on('ready', () => {
       plugins[type].ready(device);
-      if (Object.keys(devices).length == 1) {
+      if (Object.keys(devices).length === 1) {
         VIEW.switchDevice(device.id);
       }
     });
@@ -113,26 +116,26 @@ initDeviceConnection = function (id) {
       }
       device.lastMessage = Date.now();
     });
-    device.send = function (address, args) {
-      device.connection.send({ address: address, args: args });
+    device.send = (address, args) => {
+      device.connection.send({ 'address': address, 'args': args });
     };
     device.plugin = plugins[type];
 
 
-  } else if (plugins[type].connectionType == 'TCPsocket') {
+  } else if (plugins[type].connectionType === 'TCPsocket') {
     device.connection = new net.Socket();
 
-    device.connection.connect(
-      { port: device.port, host: device.addresses[0] },
-      () => {}
-    );
+    device.connection.connect({
+      port: device.port,
+      host: device.addresses[0]
+    }, () => {});
 
     device.connection.on('error', (error) => {
       // console.error(error)
     });
     device.connection.on('ready', () => {
       plugins[type].ready(device);
-      if (Object.keys(devices).length == 1) {
+      if (Object.keys(devices).length === 1) {
         VIEW.switchDevice(device.id);
       }
     });
@@ -142,13 +145,13 @@ initDeviceConnection = function (id) {
       device.lastMessage = Date.now();
       infoUpdate(device, 'status', 'ok');
     });
-    device.send = function (data) {
+    device.send = (data) => {
       // log("SOCK OUT", data);
       device.connection.write(data);
     };
 
 
-  } else if (plugins[type].connectionType == 'UDPsocket') {
+  } else if (plugins[type].connectionType === 'UDPsocket') {
     device.connection = udp.createSocket('udp4');
 
     device.connection.bind({port: plugins[type].defaultPort}, () => {
@@ -160,14 +163,14 @@ initDeviceConnection = function (id) {
       });
     });
 
-    device.send = function (data) {
+    device.send = (data) => {
       device.connection.send(Buffer.from(data), device.port, device.addresses[0], (err) => {
         // console.log(err);
       });
     };
   
 
-  } else if (plugins[type].connectionType == 'multicast') {
+  } else if (plugins[type].connectionType === 'multicast') {
     device.connection = udp.createSocket('udp4');
 
     device.connection.bind(device.port, () => {
@@ -179,14 +182,14 @@ initDeviceConnection = function (id) {
       });
     });
 
-    device.send = function (data) {};
+    device.send = (data) => { };
   }
 
-  
+  return true;
 };
 module.exports.initDeviceConnection = initDeviceConnection;
 
-module.exports.deleteActive = function () {
+module.exports.deleteActive = function deleteActive() {
   const device = VIEW.getActiveDevice();
   const choice = confirm(
     `Are you sure you want to delete ${device.type} device "${
@@ -203,7 +206,7 @@ module.exports.deleteActive = function () {
   }
 };
 
-module.exports.changeActiveType = function (newType) {
+module.exports.changeActiveType = function changeActiveType(newType) {
   const device = VIEW.getActiveDevice();
   device.type = newType;
 
@@ -212,7 +215,7 @@ module.exports.changeActiveType = function (newType) {
   // SAVESLOTS.saveAll();
 };
 
-module.exports.changeActiveIP = function (newIP) {
+module.exports.changeActiveIP = function changeActiveIP(newIP) {
   const device = VIEW.getActiveDevice();
   device.addresses[0] = newIP;
   initDeviceConnection(device.id);
@@ -220,7 +223,7 @@ module.exports.changeActiveIP = function (newIP) {
   SAVESLOTS.saveAll();
 };
 
-module.exports.changeActivePort = function (newPort) {
+module.exports.changeActivePort = function changeActivePort(newPort) {
   const device = VIEW.getActiveDevice();
   device.port = newPort;
 
@@ -229,59 +232,83 @@ module.exports.changeActivePort = function (newPort) {
   SAVESLOTS.saveAll();
 };
 
-module.exports.changeActiveName = function (newName) {
+module.exports.changeActiveName = function changeActiveName(newName) {
   const device = VIEW.getActiveDevice();
   device.displayName = newName;
   infoUpdate(device, 'displayName', newName);
   VIEW.draw(device);
   SAVESLOTS.saveAll();
 };
-module.exports.changeActivePinIndex = function (newPin) {
+module.exports.changeActivePinIndex = function changeActivePinIndex(newPin) {
   const device = VIEW.getActiveDevice();
   device.pinIndex = newPin;
   VIEW.draw(device);
   SAVESLOTS.saveAll();
 };
-module.exports.changePinIndex = function (device, newPin) {
-  device.pinIndex = newPin;
+module.exports.changePinIndex = function changePinIndex(device, newPin) {
+  const d = device;
+  d.pinIndex = newPin;
   // SAVESLOTS.saveAll();
 };
-module.exports.refreshActive = function () {
+module.exports.refreshActive = function refreshActive() {
   const device = VIEW.getActiveDevice();
-  if (device == undefined) {
+  if (device === undefined) {
     return true;
   }
   initDeviceConnection(device.id);
   VIEW.draw(device);
+  return true;
 };
 
-infoUpdate = function (device, param, value) {
-  if (param == 'addresses') {
-    device.addresses = value.replace(/\s+/g, '').split(',');
+function infoUpdate(device, param, value) {
+  const d = device;
+  if (param === 'addresses') {
+    d.addresses = value.replace(/\s+/g, '').split(',');
   } else {
-    device[param] = value;
+    d[param] = value;
   }
   VIEW.addDeviceToList(device);
 };
 module.exports.infoUpdate = infoUpdate;
 
 function heartbeat() {
-  for (let i in devices) {
-    const device = devices[i];
-    if (Date.now() >= device.lastHeartbeat + device.heartbeatInterval) {
-      if (device.status == 'broken') {
-        initDeviceConnection(i);
-      } else if (Date.now() - device.lastMessage > device.heartbeatTimeout) {
-        infoUpdate(device, 'status', 'broken');
+
+  Object.keys(devices).forEach((deviceID) => {
+    const d = devices[deviceID];
+
+    if (Date.now() >= d.lastHeartbeat + d.heartbeatInterval) {
+      if (d.status === 'broken') {
+        initDeviceConnection(deviceID);
+      } else if (Date.now() - d.lastMessage > d.heartbeatTimeout) {
+        infoUpdate(d, 'status', 'broken');
+      } else if (d.port !== undefined && d.addresses.length > 0) {
+        PLUGINS.all[d.type].heartbeat(d);
       } else {
-        if (device.port != undefined && device.addresses.length > 0) {
-          PLUGINS.all[device.type].heartbeat(device);
-        } else {
-          // console.error("Invalid IP/Port on device "+device.name)
-        }
+        //
       }
-      device.lastHeartbeat = Date.now();
+      d.lastHeartbeat = Date.now();
     }
-  }
+
+  });
+
+
+
+  // for (let i in devices) {
+  //   const device = devices[i];
+  //   if (Date.now() >= device.lastHeartbeat + device.heartbeatInterval) {
+  //     if (device.status == 'broken') {
+  //       initDeviceConnection(i);
+  //     } else if (Date.now() - device.lastMessage > device.heartbeatTimeout) {
+  //       infoUpdate(device, 'status', 'broken');
+  //     } else {
+  //       if (device.port != undefined && device.addresses.length > 0) {
+  //         PLUGINS.all[device.type].heartbeat(device);
+  //       } else {
+  //         // console.error("Invalid IP/Port on device "+device.name)
+  //       }
+  //     }
+  //     device.lastHeartbeat = Date.now();
+  //   }
+  // }
 }
 setInterval(heartbeat, 100);

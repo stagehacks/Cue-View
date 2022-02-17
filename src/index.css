@@ -193,8 +193,8 @@ a {
 }
 .device-wrapper {
   box-sizing: border-box;
-  border:  black 1px solid;
-  padding:  2px;
+  border: black 1px solid;
+  padding: 2px;
 }
 .draw-area {
   height: 100%;
@@ -204,7 +204,7 @@ a {
   border: 0;
 }
 .active-device-outline {
-  padding:  0px;
+  padding: 0px;
   border: #fdea08 3px solid;
 }
 
@@ -234,10 +234,10 @@ select {
   font-size: 16px;
   font-weight: 500;
 }
-select option{
+select option {
   /* these styles don't affect macOS but are important for Windows! */
   text-align: left;
-  background-color: #333333; 
+  background-color: #333333;
 }
 input:focus,
 select:focus {

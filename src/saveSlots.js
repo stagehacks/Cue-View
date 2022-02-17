@@ -15,37 +15,45 @@ if (storedDevices) {
   savedDevices = JSON.parse(storedDevices);
 }
 
-loadSlot = function (slotIndex) {
+function loadSlot(slotIndex) {
   VIEW.toggleSlotButtons(slotIndex);
   activeSlot = slotIndex;
 
-  for (var d in DEVICE.all) {
+  console.log(DEVICE.all);
+
+  Object.keys(DEVICE.all).forEach((d)=>{
     DEVICE.changePinIndex(DEVICE.all[d], false);
-  }
+  });
   VIEW.resetPinned();
 
-  for (var d in savedSlots[slotIndex]) {
-    const savedDevice = savedSlots[slotIndex][d];
-    for (var d in DEVICE.all) {
+  console.log(savedSlots[slotIndex]);
+
+  Object.keys(savedSlots[slotIndex]).forEach((slot) => {
+    const savedDevice = savedSlots[slotIndex][slot];
+
+    Object.keys(DEVICE.all).forEach((d) => {
       const device = DEVICE.all[d];
-      // if(device.addresses[0] == savedDevice.addresses[0] && device.type == savedDevice.type){
-      if (device.id == savedDevice.id) {
+
+      if (device.id === savedDevice.id) {
         VIEW.pinDevice(device);
         VIEW.switchDevice(device.id);
+
       } else if (
-        device.addresses[0] == savedDevice.addresses[0] &&
-        device.type == savedDevice.type &&
-        savedDevice.addresses[0] != undefined
+        device.addresses[0] === savedDevice.addresses[0] &&
+        device.type === savedDevice.type &&
+        savedDevice.addresses[0] !== undefined
       ) {
         VIEW.pinDevice(device);
         VIEW.switchDevice(device.id);
       }
-    }
-  }
+    });
+
+  });
 };
 module.exports.loadSlot = loadSlot;
 
-module.exports.loadDevices = function () {
+
+module.exports.loadDevices = function loadDevices() {
   console.log(`Loading ${savedDevices.length} saved devices...`);
 
   for (let i = 0; i < savedDevices.length; i++) {
@@ -60,7 +68,8 @@ module.exports.loadDevices = function () {
   }
 };
 
-module.exports.saveAll = function () {
+
+module.exports.saveAll = function saveAll() {
   console.log('Saving...');
   const currentPins = VIEW.getPinnedDevices();
 
@@ -78,9 +87,9 @@ module.exports.saveAll = function () {
   );
 
   savedDevices = [];
-  var i = 0;
-  for (var d in DEVICE.all) {
-    var device = DEVICE.all[d];
+  let i = 0;
+  Object.keys(DEVICE.all).forEach((d) => {
+    const device = DEVICE.all[d];
     savedDevices[i] = {
       addresses: device.addresses,
       type: device.type,
@@ -90,25 +99,29 @@ module.exports.saveAll = function () {
       id: device.id,
     };
     i++;
-  }
+  });
   localStorage.setItem('savedDevices', JSON.stringify(savedDevices));
+
 };
 
-module.exports.deleteFromSlots = function (device) {
+
+module.exports.deleteFromSlots = function deleteFromSlots(device) {
   for (let i = 1; i <= 3; i++) {
     console.log(savedSlots);
     for (let j = 0; j < savedSlots[i].length; j++) {
-      if (savedSlots[i][j].id == device.id) {
+      if (savedSlots[i][j].id === device.id) {
         delete savedSlots[i][j];
       }
     }
   }
 };
 
-module.exports.reloadActiveSlot = function () {
+
+module.exports.reloadActiveSlot = function reloadActiveSlot() {
   loadSlot(activeSlot);
 };
 
-module.exports.resetSlots = function () {
+
+module.exports.resetSlots = function resetSlots() {
   localStorage.clear();
 };
