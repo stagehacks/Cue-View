@@ -15,7 +15,7 @@
     <td width="40px">LR</td>
     <td width="100px"><div class="color color-8">MAIN OUT</div></td>
     <td><div class="fader-mute mute-<%=data.stereoMute%>">M</div></td>
-    <td><%- formatAsDB(data.stereoFaderDB) %></td>
+    <td><%= formatAsDB(data.stereoFaderDB) %></td>
     <td>
       <input
         type="range"
@@ -34,7 +34,7 @@
       </div>
     </td>
     <td><div class="fader-mute mute-<%=data.channelMutes[i]%>">M</div></td>
-    <td><%- formatAsDB(data.channelFadersDB[i]) %></td>
+    <td><%= formatAsDB(data.channelFadersDB[i]) %></td>
     <td>
       <input
         type="range"
@@ -47,5 +47,5 @@
   <% } %>
 </table>
 
-<% function formatAsDB(val){ if(val==-90){ return "-&infin;"; } if(val>0){
+<% function formatAsDB(val){ if(val==-90){ return '-<span class="infin">&infin;</span>'; } if(val>0){
 return "+"+val.toFixed(1); } return val.toFixed(1); } %>

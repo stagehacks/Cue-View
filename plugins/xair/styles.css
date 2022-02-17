@@ -127,3 +127,8 @@ input[type='range']::-webkit-slider-runnable-track {
   background: #3b3b3b;
   border-radius: 4px;
 }
+
+.infin{
+  font-size: 20px;
+  vertical-align: middle;
+}
