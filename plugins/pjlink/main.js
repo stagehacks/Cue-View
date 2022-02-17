@@ -122,4 +122,5 @@ exports.heartbeat = function heartbeat(device) {
       `${password}%1POWR ?\r%1INPT ?\r%1AVMT ?\r%1ERST ?\r%1LAMP ?\r%1NAME ?\r%1INF1 ?\r%1INF2 ?\r%2SNUM ?\r%2SVER ?\r`
     );
   }
+  device.draw();
 };
