@@ -19,14 +19,10 @@ function loadSlot(slotIndex) {
   VIEW.toggleSlotButtons(slotIndex);
   activeSlot = slotIndex;
 
-  console.log(DEVICE.all);
-
   Object.keys(DEVICE.all).forEach((d)=>{
     DEVICE.changePinIndex(DEVICE.all[d], false);
   });
   VIEW.resetPinned();
-
-  console.log(savedSlots[slotIndex]);
 
   Object.keys(savedSlots[slotIndex]).forEach((slot) => {
     const savedDevice = savedSlots[slotIndex][slot];
