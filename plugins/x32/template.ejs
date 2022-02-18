@@ -36,6 +36,8 @@
     <td><div class="fader-mute mute-<%=data.channelMutes[i]%>">M</div></td>
     <td><%= formatAsDB(data.channelFadersDB[i]) %></td>
     <td>
+      <% let style = `style=height:3px;background-color:green;width:${data.meters[i] + 90}%`; %>
+      <div <%= style %>></div>
       <input
         type="range"
         min="0"
