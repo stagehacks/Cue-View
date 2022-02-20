@@ -13,39 +13,51 @@
   </tr>
   <tr>
     <td width="40px">LR</td>
-    <td width="100px"><div class="color color-8">MAIN OUT</div></td>
-    <td><div class="fader-mute mute-<%=data.stereoMute%>">M</div></td>
-    <td><%- formatAsDB(data.stereoFaderDB) %></td>
+    <td width="100px"><div class="color color-<%= data.X32.main.stereo.color %>"><%- data.X32.main.stereo.name%></div></td>
+    <td><div class="fader-mute mute-<%=data.X32.main.stereo.mute%>">M</div></td>
+    <td><%= formatAsDB(data.X32.main.stereo.faderDB) %></td>
     <td>
+      <% let style = `style=width:${Math.abs(data.X32.main.stereo.meter[0] - 10)}%`; %>
+      <div class="meter">
+        <div class="meter-cover" <%= style %>></div>
+      </div>
+      <% style = `style=width:${Math.abs(data.X32.main.stereo.meter[1] - 10)}%`; %>
+      <div class="meter">
+        <div class="meter-cover" <%= style %>></div>
+      </div>
       <input
         type="range"
         min="0"
         max="100"
-        value="<%= data.stereoFader*100 %>"
+        value="<%= data.X32.main.stereo.fader*100 %>"
         disabled />
     </td>
   </tr>
-  <% for(var i=0; i<32; i++){ %> <% if(data.channelNames[i]=="end"){break;} %>
+  <% for(var i=0; i<32; i++){ %> <% if(data.X32.inputs.channels[i].name == "end"){break;} %>
   <tr>
     <td><%= i+1 %></td>
     <td>
-      <div class="color color-<%= data.channelColors[i] %>">
-        <%- data.channelNames[i] || i+1 %>
+      <div class="color color-<%= data.X32.inputs.channels[i].color %>">
+        <%- data.X32.inputs.channels[i].name || i+1 %>
       </div>
     </td>
-    <td><div class="fader-mute mute-<%=data.channelMutes[i]%>">M</div></td>
-    <td><%- formatAsDB(data.channelFadersDB[i]) %></td>
+    <td><div class="fader-mute mute-<%=data.X32.inputs.channels[i].mute%>">M</div></td>
+    <td><%= formatAsDB(data.X32.inputs.channels[i].faderDB) %></td>
     <td>
+      <% let style = `style=width:${Math.abs(data.X32.inputs.channels[i].meter - 10)}%`; %>
+      <div class="meter">
+        <div class="meter-cover" <%= style %>></div>
+      </div>
       <input
         type="range"
         min="0"
         max="100"
-        value="<%= data.channelFaders[i]*100 %>"
+        value="<%= data.X32.inputs.channels[i].fader*100 %>"
         disabled />
     </td>
   </tr>
   <% } %>
 </table>
 
-<% function formatAsDB(val){ if(val==-90){ return "-&infin;"; } if(val>0){
+<% function formatAsDB(val){ if(val==-90){ return '-<span class="infin">&infin;</span>'; } if(val>0){
 return "+"+val.toFixed(1); } return val.toFixed(1); } %>
