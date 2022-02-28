@@ -19,23 +19,24 @@ A dashboard for everything in your show.
 - PJLink Projectors
 - X32 Audio Consoles
 - XAir Audio Consoles
+- Art-Net Universes
+- sACN Universes
 
 #### Future Devices
 
 - Spikemark (not possible until additional OSC methods are added)
 - ATEM Video Mixers
-- Art-Net, sACN Universes
 - Epson Pro series Projectors
 - DiGiCo Consoles
 - d&b DS100, amps
 - Hog
 
-
-
 # Plugins
+
 A Cue View "plugin" is a system for communicating with a type of device, for example QLab or Watchout. It consists of a JS file that describes how to communicate with the device, an HTML template for displaying the device's data, and a CSS file to style the HTML.
 
 ### plugin.js
+
 ```js
 exports.defaultName = 'Example Plugin';
 exports.connectionType = 'osc' or 'TCPsocket' or 'UDPsocket'
