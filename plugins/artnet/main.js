@@ -5,7 +5,7 @@ exports.connectionType = 'UDPsocket';
 exports.heartbeatInterval = 10000;
 exports.searchOptions = {
   type: 'UDPsocket',
-  searchBuffer: Buffer.from([65, 114, 116, 45, 78, 101, 116, 0x00, 0x00, 0x20, 0x00, 0x0e, 0x00, 0x00]),
+  searchBuffer: Buffer.from([0x00]),
   devicePort: 6454,
   listenPort: 6454,
   validateResponse (msg, info, devices) {
