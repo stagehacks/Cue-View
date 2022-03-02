@@ -12,7 +12,6 @@ const devices = {};
 module.exports.all = devices;
 
 function registerDevice(newDevice) {
-
   if (PLUGINS.all[newDevice.type] === undefined) {
     console.error(`Plugin for device ${newDevice.type} does not exist.`);
     return true;
@@ -25,17 +24,16 @@ function registerDevice(newDevice) {
 
   // only register device if it hasn't already been added
   if (newDevice.addresses.length > 0) {
-    
     const existing = _.find(devices, (e) => {
       const typeMatch = e.type === newDevice.type;
-      const addressMatch = JSON.stringify(e.addresses) === JSON.stringify(newDevice.addresses);
+      const addressMatch =
+        JSON.stringify(e.addresses) === JSON.stringify(newDevice.addresses);
       return typeMatch && addressMatch;
     });
 
-    if(existing){
+    if (existing) {
       return false;
     }
-
   }
 
   // console.log("Registered new "+newDevice.type)
@@ -55,24 +53,23 @@ function registerDevice(newDevice) {
     lastDrawn: 0,
     lastHeartbeat: 0,
     heartbeatInterval: PLUGINS.all[newDevice.type].heartbeatInterval,
-    draw(){
+    draw() {
       VIEW.draw(this);
     },
-    update(type, data){
-      if(this.drawn){
+    update(type, data) {
+      if (this.drawn) {
         VIEW.update(this, type, data);
-      }else{
+      } else {
         this.draw();
       }
-    }
+    },
   };
 
   VIEW.addDeviceToList(devices[id]);
   initDeviceConnection(id);
   return true;
-};
+}
 module.exports.registerDevice = registerDevice;
-
 
 function initDeviceConnection(id) {
   const device = devices[id];
@@ -85,18 +82,26 @@ function initDeviceConnection(id) {
   try {
     // mostly only useful for UDP
     device.connection.close();
-  } catch (err){
+  } catch (err) {
     //
   }
 
   const { type } = devices[id];
   const plugins = PLUGINS.all;
 
-  if (plugins[type].connectionType === 'osc') {
-    device.connection = new osc.TCPSocketPort({
-      address: device.addresses[0],
-      port: device.port,
-    });
+  if (plugins[type].connectionType.includes('osc')) {
+    if (plugins[type].connectionType.includes('udp')) {
+      device.connection = new osc.UDPPort({
+        localAddress: '0.0.0.0',
+        remoteAddress: device.addresses[0],
+        remotePort: device.port,
+      });
+    } else {
+      device.connection = new osc.TCPSocketPort({
+        address: device.addresses[0],
+        port: device.port,
+      });
+    }
     device.connection.open();
     device.connection.on('error', (error) => {
       // console.error(error)
@@ -109,26 +114,27 @@ function initDeviceConnection(id) {
       }
     });
     device.connection.on('message', (message) => {
-      try{
+      try {
         plugins[type].data(device, message);
-      }catch(err){
-        console.error(err)
+      } catch (err) {
+        console.error(err);
       }
       device.lastMessage = Date.now();
     });
     device.send = (address, args) => {
-      device.connection.send({ 'address': address, 'args': args });
+      device.connection.send({ address, args });
     };
     device.plugin = plugins[type];
-
-
   } else if (plugins[type].connectionType === 'TCPsocket') {
     device.connection = new net.Socket();
 
-    device.connection.connect({
-      port: device.port,
-      host: device.addresses[0]
-    }, () => {});
+    device.connection.connect(
+      {
+        port: device.port,
+        host: device.addresses[0],
+      },
+      () => {}
+    );
 
     device.connection.on('error', (error) => {
       // console.error(error)
@@ -149,12 +155,10 @@ function initDeviceConnection(id) {
       // log("SOCK OUT", data);
       device.connection.write(data);
     };
-
-
   } else if (plugins[type].connectionType === 'UDPsocket') {
     device.connection = udp.createSocket('udp4');
 
-    device.connection.bind({port: plugins[type].defaultPort}, () => {
+    device.connection.bind({ port: plugins[type].defaultPort }, () => {
       plugins[type].ready(device);
 
       device.connection.on('message', (msg, info) => {
@@ -164,12 +168,15 @@ function initDeviceConnection(id) {
     });
 
     device.send = (data) => {
-      device.connection.send(Buffer.from(data), device.port, device.addresses[0], (err) => {
-        // console.log(err);
-      });
+      device.connection.send(
+        Buffer.from(data),
+        device.port,
+        device.addresses[0],
+        (err) => {
+          // console.log(err);
+        }
+      );
     };
-  
-
   } else if (plugins[type].connectionType === 'multicast') {
     device.connection = udp.createSocket('udp4');
 
@@ -182,11 +189,11 @@ function initDeviceConnection(id) {
       });
     });
 
-    device.send = (data) => { };
+    device.send = (data) => {};
   }
 
   return true;
-};
+}
 module.exports.initDeviceConnection = initDeviceConnection;
 
 module.exports.deleteActive = function deleteActive() {
@@ -268,11 +275,10 @@ function infoUpdate(device, param, value) {
     d[param] = value;
   }
   VIEW.addDeviceToList(device);
-};
+}
 module.exports.infoUpdate = infoUpdate;
 
 function heartbeat() {
-
   Object.keys(devices).forEach((deviceID) => {
     const d = devices[deviceID];
 
@@ -288,10 +294,7 @@ function heartbeat() {
       }
       d.lastHeartbeat = Date.now();
     }
-
   });
-
-
 
   // for (let i in devices) {
   //   const device = devices[i];
