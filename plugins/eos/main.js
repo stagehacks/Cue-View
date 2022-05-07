@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const fs = require('fs');
+const path = require('path');
 
 exports.defaultName = 'ETC Eos';
 exports.connectionType = 'osc';
@@ -132,7 +133,7 @@ exports.data = function data(device, osc) {
 };
 
 
-const cueTemplate = _.template(fs.readFileSync(`./plugins/eos/cue.ejs`));
+const cueTemplate = _.template(fs.readFileSync(path.join(__dirname, `cue.ejs`)));
 
 exports.update = function update(device, doc, updateType, data){
 

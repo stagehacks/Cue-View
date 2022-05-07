@@ -6,11 +6,12 @@
 <%
   const fs = require('fs');
   let _ = require('lodash');
+  const path = require('path');
 
-  let cueTemplate = _.template(fs.readFileSync(`./plugins/qlab/cue.ejs`));
-  let tileTemplate = _.template(fs.readFileSync(`./plugins/qlab/tile.ejs`));
-  let cartTemplate = _.template(fs.readFileSync(`./plugins/qlab/cart.ejs`));
-  let listTemplate = _.template(fs.readFileSync(`./plugins/qlab/cuelist.ejs`));
+  let cueTemplate = _.template(fs.readFileSync(path.join(__dirname, `/plugins/qlab/cue.ejs`)));
+  let tileTemplate = _.template(fs.readFileSync(path.join(__dirname, `/plugins/qlab/tile.ejs`)));
+  let cartTemplate = _.template(fs.readFileSync(path.join(__dirname, `/plugins/qlab/cart.ejs`)));
+  let listTemplate = _.template(fs.readFileSync(path.join(__dirname, `/plugins/qlab/cuelist.ejs`)));
 
 %>
 

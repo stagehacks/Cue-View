@@ -1,6 +1,7 @@
 /* eslint-disable global-require */
 const fs = require('fs');
 const _ = require('lodash');
+const path = require('path');
 
 const DEVICE = require('./device.js');
 const VIEW = require('./view.js');
@@ -9,9 +10,12 @@ const allPlugins = {};
 module.exports.all = allPlugins;
 
 module.exports.init = function init(callback) {
-  console.log(`Loading plugin files... ${__dirname}/../plugins`);
 
-  fs.readdir(`${__dirname}/../plugins`, (err, files) => {
+  let pluginDirectoryPath = path.normalize(path.join(__dirname, `../plugins`));
+
+  console.log(`Loading plugin files... ${pluginDirectoryPath}`);
+
+  fs.readdir(pluginDirectoryPath, (err, files) => {
     
     files.forEach((plugin)=>{
       if (plugin[0] !== '.') {
@@ -19,7 +23,7 @@ module.exports.init = function init(callback) {
         console.log(`${plugin} started`);
 
         // eslint-disable-next-line import/no-dynamic-require
-        allPlugins[plugin] = require(`${__dirname}/../plugins/${plugin}/main.js`);
+        allPlugins[plugin] = require(path.join(pluginDirectoryPath, `/${plugin}/main.js`));
 
         const p = allPlugins[plugin];
 
@@ -31,15 +35,13 @@ module.exports.init = function init(callback) {
         };
 
         p.template = _.template(
-          fs.readFileSync(
-            `${__dirname}/../plugins/${plugin}/template.ejs`,
+          fs.readFileSync(path.join(pluginDirectoryPath, `/${plugin}/template.ejs`),
             'utf8'
           )
         );
 
         p.info = _.template(
-          fs.readFileSync(
-            `${__dirname}/../plugins/${plugin}/info.html`,
+          fs.readFileSync(path.join(pluginDirectoryPath, `/${plugin}/info.html`),
             'utf8'
           )
         );

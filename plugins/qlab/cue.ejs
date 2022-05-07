@@ -5,19 +5,19 @@
 
   <td><center>
   <% if(cue.broken){ %>
-    <img src="plugins/qlab/img/status_broken.png" height="18px">
+    <img src="./plugins/qlab/img/status_broken.png" height="18px">
 
   <% }else if(cue.running){ %>
-    <img src="plugins/qlab/img/status_running.png" height="18px">
+    <img src="./plugins/qlab/img/status_running.png" height="18px">
 
   <% }else if(cue.paused){ %>
-    <img src="plugins/qlab/img/status_paused.png" height="18px">
+    <img src="./plugins/qlab/img/status_paused.png" height="18px">
 
   <% }else if(cue.loaded){ %>
-    <img src="plugins/qlab/img/status_loaded.png" height="18px">
+    <img src="./plugins/qlab/img/status_loaded.png" height="18px">
 
   <% }else if(cue.flagged){ %>
-    <img src="plugins/qlab/img/status_flagged.png" height="20px">
+    <img src="./plugins/qlab/img/status_flagged.png" height="20px">
 
   <% }else{ %>
     
@@ -25,7 +25,7 @@
   </center></td>
 
 
-  <td><img src="plugins/qlab/img/<%= cue.type.toLowerCase().replace(' ','-') %>.png" height="20px"></td>
+  <td><img src="./plugins/qlab/img/<%= cue.type.toLowerCase().replace(' ','-') %>.png" height="20px"></td>
   <td><center><%= cue.number || "&nbsp;" %></center></td>
 
 

@@ -5,7 +5,8 @@
 
 <%
   const fs = require('fs');
-  let cueTemplate = _.template(fs.readFileSync(`./plugins/eos/cue.ejs`));
+  const path = require('path');
+  let cueTemplate = _.template(fs.readFileSync(path.join(__dirname, `/plugins/eos/cue.ejs`)));
 %>
 
 

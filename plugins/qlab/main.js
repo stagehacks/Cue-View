@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const fs = require('fs');
+const path = require('path');
 
 let lastElapsedUpdate = Date.now();
 
@@ -267,9 +268,9 @@ exports.data = function data(device, oscData) {
 };
 
 
-const cueTemplate = _.template(fs.readFileSync(`./plugins/qlab/cue.ejs`));
-const tileTemplate = _.template(fs.readFileSync(`./plugins/qlab/tile.ejs`));
-const cartTemplate = _.template(fs.readFileSync(`./plugins/qlab/cart.ejs`));
+const cueTemplate = _.template(fs.readFileSync(path.join(__dirname, `cue.ejs`)));
+const tileTemplate = _.template(fs.readFileSync(path.join(__dirname, `tile.ejs`)));
+const cartTemplate = _.template(fs.readFileSync(path.join(__dirname, `cart.ejs`)));
 
 exports.update = function update(device, doc, updateType, data){
 
