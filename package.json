@@ -1,7 +1,7 @@
 {
   "name": "cue-view",
   "productName": "Cue View",
-  "version": "0.9.5-pre",
+  "version": "0.9.5.1-pre",
   "description": "A dashboard for everything in your show",
   "main": "main.js",
   "scripts": {
@@ -37,7 +37,8 @@
     "mac": {
       "target": "zip",
       "category": "Utilities",
-      "icon": "./src/img/icon.icns"
+      "icon": "./src/img/icon.icns",
+      "electronLanguages": ["en"]
     },
     "win": {
       "target": "portable",
