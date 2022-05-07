@@ -1,6 +1,6 @@
 exports.defaultName = 'X32 Mixer';
-exports.connectionType = 'UDPsocket';
-exports.heartbeatInterval = 10000;
+exports.connectionType = 'osc-udp';
+exports.heartbeatInterval = 9000;
 exports.searchOptions = {
   type: 'UDPsocket',
   searchBuffer: Buffer.from([0x2f, 0x78, 0x69, 0x6e, 0x66, 0x6f]),
@@ -15,10 +15,23 @@ exports.defaultPort = 10023;
 exports.ready = function ready(device) {
   const d = device;
   d.data.X32 = new Console();
+  d.send('/xinfo');
 
-  d.send(Buffer.from('/xinfo'));
+  device.send('/batchsubscribe', [
+    { type: 's', value: '/ch/meters' },
+    { type: 's', value: '/meters/0' },
+    { type: 'i', value: 0 },
+    { type: 'i', value: 0 },
+    { type: 'i', value: 1 },
+  ]);
 
-  // device.send(Buffer.from("/subscribe\x00,si\x00/-stat/solosw/01\x001"));
+  device.send('/batchsubscribe', [
+    { type: 's', value: '/main/meters' },
+    { type: 's', value: '/meters/2' },
+    { type: 'i', value: 0 },
+    { type: 'i', value: 0 },
+    { type: 'i', value: 1 },
+  ]);
 };
 
 function parseAddress(msg) {
@@ -27,34 +40,29 @@ function parseAddress(msg) {
   return addr;
 }
 
-exports.data = function data(device, buf) {
+exports.data = function data(device, oscData) {
   this.deviceInfoUpdate(device, 'status', 'ok');
-
-  // replace one or more nulls with new line then split on that
-  const msg = buf.toString().replace(/(\0+)/gm, '\n').split('\n');
 
   const d = device;
 
-  if (msg[0] === '/xinfo') {
-    d.data.X32.info.name = msg[3];
-    d.data.X32.info.ip = msg[2];
-    d.data.X32.info.firmware = msg[5];
-    d.data.X32.info.model = msg[4];
+  if (oscData.address === '/xinfo') {
+    d.data.X32.info.name = oscData.args[1];
+    d.data.X32.info.ip = oscData.args[0];
+    d.data.X32.info.firmware = oscData.args[3];
+    d.data.X32.info.model = oscData.args[2];
 
     this.deviceInfoUpdate(device, 'defaultName', d.data.X32.info.name);
 
-    d.send(Buffer.from('/main/st/config/name\x00\x00\x00\x00'));
+    d.send('/main/st/config/name');
 
     for (let i = 0; i <= 32; i++) {
-      d.send(
-        Buffer.from(
-          `/ch/${i.toString().padStart(2, '0')}/config/name\x00\x00\x00\x00`
-        )
-      );
+      d.send(`/ch/${i.toString().padStart(2, '0')}/config/name`);
     }
     d.draw();
-  } else if (msg[0].includes('meters/0')) {
-    let offset = 24;
+  } else if (oscData.address.includes('/ch/meters')) {
+    const buf = Buffer.from(oscData.args[0]);
+
+    let offset = 4; // skip first 4 bytes they are the length bytes
     for (let i = 0; i < 70; i++) {
       if (i >= 0 && i < 32) {
         // These are channel meters
@@ -66,8 +74,9 @@ exports.data = function data(device, buf) {
       offset += 4;
     }
     d.draw();
-  } else if (msg[0].includes('meters/2')) {
-    let offset = 24;
+  } else if (oscData.address.includes('/main/meters')) {
+    const buf = Buffer.from(oscData.args[0]);
+    let offset = 4; // skip first 4 bytes they are the length bytes
 
     for (let i = 0; i < 49; i++) {
       if (i === 22) {
@@ -83,82 +92,70 @@ exports.data = function data(device, buf) {
       }
       offset += 4;
     }
-  } else if (msg[0].indexOf('/mix/fader') >= 0) {
-    const addr = parseAddress(msg[0]);
-    const channel = Number(addr[1]);
+  } else if (oscData.address.includes('/mix/fader')) {
+    const addr = parseAddress(oscData.address);
 
     if (addr[0] === 'ch') {
-      d.data.X32.inputs.channels[channel - 1].fader = buf.readFloatBE(24);
+      const channel = Number(addr[1]);
+      d.data.X32.inputs.channels[channel - 1].fader = oscData.args[0];
       d.data.X32.inputs.channels[channel - 1].faderDB = Console.getBehringerDB(
-        buf.readFloatBE(24)
+        oscData.args[0]
       );
     } else if (addr[0] === 'main') {
-      d.data.X32.main.stereo.fader = buf.readFloatBE(24);
-      d.data.X32.main.stereo.faderDB = Console.getBehringerDB(
-        buf.readFloatBE(24)
-      );
+      d.data.X32.main.stereo.fader = oscData.args[0];
+      d.data.X32.main.stereo.faderDB = Console.getBehringerDB(oscData.args[0]);
     }
 
     d.draw();
-  } else if (msg[0].indexOf('/mix/on') >= 0) {
-    const addr = parseAddress(msg[0]);
-    const channel = Number(addr[1]);
-
+  } else if (oscData.address.includes('/mix/on')) {
+    const addr = parseAddress(oscData.address);
     if (addr[0] === 'ch') {
-      d.data.X32.inputs.channels[channel - 1].mute = buf[23];
-      d.send(Buffer.from(`/ch/${addr[1]}/mix/fader\x00\x00\x00\x00`));
+      const channel = Number(addr[1]);
+      d.data.X32.inputs.channels[channel - 1].mute = oscData.args[0];
+      d.send(`/ch/${addr[1]}/mix/fader`);
     } else if (addr[0] === 'main') {
-      d.data.X32.main.stereo.mute = buf.slice(-1)[0];
-      d.send(Buffer.from(`/main/${addr[1]}/mix/fader\x00\x00\x00\x00`));
+      d.data.X32.main.stereo.mute = oscData.args[0];
+      d.send(`/main/${addr[1]}/mix/fader`);
     }
     d.draw();
-  } else if (msg[0].indexOf('/config/name') > 0) {
-    const addr = parseAddress(msg[0]);
+  } else if (oscData.address.includes('/config/name')) {
+    const addr = parseAddress(oscData.address);
     if (addr[0] === 'main') {
       if (addr[1] === 'st') {
-        d.data.X32.main.stereo.name = msg[2];
+        d.data.X32.main.stereo.name = oscData.args[0];
         if (d.data.X32.main.stereo.name === '') {
           d.data.X32.main.stereo.name = 'LR';
         }
-        d.send(Buffer.from(`/main/${addr[1]}/config/color\x00\x00\x00\x00`));
+        d.send(`/main/${addr[1]}/config/color`);
       }
     } else if (addr[0] === 'ch') {
       const channel = Number(addr[1]);
-      d.data.X32.inputs.channels[channel - 1].name = msg[2];
-      d.send(Buffer.from(`/ch/${addr[1]}/config/color\x00\x00\x00\x00`));
+      d.data.X32.inputs.channels[channel - 1].name = oscData.args[0];
+      d.send(`/ch/${addr[1]}/config/color`);
     }
     d.draw();
-  } else if (msg[0].indexOf('/config/color') > 0) {
-    const addr = parseAddress(msg[0]);
+  } else if (oscData.address.includes('/config/color')) {
+    const addr = parseAddress(oscData.address);
     if (addr[0] === 'main') {
-      d.data.X32.main.stereo.color = Buffer.from(msg[2]).readInt8();
-      d.send(Buffer.from(`/main/${addr[1]}/mix/on\x00\x00\x00\x00`));
+      d.data.X32.main.stereo.color = oscData.args[0];
+      d.send(`/main/${addr[1]}/mix/on`);
     } else if (addr[0] === 'ch') {
       const channel = Number(addr[1]);
-      d.data.X32.inputs.channels[channel - 1].color = buf.readInt8(27);
-      d.send(Buffer.from(`/ch/${addr[1]}/mix/on\x00\x00\x00\x00`));
+      d.data.X32.inputs.channels[channel - 1].color = oscData.args[0];
+      d.send(`/ch/${addr[1]}/mix/on`);
     }
     d.draw();
   } else {
-    // console.log(msg)
+    // console.log(oscData);
   }
   // console.log(msg)
 };
 
 exports.heartbeat = function heartbeat(device) {
-  device.send(Buffer.from('/xremote'));
+  device.send('/xremote');
 
-  // subscribe to meter groups
-  device.send(
-    Buffer.from(
-      '/batchsubscribe\x00,ssiii\x00\x00meters/0\x00\x00\x00\x00/meters/0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01'
-    )
-  );
-  device.send(
-    Buffer.from(
-      '/batchsubscribe\x00,ssiii\x00\x00meters/2\x00\x00\x00\x00/meters/2\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01'
-    )
-  );
+  device.send('/renew', [{ type: 's', value: '/ch/meters' }]);
+  device.send('/renew', [{ type: 's', value: '/main/meters' }]);
 };
 
 class Console {
