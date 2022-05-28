@@ -1,83 +1,80 @@
 <tbody id="<%= q[0].uid %>">
+  <% for(var partNumber in q){ %> 
+	  <% var part = q[partNumber] %> 
+  	<%if(part.scene.length>0 && partNumber==0){ %>
+      <tr>
+        <td></td>
+        <td colspan="12" class="scene">
+        <hr />
+        <span><%= part.scene %></span>
+        </td>
+      </tr>
+	  <% } %> 
 
-<% for(var partNumber in q){ %>
-
-	<% var part = q[partNumber] %>
-
-
-	<% if(part.scene.length>0 && partNumber==0){ %>
-	<tr>
-		<td></td>
-		<td colspan="12" class="scene"><hr><span><%= part.scene %></span></td>
-	</tr>
-	<% } %>
-
-	<% if(isActive){ %>
-	<tr class="active-cue scroll-position">
-<% }else{ %>
-	<tr >
-<% } %>
-
-	<% if(partNumber!=0){ %>
-		<td class="num" style="padding-left: 20px;"><div>P<%= partNumber %></div></td>
-	<% }else{ %>
-		<td class="num"><div><%= cueNumber %></div></td>
-	<% } %>
-
-	<% if(partNumber!=0 || part.partcount==0){ %>
-
-		<!-- Int Up/Int Down -->
-		<% if(part.uptimeduration == part.downtimeduration || part.downtimeduration==-1){ %>
-			<td class="black" colspan="2"><%= prettyDuration(part.uptimedelay) || "" %><%= prettyDuration(part.uptimeduration, true) %></td>
-		<% }else{ %>
-			<td class="black"><%= prettyDuration(part.uptimedelay) || "" %><%= prettyDuration(part.uptimeduration, true) %></td>
-			<td class="black "><%= prettyDuration(part.downtimeduration, true) %></td>
-		<% } %>
-
-		<td class="black hide-medium"><%= prettyDuration(part.focustimeduration, true) %></td>
-		<td class="black hide-medium"><%= prettyDuration(part.colortimeduration, true) %></td>
-		<td class="black hide-medium"><%= prettyDuration(part.beamtimeduration, true) %></td>
-		<td class="hide-small"><%= prettyDuration(part.duration) %></td>
-
-	<% }else{ %>
-		<td class="black" colspan="2"></td>
-		<td class="black hide-medium"></td>
-		<td class="black hide-medium"></td>
-		<td class="black hide-medium"></td>
-		<td class="hide-small"></td>
-
-	<% } %>
-
-	<td class="black hide-small"><%= part.mark %></td>
-	<td class="black hide-small"><%= part.block %></td>
-	<td class="black hide-small"><%= part.assert %></td>
-	<td class="black hide-small">
-		<%= (part.follow>=0)? "F"+prettyDuration(part.follow) : "" %>
-		<%= (part.hang>=0)? "H"+prettyDuration(part.hang) : "" %>
-	</td>
-	<td class="black" style="text-align: left">
-		<%= (partNumber==0 ? "": "&nbsp;&nbsp;&nbsp;") %>
-		<%= part.label %>
-	</td>
-	<td class="black hide-medium"><%= part.extlinks %></td>
-
-</tr>
-
-
-<% } %>
-
-</tbody>
-
-<%
-function prettyDuration(milliseconds, box){
-	if(milliseconds==-1){
-		return "";
-	}
-	var num = Math.round(milliseconds/100)/10;
-	if(box){
-		return "<div class='time'>"+num+"</div>";
-	}
-	return num;
+  	<% if(isActive){ %>
+  		<tr class="active-cue scroll-position">
+	  <% }else{ %>
+      </tr>
+      <tr>
+    <% } %> 
 	
-}
-%>
+	  <% if(partNumber!=0){ %>
+      <td class="num" style="padding-left: 20px">
+        <div>P<%= partNumber %></div>
+      </td>
+    <% }else{ %>
+    	<td class="num"><div><%= cueNumber %></div></td>
+    <% } %> 
+	
+	  <% if(partNumber !== 0 || part.partCount === 0){ %>
+
+      <!-- Int Up/Int Down -->
+      <% if(part.uptimeDuration === part.downtimeDuration || part.downtimeDuration === -1){ %>
+        <td class="black" colspan="2">
+          <%= part.prettyDuration(part.uptimeDelay) || "" %>
+          <%= part.prettyDuration(part.uptimeDuration, true) %>
+        </td>
+      <% }else{ %>
+        <td class="black">
+          <%= part.prettyDuration(part.uptimeDelay) || "" %>
+          <%= part.prettyDuration(part.uptimeDuration, true) %>
+        </td>
+        <td class="black">
+          <%= part.prettyDuration(part.downtimeDuration, true) %>
+        </td>
+      <% } %>
+
+      <td class="black hide-medium">
+        <%= part.prettyDuration(part.focusDimeDuration, true) %>
+      </td>
+      <td class="black hide-medium">
+        <%= part.prettyDuration(part.colorDimeDuration, true) %>
+      </td>
+      <td class="black hide-medium">
+        <%= part.prettyDuration(part.beamDimeDuration, true) %>
+      </td>
+      <td class="hide-small"><%= part.prettyDuration(part.duration) %></td>
+
+    <% }else{ %>
+      <td class="black" colspan="2"></td>
+      <td class="black hide-medium"></td>
+      <td class="black hide-medium"></td>
+      <td class="black hide-medium"></td>
+      <td class="hide-small"></td>
+    <% } %>
+
+    <td class="black hide-small"><%= part.mark %></td>
+    <td class="black hide-small"><%= part.block %></td>
+    <td class="black hide-small"><%= part.assert %></td>
+    <td class="black hide-small">
+      <%= (part.follow>=0)? "F"+part.prettyDuration(part.follow) : "" %> 
+      <%= (part.hang>=0)? "H"+part.prettyDuration(part.hang) : "" %>
+    </td>
+    <td class="black" style="text-align: left">
+      <%= (partNumber==0 ? "": "&nbsp;&nbsp;&nbsp;") %> 
+      <%= part.label %>
+    </td>
+    <td class="black hide-medium"><%= part.extLinks %></td>
+    </tr>
+  <% } %>
+</tbody>
