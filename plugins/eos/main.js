@@ -19,59 +19,54 @@ exports.searchOptions = {
 exports.defaultPort = 3032;
 
 exports.ready = function ready(device) {
-  const d = device;
-  d.data.EOS = new EOS();
-
-  d.send('/eos/get/cuelist/count');
-  d.send('/eos/get/version');
-  d.send('/eos/subscribe', [{ type: 'i', value: 1 }]);
+  device.data.EOS = new EOS();
+  device.send('/eos/get/cuelist/count');
+  device.send('/eos/get/version');
+  device.send('/eos/subscribe', [{ type: 'i', value: 1 }]);
 };
 
 exports.data = function data(device, osc) {
-  const p = osc.address.split('/');
-  const d = device;
-  p.shift();
+  const addressParts = osc.address.split('/');
+  addressParts.shift();
 
-  // console.log(osc.address)
-
-  if (match(p, ['eos', 'out', 'show', 'name'])) {
-    d.data.EOS.showName = osc.args[0];
-    d.data.EOS.cueLists = {};
+  if (match(addressParts, ['eos', 'out', 'show', 'name'])) {
+    device.data.EOS.showName = osc.args[0];
+    device.data.EOS.cueLists = {};
     this.deviceInfoUpdate(device, 'defaultName', osc.args[0]);
-  } else if (match(p, ['eos', 'out', 'get', 'cuelist', 'count'])) {
+  } else if (match(addressParts, ['eos', 'out', 'get', 'cuelist', 'count'])) {
     for (let i = 0; i < osc.args[0]; i++) {
-      d.send(`/eos/get/cuelist/index/${i}`);
+      device.send(`/eos/get/cuelist/index/${i}`);
     }
   } else if (
-    match(p, ['eos', 'out', 'get', 'cuelist', '*', 'list', '*', '*'])
+    match(addressParts, ['eos', 'out', 'get', 'cuelist', '*', 'list', '*', '*'])
   ) {
-    d.data.EOS.cueLists[p[4]] = {};
-    d.send(`/eos/get/cue/${p[4]}/count`);
-  } else if (match(p, ['eos', 'out', 'get', 'cue', '*', 'count'])) {
+    device.data.EOS.cueLists[addressParts[4]] = {};
+    device.send(`/eos/get/cue/${addressParts[4]}/count`);
+  } else if (match(addressParts, ['eos', 'out', 'get', 'cue', '*', 'count'])) {
     for (let i = 0; i < osc.args[0]; i++) {
-      device.send(`/eos/get/cue/${p[4]}/index/${i}`);
+      device.send(`/eos/get/cue/${addressParts[4]}/index/${i}`);
     }
   } else if (
-    match(p, ['eos', 'out', 'get', 'cue', '*', '*', '*', 'list', '*', '*'])
+    match(addressParts, ['eos', 'out', 'get', 'cue', '*', '*', '*', 'list', '*', '*'])
   ) {
     this.deviceInfoUpdate(device, 'status', 'ok');
-    if (d.data.EOS.cueLists[p[4]][p[5]] === undefined) {
-      d.data.EOS.cueLists[p[4]][p[5]] = {};
+    if (device.data.EOS.cueLists[addressParts[4]][addressParts[5]] === undefined) {
+      device.data.EOS.cueLists[addressParts[4]][addressParts[5]] = {};
     }
-    d.data.EOS.cueLists[p[4]][p[5]][p[6]] = new Cue(osc.args);
+    device.data.EOS.cueLists[addressParts[4]][addressParts[5]][addressParts[6]] = new Cue(osc.args);
 
     device.update('cueData', {
-      cue: device.data.EOS.cueLists[p[4]][p[5]],
-      cueNumber: p[5],
+      cue: device.data.EOS.cueLists[addressParts[4]][addressParts[5]],
+      cueNumber: addressParts[5],
       uid: osc.args[1],
     });
-  } else if (match(p, ['eos', 'out', 'get', 'cue', '*', '*'])) {
+  } else if (match(addressParts, ['eos', 'out', 'get', 'cue', '*', '*'])) {
     // There's no OSC notification of the deletion of a part. It just tells you to update the parent cue and remaining children.
     // So: we should fetch all the parts of a cue somehow every time there's an update to a cue.
-    delete d.data.EOS.cueLists[p[4]][p[5]];
-    d.draw();
+    delete device.data.EOS.cueLists[addressParts[4]][addressParts[5]];
+    device.draw();
   } else if (
-    match(p, [
+    match(addressParts, [
       'eos',
       'out',
       'get',
@@ -86,22 +81,21 @@ exports.data = function data(device, osc) {
     ])
   ) {
     if (osc.args.length === 3) {
-      d.data.EOS.cueLists[p[4]][p[5]][0].extLinks = osc.args[2];
+      device.data.EOS.cueLists[addressParts[4]][addressParts[5]][0].extLinks = osc.args[2];
     }
-  } else if (match(p, ['eos', 'out', 'event', 'cue', '*', '*', 'fire'])) {
-    d.data.EOS.activeCue = p[5];
-    d.draw();
-    d.update('activeCue', { uid: device.data.EOS.cueLists[p[4]][p[5]][0].uid });
-  } else if (match(p, ['eos', 'out', 'notify', 'cue', '*', '*', '*', '*'])) {
-    const cueList = p[4];
+  } else if (match(addressParts, ['eos', 'out', 'event', 'cue', '*', '*', 'fire'])) {
+    device.data.EOS.activeCue = addressParts[5];
+    device.draw();
+    device.update('activeCue', { uid: device.data.EOS.cueLists[addressParts[4]][addressParts[5]][0].uid });
+  } else if (match(addressParts, ['eos', 'out', 'notify', 'cue', '*', '*', '*', '*'])) {
+    const cueList = addressParts[4];
     const cueNumber = osc.args[1];
-    d.send(`/eos/get/cue/${cueList}/${cueNumber}`);
-  } else if (match(p, ['eos', 'out', 'get', 'version'])) {
-    d.data.EOS.version = osc.args[0];
+    device.send(`/eos/get/cue/${cueList}/${cueNumber}`);
+  } else if (match(addressParts, ['eos', 'out', 'get', 'version'])) {
+    device.data.EOS.version = osc.args[0];
   } else {
     // console.log(osc);
   }
-  // console.log(p)
 };
 
 const cueTemplate = _.template(
@@ -131,17 +125,16 @@ exports.heartbeat = function heartbeat(device) {
   device.send('/eos/ping');
 };
 
-function match(osc, array) {
-  let out = true;
-  if (osc.length !== array.length) {
+function match(addressParts, array) {
+  if (addressParts.length !== array.length) {
     return false;
   }
   array.forEach((m, i) => {
-    if (osc[i] !== m && m !== '*') {
-      out = false;
+    if (addressParts[i] !== m && m !== '*') {
+      return false;
     }
   });
-  return out;
+  return true;
 }
 
 class EOS {
