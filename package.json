@@ -19,6 +19,7 @@
   "repository": "https://github.com/stagehacks/Cue-View",
   "devDependencies": {
     "electron": "^15.5.7",
+    "electron-builder": "^23.6.0",
     "eslint": "^8.16.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.5.0",
