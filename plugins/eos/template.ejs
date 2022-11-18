@@ -10,7 +10,7 @@
 %>
 
 
-<% for(var i in data.cuelists){ %>
+<% for(var i in data.EOS.cueLists){ %>
 	<strong>List <%= i %></strong>
 	<table cellspacing="0">
 		<tr>
@@ -29,16 +29,16 @@
 			<th width="10px" class="hide-medium">Ext Links</th>
 		</tr>
 
-		<% var cues = Object.keys(data.cuelists[i]).sort(function(a, b){return Number(a)-Number(b)}) %>
+		<% var cues = Object.keys(data.EOS.cueLists[i]).sort(function(a, b){return Number(a)-Number(b)}) %>
 
 		<% for(var j=0; j<cues.length; j++){ %>
-			<% var q = data.cuelists[i][cues[j]] %>
+			<% var q = data.EOS.cueLists[i][cues[j]] %>
 			
 			<%= cueTemplate({
 				q: q,
 				cues: cues,
 				cueNumber: cues[j],
-				isActive: (cues[j]==data.activeCue+"")
+				isActive: (cues[j]==data.EOS.activeCue+"")
 			}) %>
 
 		<% } %>

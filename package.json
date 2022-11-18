@@ -15,19 +15,19 @@
   "homepage": "https://github.com/stagehacks/Cue-View",
   "repository": "https://github.com/stagehacks/Cue-View",
   "devDependencies": {
-    "electron": "^15.2.0",
-    "eslint": "^8.9.0",
+    "electron": "^15.5.7",
+    "eslint": "^8.16.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.25.4",
-    "prettier": "^2.5.1"
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "prettier": "^2.6.2"
   },
   "dependencies": {
     "bonjour": "^3.5.0",
     "lodash": "^4.17.20",
     "md5": "^2.3.0",
     "netmask": "^2.0.2",
-    "osc": "^2.4.1",
+    "osc": "^2.4.3",
     "uuid": "^8.3.2"
   },
   "build": {
@@ -38,7 +38,9 @@
       "target": "zip",
       "category": "Utilities",
       "icon": "./src/img/icon.icns",
-      "electronLanguages": ["en"]
+      "electronLanguages": [
+        "en"
+      ]
     },
     "win": {
       "target": "portable",
