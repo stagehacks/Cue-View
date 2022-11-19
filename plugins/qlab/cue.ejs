@@ -33,22 +33,20 @@
 
   <% for(let i=cue.nestedGroupModes.length; i>0; i--){ %>
 
-    <% let test = "" %>
-
     <% if(cue.type=="Group" && i==1 && cue.cues.length==0){ %>
-      <td class="gMode-<%= cue.nestedGroupModes[i-1] %> gLeft gTop gBot group-arrow"><%= test %></td>
+      <td class="gMode-<%= cue.nestedGroupModes[i-1] %> gLeft gTop gBot group-arrow"></td>
 
     <% }else if(cue.type=="Group" && i==1){ %>
-      <td class="gMode-<%= cue.nestedGroupModes[i-1] %> gLeft gTop group-arrow"><%= test %></td>
+      <td class="gMode-<%= cue.nestedGroupModes[i-1] %> gLeft gTop group-arrow"></td>
 
     <% }else if(cue.nestedGroupPosition[i-1]==0 && cue.nestedGroupPosition[i-2]==0){ %>
-      <td class="gMode-<%= cue.nestedGroupModes[i-1] %> gLeft gBot"><%= test %></td>
+      <td class="gMode-<%= cue.nestedGroupModes[i-1] %> gLeft gBot"></td>
 
     <% }else if(i==1 && cue.nestedGroupPosition[i]==0){ %>
-      <td class="gMode-<%= cue.nestedGroupModes[i] %> gBot"><%= test %></td>
+      <td class="gMode-<%= cue.nestedGroupModes[i] %> gBot"></td>
 
     <% }else{ %>
-      <td class="gMode-<%= cue.nestedGroupModes[i-1] %> gLeft"><%= test %></td>
+      <td class="gMode-<%= cue.nestedGroupModes[i-1] %> gLeft"></td>
 
     <% } %>
 
