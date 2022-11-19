@@ -3,6 +3,18 @@ const fs = require('fs');
 const path = require('path');
 
 let lastElapsedUpdate = Date.now();
+let interval = 5;
+let heartbeatCount = 0;
+
+const valuesForKeysString = 
+'["uniqueID","number","name","listName","isBroken","isRunning","isLoaded","isFlagged",'
++ '"type","children","preWait","postWait","currentDuration","colorName","continueMode",'
++ '"mode","parent","cartRows","cartColumns","cartPosition","displayName","preWaitElapsed",'
++ '"actionElapsed","postWaitElapsed","isPaused"]';
+
+const cueTemplate = _.template(fs.readFileSync(path.join(__dirname, `cue.ejs`)));
+const tileTemplate = _.template(fs.readFileSync(path.join(__dirname, `tile.ejs`)));
+const cartTemplate = _.template(fs.readFileSync(path.join(__dirname, `cart.ejs`)));
 
 exports.defaultName = 'QLab 4';
 exports.connectionType = 'osc';
@@ -129,6 +141,8 @@ exports.data = function data(_device, oscData) {
 
     const nestedGroupModes = [];
     const nestedGroupPosition = [0];
+
+
     let obj = cue;
 
     while(obj.parent !== "[root group of cue lists]"){
@@ -137,7 +151,6 @@ exports.data = function data(_device, oscData) {
       let pos = _.findIndex(workspace.cues[obj.parent].cues, {uniqueID: obj.uniqueID});
       pos = Math.abs(pos - workspace.cues[obj.parent].cues.length) - 1;
       nestedGroupPosition.push(pos)
-
       obj = workspace.cues[obj.parent];
     }
     cue.nestedGroupModes = nestedGroupModes;
@@ -233,9 +246,7 @@ exports.data = function data(_device, oscData) {
 };
 
 
-const cueTemplate = _.template(fs.readFileSync(path.join(__dirname, `cue.ejs`)));
-const tileTemplate = _.template(fs.readFileSync(path.join(__dirname, `tile.ejs`)));
-const cartTemplate = _.template(fs.readFileSync(path.join(__dirname, `cart.ejs`)));
+
 
 exports.update = function update(device, doc, updateType, data){
 
@@ -277,11 +288,7 @@ exports.update = function update(device, doc, updateType, data){
   }
 }
 
-const valuesForKeysString = 
-'["uniqueID","number","name","listName","isBroken","isRunning","isLoaded","isFlagged",'
-+ '"type","children","preWait","postWait","currentDuration","colorName","continueMode",'
-+ '"mode","parent","cartRows","cartColumns","cartPosition","displayName","preWaitElapsed",'
-+ '"actionElapsed","postWaitElapsed","isPaused"]';
+
 
 function addCueToWorkspace(_workspace, cue){
   const workspace = _workspace;
@@ -321,8 +328,7 @@ function match(testArray, patternArray){
   return out;
 }
 
-let interval = 5;
-let heartbeatCount = 0;
+
 exports.heartbeat = function heartbeat(device) {
   heartbeatCount++;
 
