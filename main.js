@@ -1,4 +1,5 @@
 const { app, BrowserWindow, Menu, ipcMain, nativeTheme } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const path = require('path');
 
 const isMac = process.platform === 'darwin';
@@ -152,7 +153,7 @@ const createWindow = () => {
 
   menuObj = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menuObj);
-  
+  autoUpdater.checkForUpdatesAndNotify();
 };
 
 app.whenReady().then(() => {
