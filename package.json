@@ -40,24 +40,32 @@
     "icon": "./src/img/",
     "artifactName": "${name}.${os}.v${version}.${ext}",
     "mac": {
-      "target": "zip",
       "category": "Utilities",
       "icon": "./src/img/icon.icns",
       "electronLanguages": [
         "en"
       ],
-      "publish": ["github"]
+      "publish": [
+        "github"
+      ]
     },
     "win": {
-      "target": "portable",
+      "target": "NSIS",
       "icon": "./src/img/icon.ico",
-      "publish": ["github"]
+      "publish": [
+        "github"
+      ]
+    },
+    "nsis": {
+      "oneClick": false
     },
     "linux": {
-      "target": "deb",
+      "target": "AppImage",
       "maintainer": "alec@stagehacks.com",
       "category": "Utility",
-      "publish": ["github"]
+      "publish": [
+        "github"
+      ]
     }
   }
 }
