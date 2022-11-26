@@ -11,7 +11,8 @@
     "build:mac": "electron-builder -m",
     "build:windows": "electron-builder -w",
     "build:linux": "electron-builder -l",
-    "build:arm": "electron-builder -l --arm64"
+    "build:arm": "electron-builder -l --arm64",
+    "release": "electron-builder"
   },
   "author": "alec@stagehacks.com",
   "license": "CC BY-SA 4.0",
@@ -37,23 +38,26 @@
   "build": {
     "appId": "com.electron.cueview",
     "icon": "./src/img/",
-    "artifactName": "${productName} ${os} v${version}.${ext}",
+    "artifactName": "${name}.${os}.v${version}.${ext}",
     "mac": {
       "target": "zip",
       "category": "Utilities",
       "icon": "./src/img/icon.icns",
       "electronLanguages": [
         "en"
-      ]
+      ],
+      "publish": ["github"]
     },
     "win": {
       "target": "portable",
-      "icon": "./src/img/icon.ico"
+      "icon": "./src/img/icon.ico",
+      "publish": ["github"]
     },
     "linux": {
       "target": "deb",
       "maintainer": "alec@stagehacks.com",
-      "category": "Utility"
+      "category": "Utility",
+      "publish": ["github"]
     }
   }
 }
