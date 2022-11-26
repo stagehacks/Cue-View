@@ -3,6 +3,9 @@ on:
     branches:
       - github-actions
 
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+
 jobs:
   build-linux:
     runs-on: ubuntu-latest
