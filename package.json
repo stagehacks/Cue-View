@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "bonjour": "^3.5.0",
+    "electron-updater": "^5.3.0",
     "lodash": "^4.17.20",
     "md5": "^2.3.0",
     "netmask": "^2.0.2",
@@ -36,7 +37,7 @@
     "uuid": "^9.0.0"
   },
   "build": {
-    "appId": "com.electron.cueview",
+    "appId": "com.stagehacks.cueview",
     "icon": "./src/img/",
     "artifactName": "${name}.${os}.v${version}.${ext}",
     "mac": {
