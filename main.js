@@ -227,7 +227,7 @@ autoUpdater.on('update-available', (updateInfo)=>{
     return;
   }
 
-  const msg = `Version ${updateInfo.version} is available:  Would you like to download?`
+  const msg = `Version v${updateInfo.version} is available.  Would you like to download?`
   const title = 'Update Available';
 
   let dialogOpts = {}
