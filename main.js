@@ -224,7 +224,6 @@ ipcMain.on('setDevicePin', (event, arg) => {
 
 // Autoupdate logic
 ipcMain.on('checkForUpdates', (event, arg)=>{
-  console.log('main process told to check for updates')
   autoUpdater.checkForUpdates();
 })
 

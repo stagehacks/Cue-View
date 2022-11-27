@@ -177,8 +177,6 @@ ipcRenderer.on('loadSlot', (event, slot) => {
 
 // message from main process to set autoUpdate state
 ipcRenderer.on('setAutoUpdate',(event,autoUpdate)=>{
-  console.log('setAutoUpdate called ')
-  console.log(autoUpdate)
   localStorage.setItem('autoUpdate',autoUpdate);
   if(autoUpdate){
     ipcRenderer.send('checkForUpdates');
