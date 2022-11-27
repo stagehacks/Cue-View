@@ -5,6 +5,7 @@ const path = require('path');
 const isMac = process.platform === 'darwin';
 const isWin = process.platform === 'win32';
 
+let autoUpdate = false;
 let menuObj;
 let mainWindow;
 
@@ -41,7 +42,7 @@ const menuTemplate = [
         id: 'window1',
         enabled: true,
         click (menuItem, window, event) {
-          mainWindow.webContents.send('doSlots1');
+          mainWindow.webContents.send('loadSlot',1);
         }
       },
       {
@@ -50,7 +51,7 @@ const menuTemplate = [
         id: 'window2',
         enabled: true,
         click (menuItem, window, event) {
-          mainWindow.webContents.send('doSlots2');
+          mainWindow.webContents.send('loadSlot',2);
         }
       },
       {
@@ -59,7 +60,7 @@ const menuTemplate = [
         id: 'window3',
         enabled: true,
         click (menuItem, window, event) {
-          mainWindow.webContents.send('doSlots3');
+          mainWindow.webContents.send('loadSlot',3);
         }
       },
       { type: 'separator' },
@@ -75,7 +76,7 @@ const menuTemplate = [
         id: 'deviceSearch',
         enabled: true,
         click (menuItem, window, event) {
-          mainWindow.webContents.send('doSearch');
+          mainWindow.webContents.send('searchAll');
         }
       },
       { type: 'separator' },
@@ -99,7 +100,7 @@ const menuTemplate = [
         id: 'deviceDelete',
         enabled: false,
         click (menuItem, window, event) {
-          mainWindow.webContents.send('doDelete');
+          mainWindow.webContents.send('deleteActive');
         }
       }
     ]
@@ -116,6 +117,12 @@ const menuTemplate = [
         label: 'Check for Updates',
         click: ()=>{
           autoUpdater.checkForUpdates();
+        }
+      },
+      {
+        label: 'Enable Auto Update',
+        click: ()=>{
+          mainWindow.webContents.send('setAutoUpdate',!autoUpdate);
         }
       }
     ]
@@ -216,18 +223,31 @@ ipcMain.on('setDevicePin', (event, arg) => {
 
 
 // Autoupdate logic
+ipcMain.on('checkForUpdates', (event, arg)=>{
+  console.log('main process told to check for updates')
+  autoUpdater.checkForUpdates();
+})
+
+ipcMain.on('setAutoUpdate', (event, _autoUpdate)=>{
+  autoUpdate = _autoUpdate
+  
+  // update menu item for enabling/disabling auto update
+  menuTemplate[menuTemplate.length-1].submenu[2].label = autoUpdate ? 'Disable Auto Update' : 'Enable Auto Update';
+  menuObj = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(menuObj);
+})
 
 // this can be set to true to bypass the download update dialog and skip straight to install prompt
 autoUpdater.autoDownload = false;
 
-autoUpdater.on('update-available', (updateInfo)=>{
+autoUpdater.on('update-available', (updateInfo) => {
 
   // skip prompting to download if autoDownload is set
   if(autoUpdater.autoDownload){
     return;
   }
 
-  const msg = `Version v${updateInfo.version} is available.  Would you like to download?`
+  const msg = `Version v${updateInfo.version} is available.  Would you like to download it?`
   const title = 'Update Available';
 
   let dialogOpts = {}
@@ -266,7 +286,7 @@ autoUpdater.on('update-available', (updateInfo)=>{
 
 autoUpdater.on('update-downloaded',(event)=>{
   const title = 'Update Downloaded';
-  const msg = `Version ${event.version} has been downloaded. Would you like to install this update now?`
+  const msg = `Version v${event.version} has been downloaded. Would you like to install this update now?`
 
   let dialogOpts = {}
   

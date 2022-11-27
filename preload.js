@@ -15,6 +15,16 @@ window.init = function init() {
   ipcRenderer.send('enableDeviceDropdown');
   ipcRenderer.send('enableSearchAll');
 
+  // load autoUpdate setting from storage and send to main process
+  const autoUpdate = JSON.parse(localStorage.getItem('autoUpdate'))
+  if(autoUpdate !== undefined && autoUpdate !== null){
+    if(autoUpdate){
+      ipcRenderer.send('checkForUpdates');
+    }
+    // send message so main process knows the state of autoUpdate
+    ipcRenderer.send('setAutoUpdate', autoUpdate)
+  }
+
   PLUGINS.init(() => {
     VIEW.init();
     SAVESLOTS.loadDevices();
@@ -57,6 +67,7 @@ window.init = function init() {
       VIEW.unpinActiveDevice();
     }
   };
+
 
   document.getElementById('save-slot-1').onclick = function slot1click(e) {
     e.stopPropagation();
@@ -145,11 +156,11 @@ ipcRenderer.on('setActiveDevicePinned', (event, message) => {
   }
 });
 
-ipcRenderer.on('doSearch', (event, message) => {
+ipcRenderer.on('searchAll', (event, message) => {
   window.searchAll();
 });
 
-ipcRenderer.on('doDelete', (event, message) => {
+ipcRenderer.on('deleteActive', (event, message) => {
   DEVICE.deleteActive();
 });
 
@@ -157,17 +168,25 @@ ipcRenderer.on('resetViews', (event, message) => {
   SAVESLOTS.resetSlots();
 });
 
-ipcRenderer.on('doSlots1', (event, message) => {
-  SAVESLOTS.loadSlot(1);
+ipcRenderer.on('loadSlot', (event, slot) => {
+  if(slot){
+    SAVESLOTS.loadSlot(slot);
+  }
 });
 
-ipcRenderer.on('doSlots2', (event, message) => {
-  SAVESLOTS.loadSlot(2);
-});
 
-ipcRenderer.on('doSlots3', (event, message) => {
-  SAVESLOTS.loadSlot(3);
-});
+// message from main process to set autoUpdate state
+ipcRenderer.on('setAutoUpdate',(event,autoUpdate)=>{
+  console.log('setAutoUpdate called ')
+  console.log(autoUpdate)
+  localStorage.setItem('autoUpdate',autoUpdate);
+  if(autoUpdate){
+    ipcRenderer.send('checkForUpdates');
+  }
+  // message to main process that we have updated the state
+  ipcRenderer.send('setAutoUpdate',autoUpdate);
+})
+
 
 function switchClass(element, className) {
   try {
