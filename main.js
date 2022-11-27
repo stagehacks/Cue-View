@@ -1,10 +1,13 @@
-const { app, BrowserWindow, Menu, ipcMain, nativeTheme } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, nativeTheme, dialog, shell } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 
 const isMac = process.platform === 'darwin';
+const isWin = process.platform === 'win32';
+
 let menuObj;
 let mainWindow;
+
 
 const menuTemplate = [
   ...(isMac ? [{ role: 'appMenu' }] : []),
@@ -100,8 +103,25 @@ const menuTemplate = [
         }
       }
     ]
-  }
+  },
+  {
+    label: 'Help',
+    role: 'help',
+    submenu: [
+      {
+        label: 'About',
+        role: 'about'
+      },
+      {
+        label: 'Check for Updates',
+        click: ()=>{
+          autoUpdater.checkForUpdates();
+        }
+      }
+    ]
+  },
 ];
+
 
 const windowMac = {
   width: 1500,
@@ -131,6 +151,11 @@ const windowWin = {
   },
 }
 
+if (isWin)
+{
+    app.setAppUserModelId(app.name);
+}
+
 const createWindow = () => {
 
   nativeTheme.themeSource = 'dark';
@@ -153,7 +178,6 @@ const createWindow = () => {
 
   menuObj = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menuObj);
-  autoUpdater.checkForUpdatesAndNotify();
 };
 
 app.whenReady().then(() => {
@@ -189,3 +213,127 @@ ipcMain.on('disableSearchAll', (event, arg) => {
 ipcMain.on('setDevicePin', (event, arg) => {
   menuObj.getMenuItemById('devicePin').checked = arg;
 });
+
+
+// Autoupdate logic
+
+// this can be set to true to bypass the download update dialog and skip straight to install prompt
+autoUpdater.autoDownload = false;
+
+autoUpdater.on('update-available', (updateInfo)=>{
+
+  // skip prompting to download if autoDownload is set
+  if(autoUpdater.autoDownload){
+    return;
+  }
+
+  const msg = `Version ${updateInfo.version} is available:  Would you like to download?`
+  const title = 'Update Available';
+
+  let dialogOpts = {}
+
+  if(isMac){
+    dialogOpts = {
+      type: 'info',
+      buttons: ['Download', 'Cancel'],
+      title: 'Update Available',
+      message: title,
+      detail: `Auto updating is not yet automatic on MacOS. Please manually download and install version ${updateInfo.version}.`
+    }
+  }else{
+    dialogOpts = {
+      type: 'info',
+      buttons: ['Download', 'Cancel'],
+      title: 'Update Available',
+      message: msg
+    }
+  }
+  
+  dialog.showMessageBox(mainWindow,dialogOpts).then((returnValue) => {
+    // download was clicked
+    if (returnValue.response === 0){ 
+      if(!isMac){
+        autoUpdater.downloadUpdate();
+      }else{
+        // TODO: get code signing working
+        // temp solution to direct user to download
+        shell.openExternal("https://github.com/stagehacks/Cue-View/releases/")
+      }
+
+    }
+  })
+})
+
+autoUpdater.on('update-downloaded',(event)=>{
+  const title = 'Update Downloaded';
+  const msg = `Version ${event.version} has been downloaded. Would you like to install this update now?`
+
+  let dialogOpts = {}
+  
+  if(isMac){
+    dialogOpts = {
+      type: 'info',
+      buttons: ['Install', 'Later'],
+      title: 'Update Available',
+      message: title,
+      detail: msg
+    }
+  }else{
+    dialogOpts = {
+      type: 'info',
+      buttons: ['Install', 'Later'],
+      title: 'Update Available',
+      message: msg
+    }
+  }
+  
+  dialog.showMessageBox(mainWindow,dialogOpts).then((returnValue) => {
+    if (returnValue.response === 0) autoUpdater.quitAndInstall()
+  })
+})
+
+autoUpdater.on('update-not-available',(updateInfo)=>{
+  let dialogOpts = {}
+  const msg = `There is no update available at this time. Latest version is v${updateInfo.version}`
+  if(isMac){
+    dialogOpts = {
+      type: 'info',
+      buttons: ['Ok'],
+      title: 'No Update Available',
+      message: 'No Update Available',
+      detail: msg
+    }
+  }else{
+    dialogOpts = {
+      type: 'info',
+      buttons: ['Ok'],
+      title: 'No Update Available',
+      message: msg
+    }
+  }
+
+  dialog.showMessageBox(mainWindow,dialogOpts)
+})
+
+autoUpdater.on('error',(error,message)=>{
+  let dialogOpts = {}
+  
+  if(isMac){
+    dialogOpts = {
+      type: 'error',
+      buttons: ['Ok'],
+      title: 'Update Error',
+      message: 'Update Error',
+      detail: error.message
+    }
+  }else{
+    dialogOpts = {
+      type: 'error',
+      buttons: ['Ok'],
+      title: 'Update Error',
+      message: error.message
+    }
+  }
+
+  dialog.showMessageBox(mainWindow,dialogOpts)
+})
