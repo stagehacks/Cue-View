@@ -3,6 +3,7 @@ const _ = require('lodash');
 exports.defaultName = "Art-Net";
 exports.connectionType = 'UDPsocket';
 exports.heartbeatInterval = 10000;
+
 exports.searchOptions = {
   type: 'UDPsocket',
   searchBuffer: Buffer.from([0x00]),
@@ -12,108 +13,88 @@ exports.searchOptions = {
     return msg.toString('utf8', 0, 7) === "Art-Net";
   }
 };
+
 exports.defaultPort = 6454;
 
-exports.ready = function ready(device) {
-  const d = device;
-  d.data.universes = {};
-  d.data.orderedUniverses = [];
-
+exports.ready = function ready(_device) {
+  const device = _device;
+  device.data.universes = {};
+  device.data.orderedUniverses = [];
 };
 
-exports.data = function data(device, buf) {
+exports.data = function data(_device, buf) {
   if(buf.length < 18){
     return
   }
-  const univ = buf.readUInt8(14);
-  const d = device;
-  let u = d.data.universes[univ];
+  const universeIndex = buf.readUInt8(14);
+  const device = _device;
+  let universe = device.data.universes[universeIndex];
 
-  if(!u){
-    d.data.universes[univ] = {};
-    u = d.data.universes[univ];
+  if(!universe){
+    device.data.universes[universeIndex] = {};
+    universe = device.data.universes[universeIndex];
   }
 
-  u.sequence = buf.readUInt8(12);
-  u.net = buf.readUInt8(15);
-  u.opCode = buf.readUInt8(9);
-  u.version = buf.readUInt16BE(10);
-  u.slots = Array.prototype.slice.call(buf, 18);
-  d.data.ip = d.addresses[0];
+  universe.sequence = buf.readUInt8(12);
+  universe.subnet = buf.readUInt8(15);
+  universe.opCode = buf.readUInt8(9);
+  universe.version = buf.readUInt16BE(10);
+  universe.slots = buf.slice(18)
+  device.data.ip = device.addresses[0];
 
-  if(!_.includes(d.data.orderedUniverses, univ)){
-    d.data.orderedUniverses.push(univ);
-    d.data.orderedUniverses.sort();
-    u.slotElems = [];
-    u.slotElemsSet = false;
+  if(!_.includes(device.data.orderedUniverses, universeIndex)){
+    device.data.orderedUniverses.push(universeIndex);
+    device.data.orderedUniverses.sort();
+    universe.slotElems = [];
+    universe.slotElemsSet = false;
 
-    d.draw();
-    updateElementsCache(d, d.data.universes, d.data.orderedUniverses);
-
+    device.draw();
+    device.update('elementCache');
   }
 
   device.update("universeData", {
-    u: univ,
-    universe: u
+    universeIndex,
+    universe
   });
-
-
 };
-
 
 exports.heartbeat = function heartbeat(device) {
   
 };
 
-
-
 let lastUpdate = Date.now();
-exports.update = function update(device, document, updateType, updateData){
-
+exports.update = function update(_device, _document, updateType, updateData){
+  const device = _device
   const data = updateData;
-  const doc = document;
+  const document = _document;
 
   if(updateType === "universeData" && data.universe){
 
     if(Date.now() - lastUpdate > 1000){
       lastUpdate = Date.now();
-      updateElementsCache(device, device.data.universes, device.data.orderedUniverses);
+      device.update("elementCache");
     }
 
-    const $elem = doc.getElementById(`universe-${data.u}`);
+    const $elem = document.getElementById(`universe-${data.universeIndex}`);
 
     if($elem && data.universe.slotElemsSet){
-
       for(let i = 0; i < 512; i++){
         data.universe.slotElems[i].innerText = data.universe.slots[i];
       }
 
-      doc.getElementById(`universe-${data.u}-sequence`).innerText = data.universe.sequence;
-
-
+      document.getElementById(`universe-${data.universeIndex}-sequence`).innerText = data.universe.sequence;
     }else{
       device.draw();
-      updateElementsCache(device, device.data.universes, device.data.orderedUniverses);
+      device.update("elementCache");
     }
 
   }else if(updateType === "elementCache"){
-
-    data.orderedUniverses.forEach(univ => { 
+    device.data.orderedUniverses.forEach(universeIndex => { 
       for(let i = 0; i < 512; i++){
-        data.universes[univ].slotElems[i] = doc.getElementById(`${univ}-${i}`);
+        device.data.universes[universeIndex].slotElems[i] = document.getElementById(`${universeIndex}-${i}`);
       }
-      data.universes[univ].slotElemsSet = true;
+      device.data.universes[universeIndex].slotElemsSet = true;
     });
-
   }
-  
-
-}
-
-function updateElementsCache(device, univ, ordered){
-  device.update("elementCache", {
-    universes: univ,
-    orderedUniverses: ordered
-  });
 }
 
