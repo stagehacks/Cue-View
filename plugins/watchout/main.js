@@ -15,44 +15,42 @@ exports.ready = function ready(device) {
   device.send('authenticate 1\n');
 };
 
-exports.data = function data(device, message) {
-  const msg = message.toString();
-  const d = device;
+exports.data = function data(_device, _message) {
+  const message = message.toString();
+  const device = _device;
 
-  if (msg.substring(0, 5) === 'Ready') {
-    d.send('getStatus\n');
+  if (message.substring(0, 5) === 'Ready') {
+    device.send('getStatus\n');
 
-  }else if (msg.substring(0, 5) === 'Reply') {
-    const arr = msg.split(' ');
+  }else if (message.substring(0, 5) === 'Reply') {
+    const arr = message.split(' ');
 
-    d.data.showName = '';
+    device.data.showName = '';
+    
     let i = 0;
     while (arr[i][arr[i].length - 1] !== '"') {
       i++;
-      d.data.showName += `${arr[i]} `;
+      device.data.showName += `${arr[i]} `;
     }
-    d.data.showName = d.data.showName.substring(
+
+    device.data.showName = device.data.showName.substring(
       1,
-      d.data.showName.length - 2
+      device.data.showName.length - 2
     );
 
     i--;
-    d.data.busy = arr[i + 2];
-    d.data.health = arr[i + 3];
-    d.data.displayOpen = arr[i + 4];
-    d.data.showActive = arr[i + 5];
-    d.data.programmerOnline = arr[i + 6];
-    d.data.position = Number(arr[i + 7]).toFixed(2);
-    d.data.rate = arr[i + 8];
-    d.data.standby = arr[i + 9];
+    device.data.busy = arr[i + 2];
+    device.data.health = arr[i + 3];
+    device.data.displayOpen = arr[i + 4];
+    device.data.showActive = arr[i + 5];
+    device.data.programmerOnline = arr[i + 6];
+    device.data.position = Number(arr[i + 7]).toFixed(2);
+    device.data.rate = arr[i + 8];
+    device.data.standby = arr[i + 9];
 
-    this.deviceInfoUpdate(d, 'defaultName', d.data.showName);
-    d.draw();
+    this.deviceInfoUpdate(device, 'defaultName', device.data.showName);
+    device.draw();
   }
-  // if(msg.substring(0, 5)=="Error"){
-  // 	device.data.error = msg.substring(6, 7);
-  // }
-  // console.log(msg)
 };
 
 exports.heartbeat = function heartbeat(device) {
