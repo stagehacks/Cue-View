@@ -4,15 +4,15 @@
 
 
 <div id="universes">
-<% data.orderedUniverses.forEach(univ => { 
-  let universe = data.universes[univ];
+<% data.orderedUniverses.forEach(universeIndex => { 
+  let universe = data.universes[universeIndex];
 %>
 
-  <table id="universe-<%= univ %>">
+  <table id="universe-<%= universeIndex %>">
   <tr>
     <td class="data" colspan="2">
       Universe
-      <br><em><%= univ %></em>
+      <br><em><%= universeIndex %></em>
     </td>
     <td class="data" colspan="2">
       Priority
@@ -28,7 +28,7 @@
     </td>
     <td class="data" colspan="2">
       Flavor
-      <br><em id="universe-<%= univ %>-code">0</em>
+      <br><em id="universe-<%= universeIndex %>-code">0</em>
     </td>
   </tr>
 
@@ -45,7 +45,7 @@
       <th><%= row*16+1 %></th>
     <% for(col=0; col<16; col++){ %>
       <% slot++%>
-      <td id="<%= univ %>-<%= row*16+col %>" title="<%= univ %>/<%= slot %>"><%= universe.slots[slot-1] %></td>
+      <td id="<%= universeIndex %>-<%= row*16+col %>" title="<%= universeIndex %>/<%= slot %>"><%= universe.slots[slot-1] %></td>
     <% } %>
     </tr>
   <% } %>
