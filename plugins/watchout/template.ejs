@@ -2,7 +2,6 @@
 	<h1><%= listName %></h1>
 </header>
 
-
 <table class="cv-table">
 	<tr>
 		<td colspan="2">
@@ -20,13 +19,10 @@
 		<td colspan="2"><h1><%= minutes %>:<%= ((seconds%60)+"").padStart(2, "0") %>.<%= millis%1000 %></h1></td>
 	</tr>
 
-	
-
 	<tr>
 		<td>Busy</td>
 		<td><div><%= data.busy %></div></td></td>
-	</tr>
-	
+	</tr>	
 	<tr>
 		<td>Display Open</td>
 		<td><div><%= data.displayOpen %></td></td>
