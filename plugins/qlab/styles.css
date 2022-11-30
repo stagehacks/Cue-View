@@ -151,6 +151,12 @@ tr.playback-position .q-gray-text {
 .gMode-4 {
   border-color: #925fc0;
 }
+.gMode-4 {
+  border-color: #925fc0;
+}
+.gMode-6 {
+  border-color: #D05B15;
+}
 .gMode-,
 .gMode-0 {
   border-color: rgba(0, 0, 0, 0);
