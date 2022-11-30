@@ -16,7 +16,7 @@ const cueTemplate = _.template(fs.readFileSync(path.join(__dirname, `cue.ejs`)))
 const tileTemplate = _.template(fs.readFileSync(path.join(__dirname, `tile.ejs`)));
 const cartTemplate = _.template(fs.readFileSync(path.join(__dirname, `cart.ejs`)));
 
-exports.defaultName = 'QLab 4';
+exports.defaultName = 'QLab';
 exports.connectionType = 'osc';
 exports.heartbeatInterval = 50;
 exports.heartbeatTimeout = 2000;
@@ -87,11 +87,11 @@ exports.data = function data(_device, oscData) {
       });
     }, 0);
 
-  }else if(match(oscAddressParts, ["reply", "cue_id", "*", "children"])){
+  }else if(match(oscAddressParts, ["reply", "cue_id", "*", "children"]) || match(oscAddressParts, ["reply", "workspace", "*", "cue_id", "*", "children"])){
 
     const json = JSON.parse(oscData.args[0]);
     const workspace = device.data.workspaces[json.workspace_id];
-    const cueID = oscAddressParts[2];
+    const cueID = json.address.substring(55, 91);
     const cue = workspace.cues[cueID];
 
     if(!_.isEqual(cue.cues, json.data)){
@@ -101,7 +101,7 @@ exports.data = function data(_device, oscData) {
       getValuesForKeys(device, json.workspace_id, cue);
     }
 
-  }else if(match(oscAddressParts, ["reply", "cue_id", "*", "valuesForKeys"])){
+  }else if(match(oscAddressParts, ["reply", "cue_id", "*", "valuesForKeys"]) || match(oscAddressParts, ["reply", "workspace", "*", "cue_id", "*", "valuesForKeys"])){
 
     const json = JSON.parse(oscData.args[0]);
     const cueValues = json.data;
@@ -124,7 +124,7 @@ exports.data = function data(_device, oscData) {
     cue.flagged = cueValues.isFlagged;
     cue.paused = cueValues.isPaused;
     cue.type = cueValues.type;
-    cue.cues = cueValues.children;
+    //cue.cues = cueValues.children;
     cue.preWait = cueValues.preWait;
     cue.postWait = cueValues.postWait;
     cue.duration = cueValues.currentDuration;
@@ -138,6 +138,13 @@ exports.data = function data(_device, oscData) {
     cue.preWaitElapsed = cueValues.preWaitElapsed;
     cue.actionElapsed = cueValues.actionElapsed;
     cue.postWaitElapsed = cueValues.postWaitElapsed;
+
+    // QLab 5 fix
+    if(cueValues.type=="Group" || cueValues.type=="Cue List"){
+       cue.cues = cueValues.children;
+    }else{
+       cue.cues = undefined;
+    }
 
     const nestedGroupModes = [];
     const nestedGroupPosition = [];
@@ -181,7 +188,7 @@ exports.data = function data(_device, oscData) {
 
     const json = JSON.parse(oscData.args[0]);
     const workspace = device.data.workspaces[json.workspace_id];
-    const cue = workspace.cues[oscAddressParts[2]];
+    const cue = workspace.cues[json.address.substring(55, 91)];
 
     cue.preWaitElapsed = json.data;
     lastElapsedUpdate = Date.now();
@@ -192,7 +199,7 @@ exports.data = function data(_device, oscData) {
 
     const json = JSON.parse(oscData.args[0]);
     const workspace = device.data.workspaces[json.workspace_id];
-    const cue = workspace.cues[oscAddressParts[2]];
+    const cue = workspace.cues[json.address.substring(55, 91)];
 
     cue.actionElapsed = json.data;
     lastElapsedUpdate = Date.now();
@@ -203,7 +210,7 @@ exports.data = function data(_device, oscData) {
 
     const json = JSON.parse(oscData.args[0]);
     const workspace = device.data.workspaces[json.workspace_id];
-    const cue = workspace.cues[oscAddressParts[2]];
+    const cue = workspace.cues[json.address.substring(55, 91)];
 
     cue.postWaitElapsed = json.data;
     lastElapsedUpdate = Date.now();
@@ -352,14 +359,14 @@ exports.heartbeat = function heartbeat(device) {
   heartbeatCount++;
 
   if(Date.now() - lastElapsedUpdate > 300){
-    interval = 5;
+    interval = 24;
   }else{
     interval = 1;
   }
 
   if(heartbeatCount % interval === 0){
-    device.send(`/cue/active/preWaitElapsed`);
-    device.send(`/cue/active/actionElapsed`);
-    device.send(`/cue/active/postWaitElapsed`);
+    device.send(`/cue_id/active/preWaitElapsed`);
+    device.send(`/cue_id/active/actionElapsed`);
+    device.send(`/cue_id/active/postWaitElapsed`);
   }
 };
