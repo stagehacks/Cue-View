@@ -157,7 +157,7 @@ tr.playback-position .q-gray-text {
 }
 .group-arrow {
   width: 13px;
-  background-image: url('img/arrow-down.png');
+  background-image: url('img/new_group_arrow.png');
   background-position: center;
   background-repeat: no-repeat;
 }
