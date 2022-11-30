@@ -1,7 +1,7 @@
 {
   "name": "cue-view",
   "productName": "Cue View",
-  "version": "0.9.6-pre",
+  "version": "0.9.7-pre",
   "description": "A dashboard for everything in your show",
   "main": "main.js",
   "scripts": {
@@ -11,7 +11,8 @@
     "build:mac": "electron-builder -m",
     "build:windows": "electron-builder -w",
     "build:linux": "electron-builder -l",
-    "build:arm": "electron-builder -l --arm64"
+    "build:arm": "electron-builder -l --arm64",
+    "release": "electron-builder"
   },
   "author": "alec@stagehacks.com",
   "license": "CC BY-SA 4.0",
@@ -28,6 +29,7 @@
   },
   "dependencies": {
     "bonjour": "^3.5.0",
+    "electron-updater": "^5.3.0",
     "lodash": "^4.17.20",
     "md5": "^2.3.0",
     "netmask": "^2.0.2",
@@ -35,25 +37,36 @@
     "uuid": "^9.0.0"
   },
   "build": {
-    "appId": "com.electron.cueview",
+    "appId": "com.stagehacks.cueview",
     "icon": "./src/img/",
-    "artifactName": "${productName} ${os} v${version}.${ext}",
+    "artifactName": "${name}.${os}.v${version}.${ext}",
     "mac": {
-      "target": "zip",
       "category": "Utilities",
       "icon": "./src/img/icon.icns",
       "electronLanguages": [
         "en"
+      ],
+      "publish": [
+        "github"
       ]
     },
     "win": {
-      "target": "portable",
-      "icon": "./src/img/icon.ico"
+      "target": "NSIS",
+      "icon": "./src/img/icon.ico",
+      "publish": [
+        "github"
+      ]
+    },
+    "nsis": {
+      "oneClick": false
     },
     "linux": {
-      "target": "deb",
+      "target": "AppImage",
       "maintainer": "alec@stagehacks.com",
-      "category": "Utility"
+      "category": "Utility",
+      "publish": [
+        "github"
+      ]
     }
   }
 }
