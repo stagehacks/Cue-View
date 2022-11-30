@@ -140,19 +140,38 @@ exports.data = function data(_device, oscData) {
     cue.postWaitElapsed = cueValues.postWaitElapsed;
 
     const nestedGroupModes = [];
-    const nestedGroupPosition = [0];
+    const nestedGroupPosition = [];
 
 
     let obj = cue;
+    let sum = 0;
+
+    if(obj.cues){
+      sum+=obj.cues.length;
+    }
 
     while(obj.parent !== "[root group of cue lists]"){
-      nestedGroupModes.push(obj.groupMode);
 
       let pos = _.findIndex(workspace.cues[obj.parent].cues, {uniqueID: obj.uniqueID});
-      pos = Math.abs(pos - workspace.cues[obj.parent].cues.length) - 1;
-      nestedGroupPosition.push(pos)
+      pos = Math.abs(pos - workspace.cues[obj.parent].cues.length)-1;
+
+      if(obj.cues === undefined){
+        sum += pos;
+      }
+
+      nestedGroupPosition.unshift(sum);
+
+      if(obj.cues){
+        sum+=pos;
+        nestedGroupModes.unshift(obj.groupMode);
+      }else{
+        nestedGroupModes.unshift(workspace.cues[obj.parent].groupMode);
+      }
+      
       obj = workspace.cues[obj.parent];
+
     }
+
     cue.nestedGroupModes = nestedGroupModes;
     cue.nestedGroupPosition = nestedGroupPosition;
 
