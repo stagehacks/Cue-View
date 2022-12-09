@@ -1,4 +1,4 @@
-![Latest Release Build Status](https://img.shields.io/github/workflow/status/stagehacks/Cue-View/release?label=release%20build)
+![Latest Release Build Status](https://img.shields.io/github/workflow/status/stagehacks/Cue-View/release?label=release%20build&logo=github)
 # Cue View
 
 A dashboard for everything in your show.
