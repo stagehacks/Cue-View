@@ -1,7 +1,7 @@
 {
   "name": "cue-view",
   "productName": "Cue View",
-  "version": "0.9.7-pre",
+  "version": "0.9.8-pre",
   "description": "A dashboard for everything in your show",
   "main": "main.js",
   "scripts": {
@@ -19,6 +19,7 @@
   "homepage": "https://github.com/stagehacks/Cue-View",
   "repository": "https://github.com/stagehacks/Cue-View",
   "devDependencies": {
+    "@electron/notarize": "^1.2.3",
     "electron": "^21.3.0",
     "electron-builder": "^23.6.0",
     "eslint": "^8.27.0",
@@ -40,9 +41,11 @@
     "appId": "com.stagehacks.cueview",
     "icon": "./src/img/",
     "artifactName": "${name}.${os}.v${version}.${ext}",
+    "afterSign": "notarize.js",
     "mac": {
       "category": "Utilities",
       "icon": "./src/img/icon.icns",
+      "hardenedRuntime": true,
       "electronLanguages": [
         "en"
       ],

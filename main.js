@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, ipcMain, nativeTheme, dialog, shell } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, nativeTheme, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 
@@ -257,7 +257,7 @@ autoUpdater.on('update-available', (updateInfo) => {
       buttons: ['Download', 'Cancel'],
       title: 'Update Available',
       message: title,
-      detail: `Auto updating is not yet automatic on MacOS. Please manually download and install version ${updateInfo.version}.`
+      detail: msg
     }
   }else{
     dialogOpts = {
@@ -271,14 +271,7 @@ autoUpdater.on('update-available', (updateInfo) => {
   dialog.showMessageBox(mainWindow,dialogOpts).then((returnValue) => {
     // download was clicked
     if (returnValue.response === 0){ 
-      if(!isMac){
-        autoUpdater.downloadUpdate();
-      }else{
-        // TODO: get code signing working
-        // temp solution to direct user to download
-        shell.openExternal("https://github.com/stagehacks/Cue-View/releases/")
-      }
-
+      autoUpdater.downloadUpdate();
     }
   })
 })
