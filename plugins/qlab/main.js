@@ -73,19 +73,22 @@ exports.data = function data(_device, oscData) {
     workspace.cueLists = {};
     workspace.cues = {};
 
-    json.data.forEach(cueList => {
-      workspace.cueLists[cueList.uniqueID] = cueList;
-      addCueToWorkspace(workspace, cueList);
-    });
+    if(json.data){
 
-    device.draw();
-
-    setTimeout(() => {
-      json.data.forEach(ql => {
-        workspace.cueLists[ql.uniqueID] = ql;
-        getValuesForKeys(device, json.workspace_id, ql);
+      json.data.forEach(cueList => {
+        workspace.cueLists[cueList.uniqueID] = cueList;
+        addCueToWorkspace(workspace, cueList);
       });
-    }, 0);
+
+      device.draw();
+
+      setTimeout(() => {
+        json.data.forEach(ql => {
+          workspace.cueLists[ql.uniqueID] = ql;
+          getValuesForKeys(device, json.workspace_id, ql);
+        });
+      }, 0);
+    }
 
   }else if(match(oscAddressParts, ["reply", "cue_id", "*", "children"]) || match(oscAddressParts, ["reply", "workspace", "*", "cue_id", "*", "children"])){
 
