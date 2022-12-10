@@ -1,16 +1,18 @@
 const _ = require('lodash');
 
-exports.defaultName = "Art-Net";
-exports.connectionType = 'UDPsocket';
-exports.heartbeatInterval = 10000;
-
-exports.searchOptions = {
-  type: 'UDPsocket',
-  searchBuffer: Buffer.from([0x00]),
-  devicePort: 6454,
-  listenPort: 6454,
-  validateResponse (msg, info, devices) {
-    return msg.toString('utf8', 0, 7) === "Art-Net";
+exports.config = {
+  defaultName: "Art-Net",
+  connectionType: "UDPsocket",
+  heartbeatInterval: 10000,
+  searchOptions: {
+    type: 'UDPsocket',
+    searchBuffer: Buffer.from([0x00]),
+    devicePort: 6454,
+    listenPort: 6454,
+    mayChangePort: false,
+    validateResponse (msg, info, devices) {
+      return msg.toString('utf8', 0, 7) === "Art-Net";
+    }
   }
 };
 

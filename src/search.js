@@ -60,21 +60,21 @@ function searchAll() {
     const plugin = PLUGINS.all[p];
     
     try {
-      const t = plugin.searchOptions.type;
+      const t = plugin.config.searchOptions.type;
 
       if(t === 'TCPport'){
         if (TCPFlag) {
-          searchTCP(p, plugin);
+          searchTCP(p, plugin.config);
         }
 
       }else if(t === 'Bonjour'){
-        searchBonjour(p, plugin);
+        searchBonjour(p, plugin.config);
 
       }else if(t === 'UDPsocket'){
-        searchUDP(p, plugin);
+        searchUDP(p, plugin.config);
 
       }else if(t === 'multicast'){
-        searchMulticast(p, plugin);
+        searchMulticast(p, plugin.config);
 
       }
 

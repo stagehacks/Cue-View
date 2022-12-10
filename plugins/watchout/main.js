@@ -1,15 +1,18 @@
-exports.defaultName = 'Dataton Watchout';
-exports.connectionType = 'TCPsocket';
-exports.heartbeatInterval = 500;
-exports.searchOptions = {
-  type: 'TCPport',
-  searchBuffer: Buffer.from('authenticate 1\n', 'ascii'),
-  testPort: 3040,
-  validateResponse (msg, info) {
-    return msg.toString().substring(0, 5) === 'Ready';
-  },
-};
-exports.defaultPort = 3040;
+exports.config = {
+  defaultName: "Dataton Watchout",
+  connectionType: "TCPsocket",
+  heartbeatInterval: 500,
+  defaultPort: 3040,
+  mayChangePort: false,
+  searchOptions: {
+    type: 'TCPport',
+    searchBuffer: Buffer.from('authenticate 1\n', 'ascii'),
+    testPort: 3040,
+    validateResponse (msg, info) {
+      return msg.toString().substring(0, 5) === 'Ready';
+    }
+  }
+}
 
 exports.ready = function ready(device) {
   device.send('authenticate 1\n');

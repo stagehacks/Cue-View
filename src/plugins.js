@@ -47,17 +47,33 @@ module.exports.init = function init(callback) {
         );
 
 
-        if (p.heartbeatTimeout === undefined || p.heartbeatTimeout < 50) {
-          if(p.heartbeatInterval){
-            p.heartbeatTimeout = p.heartbeatInterval * 1.5;
+        //if (p.heartbeatTimeout === undefined || p.heartbeatTimeout < 50) {
+          if(p.config.heartbeatTimeout){
+            p.heartbeatTimeout = p.config.heartbeatInterval * 1.5;
           }else{
             p.heartbeatTimeout = 10000;
           }
-        }
+        //}
 
-        if (p.heartbeatInterval === undefined || p.heartbeatInterval < 50) {
-          p.heartbeatInterval = 5000;
-        }
+          if(p.config.heartbeatInterval){
+            p.heartbeatInterval = Math.max(50, p.config.heartbeatInterval);
+          }else{
+            p.heartbeatInterval = 5000;
+          }
+
+          // p.fields = {};
+          // if(p.config.fields){
+          //   p.config.fields.forEach(field => {
+          //     p.fields[field.key] = field.value;
+          //   });
+          // }
+
+
+
+
+        // if (p.heartbeatInterval === undefined || p.heartbeatInterval < 50) {
+        //   p.heartbeatInterval = 5000;
+        // }
 
       }
     });

@@ -1,19 +1,22 @@
 const md5 = require('md5');
 
-exports.defaultName = 'PJLink Projector';
-exports.connectionType = 'TCPsocket';
-exports.heartbeatInterval = 5000;
-exports.heartbeatTimeout = 15000;
-exports.searchOptions = {
-  type: 'UDPsocket',
-  searchBuffer: Buffer.from([0x25, 0x32, 0x53, 0x52, 0x43, 0x48, 0x0d]),
-  devicePort: 4352,
-  listenPort: 4352,
-  validateResponse (msg, info) {
-    return msg.toString().indexOf('%2ACKN=') >= 0;
-  },
-};
-exports.defaultPort = 4352;
+exports.config = {
+  defaultName: 'PJLink Projector',
+  connectionType: "TCPsocket",
+  heartbeatInterval: 5000,
+  heartbeatTimeout: 15000,
+  defaultPort: 4352,
+  mayChangePort: false,
+  searchOptions: {
+    type: 'UDPsocket',
+    searchBuffer: Buffer.from([0x25, 0x32, 0x53, 0x52, 0x43, 0x48, 0x0d]),
+    devicePort: 4352,
+    listenPort: 4352,
+    validateResponse (msg, info) {
+      return msg.toString().indexOf('%2ACKN=') >= 0;
+    }
+  }
+}
 
 exports.ready = function ready(device) {
   // Power status query
