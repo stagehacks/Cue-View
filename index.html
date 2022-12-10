@@ -35,62 +35,67 @@
           </h3>
         </div>
 
-        <div id="device-tools">
-          <select
-            class="left button"
-            id="add-device-button"
-            title="Add Device..."></select>
-          <button
-            class="left"
-            id="search-button"
-            title="Search network for devices">
-            <img src="src/img/outline_search_white_18dp.png" />
-          </button>
-          <button
-            class="left"
-            id="refresh-device-button"
-            title="Refresh Device"
-            disabled>
-            <img src="src/img/outline_refresh_white_18dp.png" />
-          </button>
+        <div id="device-inspector">
+          <div id="device-tools">
+            <select
+              class="left button"
+              id="add-device-button"
+              title="Add Device..."></select>
+            <button
+              class="left"
+              id="search-button"
+              title="Search network for devices">
+              <img src="src/img/outline_search_white_18dp.png" />
+            </button>
+            <button
+              class="left"
+              id="refresh-device-button"
+              title="Refresh Device"
+              disabled>
+              <img src="src/img/outline_refresh_white_18dp.png" />
+            </button>
+          </div>
+
+          <div id="device-settings">
+            <table id="device-settings-table">
+              <tr>
+                <th>Name:</th>
+                <td colspan="3">
+                  <input id="device-settings-name" type="text" maxlength="30" />
+                </td>
+              </tr>
+              <tr>
+                <th>Type:</th>
+                <td colspan="3">
+                  <select id="device-settings-plugin-dropdown"></select>
+                </td>
+              </tr>
+              <tr>
+                <th>Addr:</th>
+                <td colspan="3">
+                  <input id="device-settings-ip" type="text" maxlength="30" />
+                </td>
+              </tr>
+              <tr>
+                <th>Port:</th>
+                <td>
+                  <input
+                    id="device-settings-port"
+                    type="number"
+                    value="53000"
+                    maxlength="5" />
+                </td>
+                <th>Pin:</th>
+                <td><input id="device-settings-pin" type="checkbox" /></td>
+              </tr>
+              <tbody id="device-settings-fields">
+              </tbody>
+            </table>
+
+            <h3>No Device Selected</h3>
+          </div>
         </div>
 
-        <div id="device-settings">
-          <table id="device-settings-table">
-            <tr>
-              <th>Name:</th>
-              <td colspan="3">
-                <input id="device-settings-name" type="text" maxlength="30" />
-              </td>
-            </tr>
-            <tr>
-              <th>Type:</th>
-              <td colspan="3">
-                <select id="device-settings-plugin-dropdown"></select>
-              </td>
-            </tr>
-            <tr>
-              <th>Addr:</th>
-              <td colspan="3">
-                <input id="device-settings-ip" type="text" maxlength="30" />
-              </td>
-            </tr>
-            <tr>
-              <th>Port:</th>
-              <td>
-                <input
-                  id="device-settings-port"
-                  type="number"
-                  value="53000"
-                  maxlength="5" />
-              </td>
-              <th>Pin:</th>
-              <td><input id="device-settings-pin" type="checkbox" /></td>
-            </tr>
-          </table>
-
-          <h3>No Device Selected</h3>
-        </div>
       </div>
 
       <div id="all-devices"></div>
