@@ -24,8 +24,17 @@
   <% } %>
   </center></td>
 
+  <% if(cue.type == "Group"){ %>
+    <td><img src="./plugins/qlab/img/v5/group-<%= cue.groupMode %>.png" height="20px"></td>
 
-  <td><img src="./plugins/qlab/img/<%= cue.type.toLowerCase().replace(' ','-') %>.png" height="20px"></td>
+  <% }else{ %>
+    <td><img src="./plugins/qlab/img/<%= cue.type.toLowerCase().replace(' ','-') %>.png" height="20px"></td>
+
+  <% } %>
+
+
+  
+
   <td><center><%= cue.number || "&nbsp;" %></center></td>
 
 
@@ -86,7 +95,7 @@
 
 
   <% if(cue.preWait){ %>
-    <td class="q-time hide-medium"><%= elapsedTime(cue.preWait, cue.preWaitElapsed, "preWait", cue) %></td>
+    <td class="q-time hide-small"><%= elapsedTime(cue.preWait, cue.preWaitElapsed, "preWait", cue) %></td>
 
   <% }else{ %>
     <td class="q-time q-gray-text hide-small">00:00.00</td>
