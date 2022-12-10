@@ -38,31 +38,33 @@ A Cue View "plugin" is a system for communicating with a type of device, for exa
 ### plugin.js
 
 ```js
-exports.defaultName = 'Example Plugin';
-exports.connectionType = 'osc' or 'TCPsocket' or 'UDPsocket'
-exports.searchOptions = {
-	type: 'Bonjour',
-	bonjourNane: 'device'
+exports.config = {
+	defaultName: 'Example Plugin',
+	connectionType: 'osc' or 'TCPsocket' or 'UDPsocket',
+	searchOptions: {
+		type: 'Bonjour',
+		bonjourNane: 'device'
+	},
+	searchOptions: {
+		type: 'UDPsocket',
+		searchBuffer: Buffer.from([0x00, 0x01, 0x02]),
+		devicePort: 1234, // port the device receives messages on
+		listenPort: 2345, // port Cue View should listen for responses on
+		validateResponse: function(msg, info){
+			// if this function returns true, Cue View adds the responding IP address to the list
+		}
+	},
+	searchOptions: {
+		type: 'TCPport',
+		searchBuffer: Buffer.from('are you there'),
+		testPort: 1234, // port the device receives messages on
+		validateResponse: function(msg, info){
+			// if this function returns true, Cue View adds the responding IP address to the list
+		}
+	},
+	defaultPort: 1234, // only available for TCPsocket and UDPsocket devices
+	heartbeatInterval: 5000 // how frequently, in ms, to send the heartbeat message
 }
-exports.searchOptions = {
-	type: 'UDPsocket',
-	searchBuffer: Buffer.from([0x00, 0x01, 0x02]),
-	devicePort: 1234, // port the device receives messages on
-	listenPort: 2345, // port Cue View should listen for responses on
-	validateResponse: function(msg, info){
-		// if this function returns true, Cue View adds the responding IP address to the list
-	}
-}
-exports.searchOptions = {
-	type: 'TCPport',
-	searchBuffer: Buffer.from('are you there'),
-	testPort: 1234, // port the device receives messages on
-	validateResponse: function(msg, info){
-		// if this function returns true, Cue View adds the responding IP address to the list
-	}
-}
-exports.defaultPort = 1234; // only available for TCPsocket and UDPsocket devices
-exports.heartbeatInterval = 5000; // how frequently, in ms, to send the heartbeat message
 
 exports.ready = function (device){
 	// runs when Cue View identifies a new device. send all data requests here
