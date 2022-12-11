@@ -162,6 +162,7 @@ ipcRenderer.on('searchAll', (event, message) => {
 
 ipcRenderer.on('deleteActive', (event, message) => {
   DEVICE.deleteActive();
+  VIEW.selectPreviousDevice();
 });
 
 ipcRenderer.on('resetViews', (event, message) => {
