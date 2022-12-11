@@ -211,7 +211,7 @@ function switchDevice(id) {
     fields.forEach(field => {
       let $elem = document.createElement("input");
       $elem.type = "text";
-      $elem.value = activeDevice.fields[field.key] || field.value;
+      $elem.value = activeDevice.fields[field.key];// || field.value;
       $elem.name = field.key;
       $elem.onchange = function(e){
         activeDevice.fields[field.key] = $elem.value;
