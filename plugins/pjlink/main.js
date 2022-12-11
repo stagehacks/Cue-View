@@ -1,19 +1,32 @@
 const md5 = require('md5');
 
-exports.defaultName = 'PJLink Projector';
-exports.connectionType = 'TCPsocket';
-exports.heartbeatInterval = 5000;
-exports.heartbeatTimeout = 15000;
-exports.searchOptions = {
-  type: 'UDPsocket',
-  searchBuffer: Buffer.from([0x25, 0x32, 0x53, 0x52, 0x43, 0x48, 0x0d]),
-  devicePort: 4352,
-  listenPort: 4352,
-  validateResponse (msg, info) {
-    return msg.toString().indexOf('%2ACKN=') >= 0;
+exports.config = {
+  defaultName: 'PJLink Projector',
+  connectionType: "TCPsocket",
+  heartbeatInterval: 5000,
+  heartbeatTimeout: 15000,
+  defaultPort: 4352,
+  mayChangePort: false,
+  searchOptions: {
+    type: 'UDPsocket',
+    searchBuffer: Buffer.from([0x25, 0x32, 0x53, 0x52, 0x43, 0x48, 0x0d]),
+    devicePort: 4352,
+    listenPort: 4352,
+    validateResponse (msg, info) {
+      console.log(msg.toString());
+      return msg.toString().indexOf('%2ACKN=') >= 0;
+    }
   },
-};
-exports.defaultPort = 4352;
+  fields: [{
+    key: "password",
+    label: "Pass",
+    type: "textinput",
+    value: "",
+    action: function(device){
+      device.plugin.heartbeat(device);
+    }
+  }]
+}
 
 exports.ready = function ready(device) {
   // Power status query
@@ -34,7 +47,8 @@ const PJLinkCmds = [
   '%2SVER='
 ]
 
-let password = false;
+let passwordMD5 = false;
+let passwordSeed = false;
 
 function processPJLink(_device, str, that) {
   const arr = str.split('%');
@@ -104,21 +118,42 @@ exports.data = function data(device, message) {
   this.deviceInfoUpdate(device, 'status', 'ok');
   const msg = message.toString();
 
+  //console.log(msg);
+
   if (msg.substring(0, 8) === 'PJLINK 1') {
-    password = md5(`${msg.substring(9, 17)}JBMIAProjectorLink`);
+    passwordSeed = msg.substring(9, 17);
+    passwordMD5 = md5(`${passwordSeed}${device.fields.password}`);
+    device.data.authentication = "ON";
+
     device.send(
-      `${password}%1POWR ?\r%1INPT ?\r%1AVMT ?\r%1ERST ?\r%1LAMP ?\r%1NAME ?\r%1INF1 ?\r%1INF2 ?\r%2SNUM ?\r%2SVER ?\r`
+      `${passwordMD5}%1POWR ?\r%1INPT ?\r%1AVMT ?\r%1ERST ?\r%1LAMP ?\r%1NAME ?\r%1INF1 ?\r%1INF2 ?\r%2SNUM ?\r%2SVER ?\r`
     );
+    device.draw();
+
+  }else if(msg.substring(0, 8) === 'PJLINK 0') {
+    device.data.authentication = "OFF";
+    device.draw();
+
+  }else if(msg.startsWith('PJLINK ERRA')) {
+    device.data.passwordOK = false;
+    device.draw();
   }
+
   if(PJLinkCmds.includes(msg.substring(0,7))){
-    processPJLink(device,msg,this)
+    processPJLink(device,msg,this);
+    device.data.passwordOK = true;
   }
 };
 
 exports.heartbeat = function heartbeat(device) {
-  if (password) {
+  passwordMD5 = md5(`${passwordSeed}${device.fields.password}`);
+  if (device.fields.password.length>0) {
     device.send(
-      `${password}%1POWR ?\r%1INPT ?\r%1AVMT ?\r%1ERST ?\r%1LAMP ?\r%1NAME ?\r%1INF1 ?\r%1INF2 ?\r%2SNUM ?\r%2SVER ?\r`
+      `${passwordMD5}%1POWR ?\r%1INPT ?\r%1AVMT ?\r%1ERST ?\r%1LAMP ?\r%1NAME ?\r%1INF1 ?\r%1INF2 ?\r%2SNUM ?\r%2SVER ?\r`
+    );
+  }else{
+    device.send(
+      `%1POWR ?\r%1INPT ?\r%1AVMT ?\r%1ERST ?\r%1LAMP ?\r%1NAME ?\r%1INF1 ?\r%1INF2 ?\r%2SNUM ?\r%2SVER ?\r`
     );
   }
   device.draw();

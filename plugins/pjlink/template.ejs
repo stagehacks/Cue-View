@@ -93,3 +93,18 @@
 		<td><div><%= data.version %></div></td>
 	</tr>
 </table>
+<table class="cv-table">
+	<tr>
+		<td>Authentication</td>
+		<td>
+		<% if(!data.passwordOK){ %>
+			<div class='error'>INCORRECT PASSWORD</div>
+		<% }else if(data.authentication=="ON"){ %>
+			<div class='ok'>ON</div>
+		<% }else{ %>
+			<div class='error'><%= data.authentication %></div>
+		<% } %>
+		
+		</td>
+	</tr>
+</table>

@@ -1,18 +1,21 @@
 const _ = require('lodash');
 
-exports.defaultName = 'sACN';
-exports.connectionType = 'multicast';
-exports.defaultPort = 5568;
-exports.heartbeatInterval = 5000;
-exports.searchOptions = {
-  type: "multicast",
-  address: getMulticastGroup(1),
-  port: 5568,
-  validateResponse (msg, info) {
-    return msg.toString('utf8', 4, 13) === "ASC-E1.17";
-  },
-};
-exports.defaultPort = 5568;
+exports.config = {
+  defaultName: "sACN",
+  connectionType: "multicast",
+  defaultPort: 5568,
+  heartbeatInterval: 5000,
+  defaultPort: 5568,
+  mayChangePort: false,
+  searchOptions: {
+    type: "multicast",
+    address: getMulticastGroup(1),
+    port: 5568,
+    validateResponse (msg, info) {
+      return msg.toString('utf8', 4, 13) === "ASC-E1.17";
+    }
+  }
+}
 
 exports.ready = function ready(device) {
 

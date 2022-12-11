@@ -1,16 +1,19 @@
-exports.defaultName = 'X32 Mixer';
-exports.connectionType = 'osc-udp';
-exports.heartbeatInterval = 9000;
-exports.searchOptions = {
-  type: 'UDPsocket',
-  searchBuffer: Buffer.from([0x2f, 0x78, 0x69, 0x6e, 0x66, 0x6f]),
-  devicePort: 10023,
-  listenPort: 0,
-  validateResponse(msg, info) {
-    return msg.toString().indexOf('/xinfo') === 0;
-  },
-};
-exports.defaultPort = 10023;
+exports.config = {
+  defaultName: "X32 Mixer",
+  connectionType: "osc-udp",
+  heartbeatInterval: 9000,
+  defaultPort: 10023,
+  mayChangePort: false,
+  searchOptions: {
+    type: 'UDPsocket',
+    searchBuffer: Buffer.from([0x2f, 0x78, 0x69, 0x6e, 0x66, 0x6f]),
+    devicePort: 10023,
+    listenPort: 0,
+    validateResponse(msg, info) {
+      return msg.toString().indexOf('/xinfo') === 0;
+    }
+  }
+}
 
 exports.ready = function ready(device) {
   const d = device;

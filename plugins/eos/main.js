@@ -3,20 +3,23 @@ const fs = require('fs');
 const path = require('path');
 const Cue = require('./cue');
 
-exports.defaultName = 'ETC Eos';
-exports.connectionType = 'osc';
-exports.searchOptions = {
-  type: 'TCPport',
-  searchBuffer: Buffer.from(
-    '\xc0/eos/ping\x00\x00\x2c\x00\x00\x00\xc0',
-    'ascii'
-  ),
-  testPort: 3032,
-  validateResponse(msg, info) {
-    return msg.toString().indexOf('/eos/out');
-  },
-};
-exports.defaultPort = 3032;
+exports.config = {
+  defaultName: "ETC Eos",
+  connectionType: "osc",
+  defaultPort: 3032,
+  mayChangePort: false,
+  searchOptions: {
+    type: 'TCPport',
+    searchBuffer: Buffer.from(
+      '\xc0/eos/ping\x00\x00\x2c\x00\x00\x00\xc0',
+      'ascii'
+    ),
+    testPort: 3032,
+    validateResponse(msg, info) {
+      return msg.toString().indexOf('/eos/out');
+    }
+  }
+}
 
 exports.ready = function ready(_device) {
   const device = _device;

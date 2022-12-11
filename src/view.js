@@ -197,6 +197,35 @@ function switchDevice(id) {
   document.getElementById('device-settings-port').value = activeDevice.port || '';
   document.getElementById('device-settings-pin').checked = activeDevice.pinIndex;
 
+  if(activeDevice.plugin.config.mayChangePort){
+    document.getElementById('device-settings-port').disabled = false;
+  }else{
+    document.getElementById('device-settings-port').disabled = true;
+  }
+
+  document.getElementById('device-settings-fields').innerHTML = "";
+
+  if(activeDevice.plugin.config.fields){
+    let fields = activeDevice.plugin.config.fields;
+
+    fields.forEach(field => {
+      let $elem = document.createElement("input");
+      $elem.type = "text";
+      $elem.value = activeDevice.fields[field.key];// || field.value;
+      $elem.name = field.key;
+      $elem.onchange = function(e){
+        activeDevice.fields[field.key] = $elem.value;
+        field.action(activeDevice);
+      }
+
+      if(field.type=="textinput"){
+        let rowHTML =`<tr><th>${field.label}:</th><td colspan="3" id="${field.key}"></td></tr>`;
+        document.getElementById('device-settings-fields').insertAdjacentHTML("beforeend", rowHTML);
+        document.getElementById(field.key).appendChild($elem);
+      }
+    });
+  }
+
   ipcRenderer.send('enableDeviceDropdown', '');
   ipcRenderer.send('setDevicePin', !DEVICE.all[id].pinIndex === false);
 };
@@ -303,8 +332,8 @@ function populatePluginLists() {
 
   Object.keys(PLUGINS.all).forEach((pluginType) => {
     const plugin = PLUGINS.all[pluginType];
-    addSelect += `<option value='${pluginType}'>${plugin.defaultName}</option>`;
-    typeSelect += `<option value='${pluginType}'>${plugin.defaultName}</option>`;
+    addSelect += `<option value='${pluginType}'>${plugin.config.defaultName}</option>`;
+    typeSelect += `<option value='${pluginType}'>${plugin.config.defaultName}</option>`;
   });
 
   document.getElementById('device-settings-plugin-dropdown').innerHTML = typeSelect;

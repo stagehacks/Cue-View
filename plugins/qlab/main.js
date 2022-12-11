@@ -2,6 +2,27 @@ const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 
+exports.config = {
+  defaultName: "QLab",
+  connectionType: "osc",
+  heartbeatInterval: 50,
+  heartbeatTimeout: 2000,
+  mayChangePort: true,
+  searchOptions: {
+    type: 'Bonjour',
+    bonjourName: 'qlab',
+  },
+  fields: [{
+    key: "passcode",
+    label: "Pass",
+    type: "textinput",
+    value: "",
+    action: function(device){
+      device.send('/workspaces');
+    }
+  }]
+}
+
 let lastElapsedUpdate = Date.now();
 let interval = 5;
 let heartbeatCount = 0;
@@ -16,14 +37,6 @@ const cueTemplate = _.template(fs.readFileSync(path.join(__dirname, `cue.ejs`)))
 const tileTemplate = _.template(fs.readFileSync(path.join(__dirname, `tile.ejs`)));
 const cartTemplate = _.template(fs.readFileSync(path.join(__dirname, `cart.ejs`)));
 
-exports.defaultName = 'QLab';
-exports.connectionType = 'osc';
-exports.heartbeatInterval = 50;
-exports.heartbeatTimeout = 2000;
-exports.searchOptions = {
-  type: 'Bonjour',
-  bonjourName: 'qlab',
-};
 
 exports.ready = function ready(device) {
   device.send(`/version`);
@@ -54,7 +67,7 @@ exports.data = function data(_device, oscData) {
         cueLists: {},
         cues: {}
       }
-      device.send(`/workspace/${wksp.uniqueID}/connect`);
+      device.send(`/workspace/${wksp.uniqueID}/connect`, device.fields.passcode);
     });
   }else if(match(oscAddressParts, ["reply", "workspace", "*", "connect"])){
 

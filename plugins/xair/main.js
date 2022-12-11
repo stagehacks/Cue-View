@@ -1,16 +1,19 @@
-exports.defaultName = 'X Air Mixer';
-exports.connectionType = 'UDPsocket';
-exports.heartbeatInterval = 10000;
-exports.searchOptions = {
-  type: 'UDPsocket',
-  searchBuffer: Buffer.from([0x2f, 0x78, 0x69, 0x6e, 0x66, 0x6f]),
-  devicePort: 10024,
-  listenPort: 0,
-  validateResponse(msg, info) {
-    return msg.toString().indexOf('/xinfo') === 0;
-  },
-};
-exports.defaultPort = 10024;
+exports.config = {
+  defaultName: "X Air Mixer",
+  connectionType: "UDPsocket",
+  heartbeatInterval: 10000,
+  defaultPort: 10024,
+  mayChangePort: false,
+  searchOptions: {
+    type: 'UDPsocket',
+    searchBuffer: Buffer.from([0x2f, 0x78, 0x69, 0x6e, 0x66, 0x6f]),
+    devicePort: 10024,
+    listenPort: 0,
+    validateResponse(msg, info) {
+      return msg.toString().indexOf('/xinfo') === 0;
+    }
+  }
+}
 
 exports.ready = function ready(device) {
   const d = device;

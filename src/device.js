@@ -49,6 +49,7 @@ function registerDevice(newDevice) {
     port: newDevice.port,
     addresses: newDevice.addresses,
     data: {},
+    fields: {},
     pinIndex: false,
     lastDrawn: 0,
     lastHeartbeat: 0,
@@ -64,6 +65,13 @@ function registerDevice(newDevice) {
       }
     },
   };
+
+  if(PLUGINS.all[newDevice.type].config.fields){
+    PLUGINS.all[newDevice.type].config.fields.forEach(field => {
+      devices[id].fields[field.key] = field.value;
+    });
+  }
+
 
   VIEW.addDeviceToList(devices[id]);
   initDeviceConnection(id);
@@ -89,8 +97,8 @@ function initDeviceConnection(id) {
   const { type } = devices[id];
   const plugins = PLUGINS.all;
 
-  if (plugins[type].connectionType.includes('osc')) {
-    if (plugins[type].connectionType.includes('udp')) {
+  if (plugins[type].config.connectionType.includes('osc')) {
+    if (plugins[type].config.connectionType.includes('udp')) {
       device.connection = new osc.UDPPort({
         localAddress: '0.0.0.0',
         remoteAddress: device.addresses[0],
@@ -124,8 +132,8 @@ function initDeviceConnection(id) {
     device.send = (address, args) => {
       device.connection.send({ address, args });
     };
-    device.plugin = plugins[type];
-  } else if (plugins[type].connectionType === 'TCPsocket') {
+    
+  } else if (plugins[type].config.connectionType === 'TCPsocket') {
     device.connection = new net.Socket();
 
     device.connection.connect(
@@ -155,7 +163,7 @@ function initDeviceConnection(id) {
       // log("SOCK OUT", data);
       device.connection.write(data);
     };
-  } else if (plugins[type].connectionType === 'UDPsocket') {
+  } else if (plugins[type].config.connectionType === 'UDPsocket') {
     device.connection = udp.createSocket('udp4');
 
     device.connection.bind({ port: plugins[type].defaultPort }, () => {
@@ -177,7 +185,7 @@ function initDeviceConnection(id) {
         }
       );
     };
-  } else if (plugins[type].connectionType === 'multicast') {
+  } else if (plugins[type].config.connectionType === 'multicast') {
     device.connection = udp.createSocket('udp4');
 
     device.connection.bind(device.port, () => {
@@ -191,6 +199,7 @@ function initDeviceConnection(id) {
 
     device.send = (data) => {};
   }
+  device.plugin = plugins[type];
 
   return true;
 }
