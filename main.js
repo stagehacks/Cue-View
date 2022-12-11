@@ -6,6 +6,7 @@ const isMac = process.platform === 'darwin';
 const isWin = process.platform === 'win32';
 
 let autoUpdate = false;
+let manualUpdateCheck = false;
 let menuObj;
 let mainWindow;
 
@@ -116,6 +117,8 @@ const menuTemplate = [
       {
         label: 'Check for Updates',
         click: ()=>{
+          // set manual update flag
+          manualUpdateCheck = true
           autoUpdater.checkForUpdates();
         }
       },
@@ -305,26 +308,29 @@ autoUpdater.on('update-downloaded',(event)=>{
 })
 
 autoUpdater.on('update-not-available',(updateInfo)=>{
-  let dialogOpts = {}
-  const msg = `There is no update available at this time. Latest version is v${updateInfo.version}`
-  if(isMac){
-    dialogOpts = {
-      type: 'info',
-      buttons: ['Ok'],
-      title: 'No Update Available',
-      message: 'No Update Available',
-      detail: msg
+  if(manualUpdateCheck){
+    let dialogOpts = {}
+    const msg = `There is no update available at this time. Latest version is v${updateInfo.version}`
+    if(isMac){
+      dialogOpts = {
+        type: 'info',
+        buttons: ['Ok'],
+        title: 'No Update Available',
+        message: 'No Update Available',
+        detail: msg
+      }
+    }else{
+      dialogOpts = {
+        type: 'info',
+        buttons: ['Ok'],
+        title: 'No Update Available',
+        message: msg
+      }
     }
-  }else{
-    dialogOpts = {
-      type: 'info',
-      buttons: ['Ok'],
-      title: 'No Update Available',
-      message: msg
-    }
+    dialog.showMessageBox(mainWindow,dialogOpts)
+    // revert manual update flag
+    manualUpdateCheck = false;
   }
-
-  dialog.showMessageBox(mainWindow,dialogOpts)
 })
 
 autoUpdater.on('error',(error,message)=>{
