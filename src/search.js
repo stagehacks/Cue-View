@@ -43,9 +43,12 @@ function searchAll() {
   ipcRenderer.send('disableSearchAll', '');
   document.getElementById('search-button').style.opacity = 0.2;
 
-  Object.keys(DEVICE.all).forEach((i) => {
-    DEVICE.infoUpdate(DEVICE.all[i], 'status', 'refresh');
-  });
+  // Removed this block to fix #21 
+  // "After adding devices via search, searching again leaves all devices stuck in reload state"
+  // 
+  // Object.keys(DEVICE.all).forEach((i) => {
+  //   DEVICE.infoUpdate(DEVICE.all[i], 'status', 'refresh');
+  // });
 
   console.log('Searching...');
 
