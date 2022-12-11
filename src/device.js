@@ -132,7 +132,7 @@ function initDeviceConnection(id) {
     device.send = (address, args) => {
       device.connection.send({ address, args });
     };
-    device.plugin = plugins[type];
+    
   } else if (plugins[type].config.connectionType === 'TCPsocket') {
     device.connection = new net.Socket();
 
@@ -199,6 +199,7 @@ function initDeviceConnection(id) {
 
     device.send = (data) => {};
   }
+  device.plugin = plugins[type];
 
   return true;
 }
