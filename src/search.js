@@ -20,10 +20,12 @@ function getServers() {
     const addresses = interfaces[key];
     for (let i = addresses.length; i--; ) {
       const address = addresses[i];
-      if (address.family === 'IPv4' && !address.internal) {
+
+      if (address.family === 'IPv4' && !address.internal && address.address.substring(0, 3)!="169") {
         const subnet = ip.subnet(address.address, address.netmask);
         let current = ip.toLong(subnet.firstAddress);
         const last = ip.toLong(subnet.lastAddress) - 1;
+        console.log(`range ${subnet.firstAddress} - ${subnet.lastAddress}`);
         while (current++ < last) result.push(ip.fromLong(current));
       }
     }
