@@ -96,7 +96,7 @@ function searchAll() {
     }
 
     ipcRenderer.send('enableSearchAll', '');
-  }, 5000);
+  }, 10000);
 };
 module.exports.searchAll = searchAll;
 
