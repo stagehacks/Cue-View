@@ -86,6 +86,10 @@ function initDeviceConnection(id) {
 
   infoUpdate(device, 'status', 'new');
 
+  if(device.port === undefined){
+    device.port = device.plugin.config.defaultPort;
+  }
+
   if (device.port === undefined || device.addresses.length === 0) {
     return true;
   }
