@@ -49,7 +49,7 @@ function registerDevice(newDevice) {
     port: newDevice.port,
     addresses: newDevice.addresses,
     data: {},
-    fields: {},
+    fields: newDevice.fields || {},
     pinIndex: false,
     lastDrawn: 0,
     lastHeartbeat: 0,
@@ -68,12 +68,14 @@ function registerDevice(newDevice) {
 
   devices[id].plugin = PLUGINS.all[newDevice.type];
 
-  if(PLUGINS.all[newDevice.type].config.fields){
-    PLUGINS.all[newDevice.type].config.fields.forEach(field => {
+  if (
+    Object.keys(devices[id].fields).length == 0 &&
+    PLUGINS.all[newDevice.type].config.fields
+  ) {
+    PLUGINS.all[newDevice.type].config.fields.forEach((field) => {
       devices[id].fields[field.key] = field.value;
     });
   }
-
 
   VIEW.addDeviceToList(devices[id]);
   initDeviceConnection(id);
@@ -86,7 +88,7 @@ function initDeviceConnection(id) {
 
   infoUpdate(device, 'status', 'new');
 
-  if(device.port === undefined){
+  if (device.port === undefined) {
     device.port = device.plugin.config.defaultPort;
   }
 
@@ -138,7 +140,6 @@ function initDeviceConnection(id) {
     device.send = (address, args) => {
       device.connection.send({ address, args });
     };
-    
   } else if (plugins[type].config.connectionType === 'TCPsocket') {
     device.connection = new net.Socket();
 

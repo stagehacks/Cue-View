@@ -60,6 +60,7 @@ module.exports.loadDevices = function loadDevices() {
       port: savedDevices[i].port,
       addresses: savedDevices[i].addresses,
       id: savedDevices[i].id,
+      fields: savedDevices[i].fields
     });
   }
 };
@@ -74,7 +75,7 @@ module.exports.saveAll = function saveAll() {
     savedSlots[activeSlot][i] = {
       addresses: currentPins[i].addresses,
       type: currentPins[i].type,
-      id: currentPins[i].id,
+      id: currentPins[i].id
     };
   }
   localStorage.setItem('savedSlots', JSON.stringify(savedSlots));
@@ -93,6 +94,7 @@ module.exports.saveAll = function saveAll() {
       defaultName: device.defaultName,
       port: device.port,
       id: device.id,
+      fields: device.fields
     };
     i++;
   });

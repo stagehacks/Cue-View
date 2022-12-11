@@ -1,6 +1,7 @@
 const { ipcRenderer } = require('electron');
 const DEVICE = require('./device.js');
 const PLUGINS = require('./plugins.js');
+const { saveAll } = require('./saveSlots.js');
 // const _ = require('lodash/function');
 
 const pinnedDevices = [];
@@ -216,6 +217,7 @@ function switchDevice(id) {
       $elem.onchange = function(e){
         activeDevice.fields[field.key] = $elem.value;
         field.action(activeDevice);
+        saveAll();
       }
 
       if(field.type=="textinput"){
@@ -328,7 +330,7 @@ module.exports.selectNextDevice = function selectNextDevice() {
 
 function populatePluginLists() {
   let typeSelect = '';
-  let addSelect = '<option value="" disabled selected hidden>+</option>';
+  let addSelect = '<option value="" disabled selected hidden>&nbsp;+&nbsp;</option>';
 
   Object.keys(PLUGINS.all).forEach((pluginType) => {
     const plugin = PLUGINS.all[pluginType];
