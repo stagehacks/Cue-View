@@ -13,9 +13,19 @@ exports.config = {
     devicePort: 4352,
     listenPort: 4352,
     validateResponse (msg, info) {
+      console.log(msg.toString());
       return msg.toString().indexOf('%2ACKN=') >= 0;
     }
-  }
+  },
+  fields: [{
+    key: "password",
+    label: "Pass",
+    type: "textinput",
+    value: "",
+    action: function(device){
+      device.plugin.heartbeat(device);
+    }
+  }]
 }
 
 exports.ready = function ready(device) {
@@ -37,7 +47,8 @@ const PJLinkCmds = [
   '%2SVER='
 ]
 
-let password = false;
+let passwordMD5 = false;
+let passwordSeed = false;
 
 function processPJLink(_device, str, that) {
   const arr = str.split('%');
@@ -107,21 +118,42 @@ exports.data = function data(device, message) {
   this.deviceInfoUpdate(device, 'status', 'ok');
   const msg = message.toString();
 
+  //console.log(msg);
+
   if (msg.substring(0, 8) === 'PJLINK 1') {
-    password = md5(`${msg.substring(9, 17)}JBMIAProjectorLink`);
+    passwordSeed = msg.substring(9, 17);
+    passwordMD5 = md5(`${passwordSeed}${device.fields.password}`);
+    device.data.authentication = "ON";
+
     device.send(
-      `${password}%1POWR ?\r%1INPT ?\r%1AVMT ?\r%1ERST ?\r%1LAMP ?\r%1NAME ?\r%1INF1 ?\r%1INF2 ?\r%2SNUM ?\r%2SVER ?\r`
+      `${passwordMD5}%1POWR ?\r%1INPT ?\r%1AVMT ?\r%1ERST ?\r%1LAMP ?\r%1NAME ?\r%1INF1 ?\r%1INF2 ?\r%2SNUM ?\r%2SVER ?\r`
     );
+    device.draw();
+
+  }else if(msg.substring(0, 8) === 'PJLINK 0') {
+    device.data.authentication = "OFF";
+    device.draw();
+
+  }else if(msg.startsWith('PJLINK ERRA')) {
+    device.data.passwordOK = false;
+    device.draw();
   }
+
   if(PJLinkCmds.includes(msg.substring(0,7))){
-    processPJLink(device,msg,this)
+    processPJLink(device,msg,this);
+    device.data.passwordOK = true;
   }
 };
 
 exports.heartbeat = function heartbeat(device) {
-  if (password) {
+  passwordMD5 = md5(`${passwordSeed}${device.fields.password}`);
+  if (device.fields.password.length>0) {
     device.send(
-      `${password}%1POWR ?\r%1INPT ?\r%1AVMT ?\r%1ERST ?\r%1LAMP ?\r%1NAME ?\r%1INF1 ?\r%1INF2 ?\r%2SNUM ?\r%2SVER ?\r`
+      `${passwordMD5}%1POWR ?\r%1INPT ?\r%1AVMT ?\r%1ERST ?\r%1LAMP ?\r%1NAME ?\r%1INF1 ?\r%1INF2 ?\r%2SNUM ?\r%2SVER ?\r`
+    );
+  }else{
+    device.send(
+      `%1POWR ?\r%1INPT ?\r%1AVMT ?\r%1ERST ?\r%1LAMP ?\r%1NAME ?\r%1INF1 ?\r%1INF2 ?\r%2SNUM ?\r%2SVER ?\r`
     );
   }
   device.draw();
