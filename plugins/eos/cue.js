@@ -30,7 +30,7 @@ class Cue {
 
     const num = Math.round(milliseconds / 100) / 10;
     if (box) {
-      return `<div class="time">"${num}"</div>`;
+      return `<div class="time">${num}</div>`;
     }
 
     return num;
