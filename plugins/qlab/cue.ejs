@@ -24,7 +24,7 @@
   <% } %>
   </center></td>
 
-  <% if(cue.type == "Group"){ %>
+  <% if(cue.type == "Group" && cue.groupMode){ %>
     <td><img src="./plugins/qlab/img/v5/group-<%= cue.groupMode %>.png" height="20px"></td>
 
   <% }else{ %>
