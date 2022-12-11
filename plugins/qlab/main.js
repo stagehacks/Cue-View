@@ -16,7 +16,7 @@ exports.config = {
     key: "passcode",
     label: "Pass",
     type: "textinput",
-    value: "5353",
+    value: "",
     action: function(device){
       device.send('/workspaces');
     }
