@@ -18,6 +18,8 @@
 
 
 <%
+  if(data.permission){
+
   for(const workspace_id in data.workspaces){
   const workspace = data.workspaces[workspace_id];
 
@@ -40,7 +42,9 @@
 
 
 
-<% }} %>
+<% }}}else{ %>
+  <h3>Incorrect Passcode or OSC Access Permissions</h3>
+<% } %>
 
 
 

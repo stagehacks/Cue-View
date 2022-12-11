@@ -86,7 +86,11 @@ exports.data = function data(_device, oscData) {
     workspace.cueLists = {};
     workspace.cues = {};
 
-    if(json.data){
+    if(json.status=="denied"){
+      device.data.permission = false;
+
+    }else if(json.data){
+      device.data.permission = true;
 
       json.data.forEach(cueList => {
         workspace.cueLists[cueList.uniqueID] = cueList;
