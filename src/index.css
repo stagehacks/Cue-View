@@ -53,7 +53,6 @@ a {
   text-align: right;
   padding-left: 100px;
   padding-right: 7px;
-  user-select: text;
   -webkit-app-region: drag;
   z-index: 1000;
 }
@@ -339,4 +338,9 @@ select.button:focus {
 
   /* Support for IE. */
   font-feature-settings: 'liga';
+}
+
+/* only allow select on input fields */
+body :not(input):not(select):not(textarea) { 
+  user-select: none;
 }
