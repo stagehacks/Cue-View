@@ -214,21 +214,21 @@ function switchDevice(id) {
   document.getElementById('device-settings-fields').innerHTML = '';
 
   if (activeDevice.plugin.config.fields) {
-    let fields = activeDevice.plugin.config.fields;
+    const fields = activeDevice.plugin.config.fields;
 
     fields.forEach((field) => {
-      let $elem = document.createElement('input');
+      const $elem = document.createElement('input');
       $elem.type = 'text';
       $elem.value = activeDevice.fields[field.key]; // || field.value;
       $elem.name = field.key;
-      $elem.onchange = function (e) {
+      $elem.onchange = function onchange(e) {
         activeDevice.fields[field.key] = $elem.value;
         field.action(activeDevice);
         saveAll();
       };
 
-      if (field.type == 'textinput') {
-        let rowHTML = `<tr><th>${field.label}:</th><td colspan="3" id="${field.key}"></td></tr>`;
+      if (field.type === 'textinput') {
+        const rowHTML = `<tr><th>${field.label}:</th><td colspan="3" id="${field.key}"></td></tr>`;
         document
           .getElementById('device-settings-fields')
           .insertAdjacentHTML('beforeend', rowHTML);

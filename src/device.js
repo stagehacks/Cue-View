@@ -69,7 +69,7 @@ function registerDevice(newDevice) {
   devices[id].plugin = PLUGINS.all[newDevice.type];
 
   if (
-    Object.keys(devices[id].fields).length == 0 &&
+    Object.keys(devices[id].fields).length === 0 &&
     PLUGINS.all[newDevice.type].config.fields
   ) {
     PLUGINS.all[newDevice.type].config.fields.forEach((field) => {
@@ -206,7 +206,7 @@ function initDeviceConnection(id) {
 
     device.send = (data) => {};
   }
-  //device.plugin = plugins[type];
+  // device.plugin = plugins[type];
 
   return true;
 }

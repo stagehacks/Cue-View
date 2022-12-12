@@ -24,7 +24,7 @@ function getServers() {
       if (
         address.family === 'IPv4' &&
         !address.internal &&
-        address.address.substring(0, 3) != '169'
+        address.address.substring(0, 3) !== '169'
       ) {
         const subnet = ip.subnet(address.address, address.netmask);
         let current = ip.toLong(subnet.firstAddress);

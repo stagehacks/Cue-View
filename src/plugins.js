@@ -10,7 +10,7 @@ const allPlugins = {};
 module.exports.all = allPlugins;
 
 module.exports.init = function init(callback) {
-  let pluginDirectoryPath = path.normalize(path.join(__dirname, `../plugins`));
+  const pluginDirectoryPath = path.normalize(path.join(__dirname, `../plugins`));
 
   console.log(`Loading plugin files... ${pluginDirectoryPath}`);
 
@@ -48,13 +48,13 @@ module.exports.init = function init(callback) {
           )
         );
 
-        //if (p.heartbeatTimeout === undefined || p.heartbeatTimeout < 50) {
+        // if (p.heartbeatTimeout === undefined || p.heartbeatTimeout < 50) {
         if (p.config.heartbeatTimeout) {
           p.heartbeatTimeout = p.config.heartbeatInterval * 1.5;
         } else {
           p.heartbeatTimeout = 10000;
         }
-        //}
+        // }
 
         if (p.config.heartbeatInterval) {
           p.heartbeatInterval = Math.max(50, p.config.heartbeatInterval);
