@@ -31,6 +31,7 @@ A dashboard for everything in your show.
 - DiGiCo Consoles
 - d&b DS100, amps
 - Hog
+- Meyer Galileo Processors
 
 # Plugins
 
