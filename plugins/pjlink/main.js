@@ -23,7 +23,7 @@ exports.config = {
       label: 'Pass',
       type: 'textinput',
       value: '',
-      action: function (device) {
+      action(device) {
         device.plugin.heartbeat(device);
       },
     },
@@ -115,11 +115,10 @@ function processPJLink(_device, str, that) {
   device.draw();
 }
 
-exports.data = function data(device, message) {
+exports.data = function data(_device, message) {
   this.deviceInfoUpdate(device, 'status', 'ok');
   const msg = message.toString();
-
-  //console.log(msg);
+  const device = _device;
 
   if (msg.substring(0, 8) === 'PJLINK 1') {
     passwordSeed = msg.substring(9, 17);
