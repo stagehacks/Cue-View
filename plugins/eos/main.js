@@ -4,8 +4,8 @@ const path = require('path');
 const Cue = require('./cue');
 
 exports.config = {
-  defaultName: "ETC Eos",
-  connectionType: "osc",
+  defaultName: 'ETC Eos',
+  connectionType: 'osc',
   defaultPort: 3032,
   mayChangePort: false,
   searchOptions: {
@@ -17,9 +17,9 @@ exports.config = {
     testPort: 3032,
     validateResponse(msg, info) {
       return msg.toString().indexOf('/eos/out');
-    }
-  }
-}
+    },
+  },
+};
 
 exports.ready = function ready(_device) {
   const device = _device;
@@ -53,7 +53,18 @@ exports.data = function data(_device, osc) {
       device.send(`/eos/get/cue/${addressParts[4]}/index/${i}`);
     }
   } else if (
-    match(addressParts, [ 'eos', 'out', 'get','cue', '*', '*', '*', 'list', '*', '*',])
+    match(addressParts, [
+      'eos',
+      'out',
+      'get',
+      'cue',
+      '*',
+      '*',
+      '*',
+      'list',
+      '*',
+      '*',
+    ])
   ) {
     this.deviceInfoUpdate(device, 'status', 'ok');
     if (
@@ -76,7 +87,19 @@ exports.data = function data(_device, osc) {
     delete device.data.EOS.cueLists[addressParts[4]][addressParts[5]];
     device.draw();
   } else if (
-    match(addressParts, ['eos', 'out', 'get', 'cue', '*', '*', '*', 'actions', 'list', '*', '*'])
+    match(addressParts, [
+      'eos',
+      'out',
+      'get',
+      'cue',
+      '*',
+      '*',
+      '*',
+      'actions',
+      'list',
+      '*',
+      '*',
+    ])
   ) {
     if (osc.args.length === 3) {
       device.data.EOS.cueLists[addressParts[4]][addressParts[5]][0].extLinks =
@@ -130,13 +153,13 @@ exports.heartbeat = function heartbeat(device) {
   device.send('/eos/ping');
 };
 
-function match(testArray, patternArray){
+function match(testArray, patternArray) {
   let out = true;
-  if(testArray.length !== patternArray.length){
+  if (testArray.length !== patternArray.length) {
     return false;
   }
-  patternArray.forEach((patternPart, i)=> {
-    if(testArray[i] !== patternPart && patternPart !== "*"){
+  patternArray.forEach((patternPart, i) => {
+    if (testArray[i] !== patternPart && patternPart !== '*') {
       out = false;
     }
   });
