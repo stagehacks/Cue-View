@@ -1,44 +1,41 @@
 const _ = require('lodash');
 
 exports.config = {
-  defaultName: "sACN",
-  connectionType: "multicast",
+  defaultName: 'sACN',
+  connectionType: 'multicast',
   defaultPort: 5568,
   heartbeatInterval: 5000,
   defaultPort: 5568,
   mayChangePort: false,
   searchOptions: {
-    type: "multicast",
+    type: 'multicast',
     address: getMulticastGroup(1),
     port: 5568,
-    validateResponse (msg, info) {
-      return msg.toString('utf8', 4, 13) === "ASC-E1.17";
-    }
-  }
-}
+    validateResponse(msg, info) {
+      return msg.toString('utf8', 4, 13) === 'ASC-E1.17';
+    },
+  },
+};
 
 exports.ready = function ready(device) {
-
   const d = device;
   d.data.universes = {};
-  d.data.source = "Unknown Source";
+  d.data.source = 'Unknown Source';
   d.data.orderedUniverses = [];
 
   // device.draw();
-  for(let i = 1; i <= 16; i++){
+  for (let i = 1; i <= 16; i++) {
     d.connection.addMembership(getMulticastGroup(i));
   }
-  
 };
 
 exports.data = function data(_device, buf) {
-
   const universeIndex = buf.readUInt16BE(113);
   const device = _device;
 
   let universe = device.data.universes[universeIndex];
 
-  if(!universe){
+  if (!universe) {
     device.data.universes[universeIndex] = {};
     universe = device.data.universes[universeIndex];
   }
@@ -48,7 +45,7 @@ exports.data = function data(_device, buf) {
   universe.cid = buf.toString('hex', 22, 38);
   universe.slots = buf.slice(126);
 
-  if(buf.readUInt8(125) !== 0){
+  if (buf.readUInt8(125) !== 0) {
     universe.startCode = buf.readUInt8(125);
   }
 
@@ -56,74 +53,70 @@ exports.data = function data(_device, buf) {
   device.displayName = `${device.data.source} sACN`;
   device.data.ip = device.addresses[0];
 
-  if(!_.includes(device.data.orderedUniverses, universeIndex)){
+  if (!_.includes(device.data.orderedUniverses, universeIndex)) {
     device.data.orderedUniverses.push(universeIndex);
     device.data.orderedUniverses.sort();
     universe.slotElems = [];
     universe.slotElemsSet = false;
 
     device.draw();
-    device.update("elementCache")
+    device.update('elementCache');
   }
 
-  device.update("universeData", {
+  device.update('universeData', {
     universeIndex,
     universe,
-    startCode: universe.startCode
+    startCode: universe.startCode,
   });
-
 };
 
-exports.heartbeat = function heartbeat(device) {
- 
-};
+exports.heartbeat = function heartbeat(device) {};
 
 let lastUpdate = Date.now();
-exports.update = function update(_device, doc, updateType, updateData){
-
+exports.update = function update(_device, doc, updateType, updateData) {
   const device = _device;
   const data = updateData;
 
-  if(updateType === "universeData" && data.universe){
-
-    if(Date.now() - lastUpdate > 1000){
+  if (updateType === 'universeData' && data.universe) {
+    if (Date.now() - lastUpdate > 1000) {
       lastUpdate = Date.now();
-      device.update("elementCache")
+      device.update('elementCache');
     }
 
     const $elem = doc.getElementById(`universe-${data.universeIndex}`);
 
-    if($elem && data.universe.slotElemsSet){
-
-      if(data.universe.priority > 0){
-        for(let i = 0; i < 512; i++){
+    if ($elem && data.universe.slotElemsSet) {
+      if (data.universe.priority > 0) {
+        for (let i = 0; i < 512; i++) {
           data.universe.slotElems[i].innerText = data.universe.slots[i];
         }
 
         const $code = doc.getElementById(`universe-${data.universeIndex}-code`);
-        if(data.startCode === 0xDD){
-          $code.innerText = "Net3"
-        }else if(data.startCode === 0x17){
-          $code.innerText = "Text"
-        }else if(data.startCode === 0xCF){
-          $code.innerText = "SIP"
-        }else if(data.startCode === 0xCC){
-          $code.innerText = "RDM"
+        if (data.startCode === 0xdd) {
+          $code.innerText = 'Net3';
+        } else if (data.startCode === 0x17) {
+          $code.innerText = 'Text';
+        } else if (data.startCode === 0xcf) {
+          $code.innerText = 'SIP';
+        } else if (data.startCode === 0xcc) {
+          $code.innerText = 'RDM';
         }
       }
-    }else{
+    } else {
       device.draw();
-      device.update("elementCache")
+      device.update('elementCache');
     }
-  }else if(updateType === "elementCache"){
-    device.data.orderedUniverses.forEach(universeIndex => {
-      for(let i = 0; i < 512; i++){
-        device.data.universes[universeIndex].slotElems[i] = doc.getElementById(`${universeIndex}-${i}`);
+  } else if (updateType === 'elementCache') {
+    device.data.orderedUniverses.forEach((universeIndex) => {
+      for (let i = 0; i < 512; i++) {
+        device.data.universes[universeIndex].slotElems[i] = doc.getElementById(
+          `${universeIndex}-${i}`
+        );
       }
       device.data.universes[universeIndex].slotElemsSet = true;
     });
   }
-}
+};
 
 // From https://github.com/hhromic/e131-node/blob/master/lib/e131.js
 function getMulticastGroup(universe) {
