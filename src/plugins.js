@@ -10,20 +10,20 @@ const allPlugins = {};
 module.exports.all = allPlugins;
 
 module.exports.init = function init(callback) {
-
   let pluginDirectoryPath = path.normalize(path.join(__dirname, `../plugins`));
 
   console.log(`Loading plugin files... ${pluginDirectoryPath}`);
 
   fs.readdir(pluginDirectoryPath, (err, files) => {
-    
-    files.forEach((plugin)=>{
+    files.forEach((plugin) => {
       if (plugin[0] !== '.') {
-        
         console.log(`${plugin} started`);
 
         // eslint-disable-next-line import/no-dynamic-require
-        allPlugins[plugin] = require(path.join(pluginDirectoryPath, `/${plugin}/main.js`));
+        allPlugins[plugin] = require(path.join(
+          pluginDirectoryPath,
+          `/${plugin}/main.js`
+        ));
 
         const p = allPlugins[plugin];
 
@@ -35,50 +35,46 @@ module.exports.init = function init(callback) {
         };
 
         p.template = _.template(
-          fs.readFileSync(path.join(pluginDirectoryPath, `/${plugin}/template.ejs`),
+          fs.readFileSync(
+            path.join(pluginDirectoryPath, `/${plugin}/template.ejs`),
             'utf8'
           )
         );
 
         p.info = _.template(
-          fs.readFileSync(path.join(pluginDirectoryPath, `/${plugin}/info.html`),
+          fs.readFileSync(
+            path.join(pluginDirectoryPath, `/${plugin}/info.html`),
             'utf8'
           )
         );
 
-
         //if (p.heartbeatTimeout === undefined || p.heartbeatTimeout < 50) {
-          if(p.config.heartbeatTimeout){
-            p.heartbeatTimeout = p.config.heartbeatInterval * 1.5;
-          }else{
-            p.heartbeatTimeout = 10000;
-          }
+        if (p.config.heartbeatTimeout) {
+          p.heartbeatTimeout = p.config.heartbeatInterval * 1.5;
+        } else {
+          p.heartbeatTimeout = 10000;
+        }
         //}
 
-          if(p.config.heartbeatInterval){
-            p.heartbeatInterval = Math.max(50, p.config.heartbeatInterval);
-          }else{
-            p.heartbeatInterval = 5000;
-          }
+        if (p.config.heartbeatInterval) {
+          p.heartbeatInterval = Math.max(50, p.config.heartbeatInterval);
+        } else {
+          p.heartbeatInterval = 5000;
+        }
 
-          // p.fields = {};
-          // if(p.config.fields){
-          //   p.config.fields.forEach(field => {
-          //     p.fields[field.key] = field.value;
-          //   });
-          // }
-
-
-
+        // p.fields = {};
+        // if(p.config.fields){
+        //   p.config.fields.forEach(field => {
+        //     p.fields[field.key] = field.value;
+        //   });
+        // }
 
         // if (p.heartbeatInterval === undefined || p.heartbeatInterval < 50) {
         //   p.heartbeatInterval = 5000;
         // }
-
       }
     });
 
     callback();
-
   });
 };

@@ -118,13 +118,13 @@ a {
   width: 210px;
   pointer-events: none;
 }
-#device-inspector{
+#device-inspector {
   position: absolute;
   bottom: 0px;
   width: 100%;
 }
 #device-tools {
- /* position: absolute;
+  /* position: absolute;
   bottom: 210px;
   left: 0px;*/
   width: 100%;
@@ -265,7 +265,7 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-input:disabled{
+input:disabled {
   color: gray;
   cursor: not-allowed;
 }
@@ -341,6 +341,6 @@ select.button:focus {
 }
 
 /* only allow select on input fields */
-body :not(input):not(select):not(textarea) { 
+body :not(input):not(select):not(textarea) {
   user-select: none;
 }

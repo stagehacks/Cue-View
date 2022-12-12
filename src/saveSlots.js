@@ -19,7 +19,7 @@ function loadSlot(slotIndex) {
   VIEW.toggleSlotButtons(slotIndex);
   activeSlot = slotIndex;
 
-  Object.keys(DEVICE.all).forEach((d)=>{
+  Object.keys(DEVICE.all).forEach((d) => {
     DEVICE.changePinIndex(DEVICE.all[d], false);
   });
   VIEW.resetPinned();
@@ -33,7 +33,6 @@ function loadSlot(slotIndex) {
       if (device.id === savedDevice.id) {
         VIEW.pinDevice(device);
         VIEW.switchDevice(device.id);
-
       } else if (
         device.addresses[0] === savedDevice.addresses[0] &&
         device.type === savedDevice.type &&
@@ -43,11 +42,9 @@ function loadSlot(slotIndex) {
         VIEW.switchDevice(device.id);
       }
     });
-
   });
-};
+}
 module.exports.loadSlot = loadSlot;
-
 
 module.exports.loadDevices = function loadDevices() {
   console.log(`Loading ${savedDevices.length} saved devices...`);
@@ -60,11 +57,10 @@ module.exports.loadDevices = function loadDevices() {
       port: savedDevices[i].port,
       addresses: savedDevices[i].addresses,
       id: savedDevices[i].id,
-      fields: savedDevices[i].fields
+      fields: savedDevices[i].fields,
     });
   }
 };
-
 
 module.exports.saveAll = function saveAll() {
   console.log('Saving...');
@@ -75,7 +71,7 @@ module.exports.saveAll = function saveAll() {
     savedSlots[activeSlot][i] = {
       addresses: currentPins[i].addresses,
       type: currentPins[i].type,
-      id: currentPins[i].id
+      id: currentPins[i].id,
     };
   }
   localStorage.setItem('savedSlots', JSON.stringify(savedSlots));
@@ -94,14 +90,12 @@ module.exports.saveAll = function saveAll() {
       defaultName: device.defaultName,
       port: device.port,
       id: device.id,
-      fields: device.fields
+      fields: device.fields,
     };
     i++;
   });
   localStorage.setItem('savedDevices', JSON.stringify(savedDevices));
-
 };
-
 
 module.exports.deleteFromSlots = function deleteFromSlots(device) {
   for (let i = 1; i <= 3; i++) {
@@ -114,11 +108,9 @@ module.exports.deleteFromSlots = function deleteFromSlots(device) {
   }
 };
 
-
 module.exports.reloadActiveSlot = function reloadActiveSlot() {
   loadSlot(activeSlot);
 };
-
 
 module.exports.resetSlots = function resetSlots() {
   localStorage.clear();
