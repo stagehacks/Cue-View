@@ -1,6 +1,6 @@
 exports.config = {
-  defaultName: "Dataton Watchout",
-  connectionType: "TCPsocket",
+  defaultName: 'Dataton Watchout',
+  connectionType: 'TCPsocket',
   heartbeatInterval: 500,
   defaultPort: 3040,
   mayChangePort: false,
@@ -8,11 +8,11 @@ exports.config = {
     type: 'TCPport',
     searchBuffer: Buffer.from('authenticate 1\n', 'ascii'),
     testPort: 3040,
-    validateResponse (msg, info) {
+    validateResponse(msg, info) {
       return msg.toString().substring(0, 5) === 'Ready';
-    }
-  }
-}
+    },
+  },
+};
 
 exports.ready = function ready(device) {
   device.send('authenticate 1\n');
@@ -24,12 +24,11 @@ exports.data = function data(_device, _message) {
 
   if (message.substring(0, 5) === 'Ready') {
     device.send('getStatus\n');
-
-  }else if (message.substring(0, 5) === 'Reply') {
+  } else if (message.substring(0, 5) === 'Reply') {
     const arr = message.split(' ');
 
     device.data.showName = '';
-    
+
     let i = 0;
     while (arr[i][arr[i].length - 1] !== '"') {
       i++;

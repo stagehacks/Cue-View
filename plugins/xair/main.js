@@ -1,6 +1,6 @@
 exports.config = {
-  defaultName: "X Air Mixer",
-  connectionType: "UDPsocket",
+  defaultName: 'X Air Mixer',
+  connectionType: 'UDPsocket',
   heartbeatInterval: 10000,
   defaultPort: 10024,
   mayChangePort: false,
@@ -11,9 +11,9 @@ exports.config = {
     listenPort: 0,
     validateResponse(msg, info) {
       return msg.toString().indexOf('/xinfo') === 0;
-    }
-  }
-}
+    },
+  },
+};
 
 exports.ready = function ready(device) {
   const d = device;

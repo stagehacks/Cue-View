@@ -1,6 +1,6 @@
 exports.config = {
-  defaultName: "X32 Mixer",
-  connectionType: "osc-udp",
+  defaultName: 'X32 Mixer',
+  connectionType: 'osc-udp',
   heartbeatInterval: 9000,
   defaultPort: 10023,
   mayChangePort: false,
@@ -11,9 +11,9 @@ exports.config = {
     listenPort: 0,
     validateResponse(msg, info) {
       return msg.toString().indexOf('/xinfo') === 0;
-    }
-  }
-}
+    },
+  },
+};
 
 exports.ready = function ready(device) {
   const d = device;

@@ -12,9 +12,7 @@ module.exports.init = function init() {
   populatePluginLists();
 };
 
-
 function drawDeviceFrame(id) {
-
   const $deviceDrawArea = document.getElementById(`device-${id}-draw-area`);
   const $devicePinned = document.getElementById(`device-${id}-pinned`);
 
@@ -30,7 +28,8 @@ function drawDeviceFrame(id) {
   // scrollbar styles are inline to prevent the styles flickering in
   str += '<style>';
   str += '::-webkit-scrollbar {background-color: black;width: 12px;}';
-  str += '::-webkit-scrollbar-track, ::-webkit-scrollbar-corner {background-color: #2b2b2b;}';
+  str +=
+    '::-webkit-scrollbar-track, ::-webkit-scrollbar-corner {background-color: #2b2b2b;}';
   str +=
     '::-webkit-scrollbar-thumb {background-color: #6b6b6b;border-radius: 16px;border: 3px solid #2b2b2b;}';
   str += '::-webkit-scrollbar-button {display:none;}';
@@ -51,7 +50,6 @@ function drawDeviceFrame(id) {
   $deviceDrawArea.contentWindow.document.write(str);
   $deviceDrawArea.contentWindow.document.close();
 
-
   if (d.pinIndex) {
     $devicePinned.style.display = 'block';
   } else {
@@ -59,62 +57,60 @@ function drawDeviceFrame(id) {
   }
 
   return true;
+}
 
-};
-
-
-function generateBodyHTML(d){
-  let str = "";
+function generateBodyHTML(d) {
+  let str = '';
 
   if (d.status === 'ok') {
-
     try {
       str += PLUGINS.all[d.type].template({
         data: d.data,
-        listName: (d.displayName || d.defaultName)
+        listName: d.displayName || d.defaultName,
       });
     } catch (err) {
       console.log(err);
       str += '<h3>Plugin Template Error</h3>';
     }
   } else {
-    str += `<header><h1>${(d.displayName || d.defaultName)}</h1></header>`;
+    str += `<header><h1>${d.displayName || d.defaultName}</h1></header>`;
     str += "<div class='not-responding'>";
     str += `<h2><em>${d.type}</em> is not responding to requests for data.</h2>`;
     str += `<h3>IP <em>${d.addresses[0]}</em></h3>`;
     str += `<h3>Port <em>${d.port}</em></h3>`;
     str += '<hr></div>';
     str += `<div class="device-info">${PLUGINS.all[d.type].info()}<div>`;
-    
   }
-  
+
   return str;
 }
 
-
 module.exports.draw = function draw(device) {
-
   const d = device;
   const $deviceDrawArea = document.getElementById(`device-${d.id}-draw-area`);
 
-  if($deviceDrawArea){
-    const scriptEl = $deviceDrawArea.contentWindow.document.createRange().createContextualFragment(generateBodyHTML(d));
+  if ($deviceDrawArea) {
+    const scriptEl = $deviceDrawArea.contentWindow.document
+      .createRange()
+      .createContextualFragment(generateBodyHTML(d));
     $deviceDrawArea.contentWindow.document.body.replaceChildren(scriptEl);
-
-  }else{
+  } else {
     drawDeviceFrame(d.id);
-
   }
   d.drawn = true;
 };
 
-module.exports.update = function update(device, type, data){
+module.exports.update = function update(device, type, data) {
   const doc = document.getElementById(`device-${device.id}-draw-area`);
-  if(doc){
-    PLUGINS.all[device.type].update(device, doc.contentWindow.document, type, data);
+  if (doc) {
+    PLUGINS.all[device.type].update(
+      device,
+      doc.contentWindow.document,
+      type,
+      data
+    );
   }
-
-}
+};
 
 module.exports.addDeviceToList = function addDeviceToList(device) {
   const d = device;
@@ -135,20 +131,19 @@ module.exports.addDeviceToList = function addDeviceToList(device) {
   if (elem == null) {
     document
       .getElementById('device-list')
-      .insertAdjacentHTML('beforeend', `<a class='device' id='${d.id}'>${html}</a>`);
+      .insertAdjacentHTML(
+        'beforeend',
+        `<a class='device' id='${d.id}'>${html}</a>`
+      );
   } else {
     elem.innerHTML = html;
   }
-
 };
-
 
 module.exports.removeDeviceFromList = function removeDeviceFromList(device) {
   const d = device;
   document.getElementById(d.id).remove();
-
 };
-
 
 function switchDevice(id) {
   if (activeDevice && activeDevice.pinIndex === false) {
@@ -165,7 +160,9 @@ function switchDevice(id) {
     cols--;
   }
 
-  document.getElementById('all-devices').style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  document.getElementById(
+    'all-devices'
+  ).style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
 
   if (id === undefined) {
     // document.getElementById('refresh-device-button').style.opacity = 0.2;
@@ -182,47 +179,59 @@ function switchDevice(id) {
 
   if (!$deviceWrapper) {
     const html = `<div class="col device-wrapper" id="device-${i}"><img id="device-${i}-pinned" class="device-pin" src="src/img/outline_push_pin_white_18dp.png"><iframe id="device-${i}-draw-area" class="draw-area"></iframe></div>`;
-    document.getElementById('all-devices').insertAdjacentHTML('afterbegin', html);
+    document
+      .getElementById('all-devices')
+      .insertAdjacentHTML('afterbegin', html);
 
     $deviceWrapper = document.getElementById(`device-${i}`);
   }
 
   window.switchClass(document.getElementById(id), 'active-device');
   drawDeviceFrame(id);
-  window.switchClass(document.getElementById(`device-${id}`), 'active-device-outline');
+  window.switchClass(
+    document.getElementById(`device-${id}`),
+    'active-device-outline'
+  );
 
   document.getElementById('device-settings-table').style.display = 'block';
-  document.getElementById('device-settings-plugin-dropdown').value = activeDevice.type;
-  document.getElementById('device-settings-name').value = activeDevice.displayName || activeDevice.defaultName || '';
-  document.getElementById('device-settings-ip').value = activeDevice.addresses[0] || '';
-  document.getElementById('device-settings-port').value = activeDevice.port || '';
-  document.getElementById('device-settings-pin').checked = activeDevice.pinIndex;
+  document.getElementById('device-settings-plugin-dropdown').value =
+    activeDevice.type;
+  document.getElementById('device-settings-name').value =
+    activeDevice.displayName || activeDevice.defaultName || '';
+  document.getElementById('device-settings-ip').value =
+    activeDevice.addresses[0] || '';
+  document.getElementById('device-settings-port').value =
+    activeDevice.port || '';
+  document.getElementById('device-settings-pin').checked =
+    activeDevice.pinIndex;
 
-  if(activeDevice.plugin.config.mayChangePort){
+  if (activeDevice.plugin.config.mayChangePort) {
     document.getElementById('device-settings-port').disabled = false;
-  }else{
+  } else {
     document.getElementById('device-settings-port').disabled = true;
   }
 
-  document.getElementById('device-settings-fields').innerHTML = "";
+  document.getElementById('device-settings-fields').innerHTML = '';
 
-  if(activeDevice.plugin.config.fields){
-    let fields = activeDevice.plugin.config.fields;
+  if (activeDevice.plugin.config.fields) {
+    const fields = activeDevice.plugin.config.fields;
 
-    fields.forEach(field => {
-      let $elem = document.createElement("input");
-      $elem.type = "text";
-      $elem.value = activeDevice.fields[field.key];// || field.value;
+    fields.forEach((field) => {
+      const $elem = document.createElement('input');
+      $elem.type = 'text';
+      $elem.value = activeDevice.fields[field.key]; // || field.value;
       $elem.name = field.key;
-      $elem.onchange = function(e){
+      $elem.onchange = function onchange(e) {
         activeDevice.fields[field.key] = $elem.value;
         field.action(activeDevice);
         saveAll();
-      }
+      };
 
-      if(field.type=="textinput"){
-        let rowHTML =`<tr><th>${field.label}:</th><td colspan="3" id="${field.key}"></td></tr>`;
-        document.getElementById('device-settings-fields').insertAdjacentHTML("beforeend", rowHTML);
+      if (field.type === 'textinput') {
+        const rowHTML = `<tr><th>${field.label}:</th><td colspan="3" id="${field.key}"></td></tr>`;
+        document
+          .getElementById('device-settings-fields')
+          .insertAdjacentHTML('beforeend', rowHTML);
         document.getElementById(field.key).appendChild($elem);
       }
     });
@@ -230,14 +239,12 @@ function switchDevice(id) {
 
   ipcRenderer.send('enableDeviceDropdown', '');
   ipcRenderer.send('setDevicePin', !DEVICE.all[id].pinIndex === false);
-};
+}
 module.exports.switchDevice = switchDevice;
-
 
 module.exports.getActiveDevice = function getActiveDevice() {
   return activeDevice;
 };
-
 
 module.exports.pinActiveDevice = function pinActiveDevice() {
   if (activeDevice === undefined) {
@@ -249,7 +256,6 @@ module.exports.pinActiveDevice = function pinActiveDevice() {
   DEVICE.changeActivePinIndex(true);
 };
 
-
 module.exports.unpinActiveDevice = function unpinActiveDevice() {
   if (activeDevice === undefined) {
     return;
@@ -258,18 +264,15 @@ module.exports.unpinActiveDevice = function unpinActiveDevice() {
   DEVICE.changeActivePinIndex(false);
 };
 
-
 module.exports.pinDevice = function pinDevice(device) {
   pinnedDevices.push(device);
   DEVICE.changePinIndex(device, true);
 };
 
-
 module.exports.unpinDevice = function unpinDevice(device) {
   pinnedDevices.push(device);
   DEVICE.changePinIndex(device, false);
 };
-
 
 module.exports.resetPinned = function resetPinned() {
   pinnedDevices.length = 0;
@@ -285,11 +288,9 @@ module.exports.resetPinned = function resetPinned() {
   document.getElementById('all-devices').innerHTML = '';
 };
 
-
 module.exports.getPinnedDevices = function getPinnedDevices() {
   return pinnedDevices;
 };
-
 
 module.exports.toggleSlotButtons = function toggleSlotButtons(slotIndex) {
   if (slotIndex === 1) {
@@ -307,7 +308,6 @@ module.exports.toggleSlotButtons = function toggleSlotButtons(slotIndex) {
   }
 };
 
-
 module.exports.selectPreviousDevice = function selectPreviousDevice() {
   if (activeDevice === undefined) {
     return;
@@ -317,20 +317,22 @@ module.exports.selectPreviousDevice = function selectPreviousDevice() {
   switchDevice(keys[prevIndex]);
 };
 
-
 module.exports.selectNextDevice = function selectNextDevice() {
   if (activeDevice === undefined) {
     return;
   }
   const keys = Object.keys(DEVICE.all);
-  const prevIndex = Math.min(keys.length - 1, keys.indexOf(activeDevice.id) + 1);
+  const prevIndex = Math.min(
+    keys.length - 1,
+    keys.indexOf(activeDevice.id) + 1
+  );
   switchDevice(keys[prevIndex]);
 };
 
-
 function populatePluginLists() {
   let typeSelect = '';
-  let addSelect = '<option value="" disabled selected hidden>&nbsp;+&nbsp;</option>';
+  let addSelect =
+    '<option value="" disabled selected hidden>&nbsp;+&nbsp;</option>';
 
   Object.keys(PLUGINS.all).forEach((pluginType) => {
     const plugin = PLUGINS.all[pluginType];
@@ -338,6 +340,7 @@ function populatePluginLists() {
     typeSelect += `<option value='${pluginType}'>${plugin.config.defaultName}</option>`;
   });
 
-  document.getElementById('device-settings-plugin-dropdown').innerHTML = typeSelect;
+  document.getElementById('device-settings-plugin-dropdown').innerHTML =
+    typeSelect;
   document.getElementById('add-device-button').innerHTML = addSelect;
-};
+}
