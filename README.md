@@ -13,7 +13,7 @@ A dashboard for everything in your show.
 
 ## Supported Devices
 
-- QLab 4
+- QLab 4 & 5
 - ETC Eos Consoles
 - Watchout
 - PJLink Projectors
@@ -24,9 +24,7 @@ A dashboard for everything in your show.
 
 #### Future Devices
 
-- Spikemark (not possible until additional OSC methods are added)
 - ATEM Video Mixers
-- Epson Pro series Projectors
 - DiGiCo Consoles
 - d&b DS100, amps
 - Hog
