@@ -232,9 +232,18 @@ module.exports.deleteActive = function deleteActive() {
 module.exports.changeActiveType = function changeActiveType(newType) {
   const device = VIEW.getActiveDevice();
   device.type = newType;
+  device.fields = {};
+  device.plugin = PLUGINS.all[newType];
+
+  if (PLUGINS.all[device.type].config.fields) {
+    PLUGINS.all[newType].config.fields.forEach((field) => {
+      device.fields[field.key] = field.value;
+    });
+  }
 
   initDeviceConnection(device.id);
   VIEW.draw(device);
+  VIEW.updateFields();
   // SAVESLOTS.saveAll();
 };
 

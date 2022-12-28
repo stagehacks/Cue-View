@@ -211,9 +211,17 @@ function switchDevice(id) {
     document.getElementById('device-settings-port').disabled = true;
   }
 
+  updateFields();
+
+  ipcRenderer.send('enableDeviceDropdown', '');
+  ipcRenderer.send('setDevicePin', !DEVICE.all[id].pinIndex === false);
+}
+module.exports.switchDevice = switchDevice;
+
+function updateFields() {
   document.getElementById('device-settings-fields').innerHTML = '';
 
-  if (activeDevice.plugin.config.fields) {
+  if (activeDevice && activeDevice.plugin.config.fields) {
     const fields = activeDevice.plugin.config.fields;
 
     fields.forEach((field) => {
@@ -236,11 +244,8 @@ function switchDevice(id) {
       }
     });
   }
-
-  ipcRenderer.send('enableDeviceDropdown', '');
-  ipcRenderer.send('setDevicePin', !DEVICE.all[id].pinIndex === false);
 }
-module.exports.switchDevice = switchDevice;
+module.exports.updateFields = updateFields;
 
 module.exports.getActiveDevice = function getActiveDevice() {
   return activeDevice;
