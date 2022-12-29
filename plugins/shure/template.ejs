@@ -6,40 +6,51 @@
 <% for(let i=1; i<=4; i++){ %> <% let ch = data.channels[i]; %>
 <table class="channel">
   <tr>
-    <td colspan="2"><%= i %></td>
+    <td colspan="3"><small><%= i %></small></td>
   </tr>
   <tr>
-    <td colspan="2" class="chan_name"><%= ch.chan_name %></td>
+    <td colspan="3" class="chan_name"><%= ch.chan_name %></td>
   </tr>
   <tr>
-    <td><%= ch.audio_gain %>db</td>
-    <td><%= ch.audio_lvl %></td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <% if(ch.audio_mute=="ON" || ch.tx_mute_button_status=="PRESSED"){ %>
-      <div class="mute-button red">
-        <% if(ch.audio_mute=="ON"){ %>
-        <span>Receiver Muted</span>
-        <% } %>
-        <span></span>
-        <% if(ch.tx_mute_button_status=="PRESSED"){ %>
-        <span>TRANSMITTER MUTE PRESSED</span>
-        <% } %>
+    <td>
+      <small>rf</small>
+      <div class="bar-wrapper orange">
+        <div
+          class="bar"
+          style="height: <%= 90- ((ch.rx_rf_lvl + 90) * 2) %>"></div>
       </div>
+      <small><%= ch.rx_rf_lvl %><br />dBm</small>
+    </td>
+    <td>
+      <small>audio</small>
+      <div class="bar-wrapper green">
+        <div class="bar" style="height: <%= 90- (ch.audio_lvl * 2) %>"></div>
+      </div>
+      <small><%= ch.audio_lvl %><br />dBFS</small>
+    </td>
+    <td>
+      <small>gain</small>
+      <div class="bar-wrapper pink">
+        <div class="bar" style="height: <%= 60- (ch.audio_gain * 1.4) %>"></div>
+      </div>
+      <small><%= ch.audio_gain %><br />dB</small>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="3">
+      <% if(ch.batt_bars==255){ %>
+      <div class="batt-wrapper"></div>
       <% }else{ %>
-      <div class="mute-button">NOT MUTED</div>
+      <div class="batt-wrapper green">
+        <div class="batt-bar" style="width: <%= ch.batt_bars * 16 %>"></div>
+      </div>
       <% } %>
     </td>
   </tr>
   <tr>
-    <td colspan="2"><small>RF Level</small><br /><%= ch.rx_rf_lvl %>dbm</td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <br /><small>Time: </small><%= ch.batt_run_time %> <br /><small
-        >Health: </small
-      ><%= ch.batt_health %> <br /><small>Temp: </small><%= ch.batt_temp_f %>F
+    <td colspan="3">
+      <% if(ch.tx_type=="UNKN"){ %> &nbsp;<small>No Transmitter</small>&nbsp; <%
+      }else{ %> <%= ch.tx_type %> <% } %>
     </td>
   </tr>
 </table>

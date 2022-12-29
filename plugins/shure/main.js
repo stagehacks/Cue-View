@@ -15,11 +15,22 @@ exports.config = {
       return msg.toString().indexOf('DEVICE_ID');
     },
   },
+  fields: [
+    {
+      key: 'chanCount',
+      label: 'Chan',
+      type: 'textinput',
+      value: '4',
+      action(device) {
+        // device.plugin.heartbeat(device);
+      },
+    },
+  ],
 };
 
-let blankChannel = {
+const blankChannel = {
   chan_name: '?',
-  batt_bars: '',
+  batt_bars: 255,
   batt_charge: '',
   batt_cycle: '',
   batt_health: '',
@@ -52,17 +63,17 @@ exports.data = function data(device, message) {
   }
 
   msgStr = msgStr.slice(2).slice(0, -1);
-  let msgs = msgStr.split('><');
+  const msgs = msgStr.split('><');
 
   msgs.forEach((msg, i) => {
     msg = msg.trim();
-    let m = msg.split(' ');
+    const m = msg.split(' ');
 
     // console.log(msg);
 
-    let ch = device.data.channels[Number(m[1])];
+    const ch = device.data.channels[Number(m[1])];
 
-    //console.log(m);
+    // console.log(m);
 
     if (m[0] == 'REP') {
       if (m[2] == 'CHAN_NAME') {
@@ -73,8 +84,10 @@ exports.data = function data(device, message) {
         ch.batt_temp_f = Number(m[3]);
       } else if (m[2] == 'BATT_HEALTH') {
         ch.batt_health = Number(m[3]);
+      } else if (m[2] == 'BATT_BARS') {
+        ch.batt_bars = Number(m[3]);
       } else if (m[2] == 'AUDIO_GAIN') {
-        ch.audio_gain = Number(m[3]);
+        ch.audio_gain = Number(m[3]) - 18;
       } else if (m[2] == 'AUDIO_MUTE') {
         ch.audio_mute = m[3];
       } else if (m[2] == 'TX_MUTE_BUTTON_STATUS') {
@@ -82,18 +95,20 @@ exports.data = function data(device, message) {
       } else if (m[2] == 'AUDIO_LVL') {
         ch.audio_lvl = Number(m[3]);
       } else if (m[2] == 'RX_RF_LVL') {
-        ch.rx_rf_lvl = Number(m[3]);
+        ch.rx_rf_lvl = Number(m[3]) - 128;
       } else if (m[2] == 'RF_ANTENNA') {
         ch.rf_antenna = m[3];
+      } else if (m[2] == 'TX_TYPE') {
+        ch.tx_type = m[3];
       } else if (m[1] == 'DEVICE_ID') {
-        let id = msg.substring(15).slice(0, -1).trim();
+        const id = msg.substring(15).slice(0, -1).trim();
         this.deviceInfoUpdate(device, 'defaultName', id);
       } else if (m[1] == 'FW_VER') {
         device.data.version = m[2].substring(1);
       }
     } else if (m[0] == 'SAMPLE') {
       ch.rf_antenna = m[3];
-      ch.rx_rf_lvl = Number(m[4]);
+      ch.rx_rf_lvl = Number(m[4]) - 128;
       ch.audio_lvl = Number(m[5]);
     }
   });
@@ -103,7 +118,6 @@ exports.data = function data(device, message) {
 
 exports.heartbeat = function heartbeat(device) {
   device.send('< GET 0 ALL >');
-  device.send('< GET MODEL >');
-  //device.send('< SET 0 METER_RATE 00000 >');
-  //device.send('< SAMPLE 0 AUDIO_LVL>');
+  device.send('< SET 0 METER_RATE 00200 >');
+  device.send('< SAMPLE 0 AUDIO_LVL>');
 };

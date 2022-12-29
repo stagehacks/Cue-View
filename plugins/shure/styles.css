@@ -1,12 +1,14 @@
 table.channel {
   width: 120px;
-  height: 400px;
+  height: 300px;
   background-color: black;
   border: gray 1px solid;
   border-collapse: collapse;
   color: white;
   text-align: center;
   float: left;
+  margin: 2px;
+  margin-bottom: 20px;
 }
 table td {
   border: #666 1px solid;
@@ -19,14 +21,45 @@ table td {
   font-weight: bold;
 }
 
-.mute-button {
-  background-color: #222;
-  padding: 10px;
-  margin: 5px;
-  border-radius: 4px;
+.bar-wrapper {
+  width: 20px;
+  height: 90px;
+  margin: 0px auto;
+
+  border-radius: 7px;
+  border: #111 1px solid;
+  overflow: hidden;
 }
-.mute-button.red {
-  background-color: red;
+.bar-wrapper.green {
+  background: linear-gradient(0deg, greenyellow, yellow 80%, red);
+}
+.bar-wrapper.pink {
+  background: linear-gradient(0deg, hotpink, hotpink 80%, red);
+}
+.bar-wrapper.orange {
+  background: linear-gradient(0deg, orange, yellow 80%);
+}
+.bar {
+  width: 20px;
+  background-color: #333;
+  border-bottom: white 1px solid;
+}
+
+.batt-wrapper {
+  width: 84px;
+  height: 35px;
+  margin: 0px auto;
+  border: #333 2px solid;
+  border-radius: 5px;
+  padding: 2px;
+}
+.batt-wrapper.green {
+  border-color: greenyellow;
+}
+.batt-bar {
+  height: 100%;
+  background-color: greenyellow;
+  border-radius: 2px;
 }
 
 small {
