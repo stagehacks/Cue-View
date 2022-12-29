@@ -52,15 +52,15 @@ exports.data = function data(_device, message) {
 
   msgs.forEach((ms, i) => {
     const msg = ms.trim();
-    const m = msg.split(' ');
-    const chi = Number(m[1]);
-    const ch = device.data.channels[chi];
+    const msgParts = msg.split(' ');
+    const channelNumber = Number(msgParts[1]);
+    const channel = device.data.channels[channelNumber];
 
-    if (m[0] === 'REP') {
-      if (m[2] === 'CHAN_NAME') {
-        ch.chan_name = msg.substring(17).slice(0, -2).trim();
-        if (device.data.channelCount < chi) {
-          device.data.channelCount = chi;
+    if (msgParts[0] === 'REP') {
+      if (msgParts[2] === 'CHAN_NAME') {
+        channel.chan_name = msg.substring(17).slice(0, -2).trim();
+        if (device.data.channelCount < channelNumber) {
+          device.data.channelCount = channelNumber;
         }
         device.draw();
       } else if (msgParts[2] === 'BATT_BARS') {
@@ -78,14 +78,14 @@ exports.data = function data(_device, message) {
       } else if (msgParts[1] === 'DEVICE_ID') {
         const id = msg.substring(15).slice(0, -1).trim();
         this.deviceInfoUpdate(device, 'defaultName', id);
-      } else if (m[1] === 'FW_VER') {
-        device.data.version = m[2].substring(1);
+      } else if (msgParts[1] === 'FW_VER') {
+        device.data.version = msgParts[2].substring(1);
       }
-    } else if (m[0] === 'SAMPLE') {
-      ch.rf_antenna = m[3];
-      ch.rx_rf_lvl = Number(m[4]) - 128;
-      ch.audio_lvl = Number(m[5]);
-      if (chi === 4) {
+    } else if (msgParts[0] === 'SAMPLE') {
+      channel.rf_antenna = msgParts[3];
+      channel.rx_rf_lvl = Number(msgParts[4]) - 128;
+      channel.audio_lvl = Number(msgParts[5]);
+      if (channelNumber === 4) {
         device.draw();
       }
     }
