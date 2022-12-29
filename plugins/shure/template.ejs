@@ -1,0 +1,47 @@
+<header>
+  <h1><%= listName %></h1>
+  <h2><%= data.version || "" %></h2>
+</header>
+
+<% for(let i=1; i<=4; i++){ %> <% let ch = data.channels[i]; %>
+<table class="channel">
+  <tr>
+    <td colspan="2"><%= i %></td>
+  </tr>
+  <tr>
+    <td colspan="2" class="chan_name"><%= ch.chan_name %></td>
+  </tr>
+  <tr>
+    <td><%= ch.audio_gain %>db</td>
+    <td><%= ch.audio_lvl %></td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <% if(ch.audio_mute=="ON" || ch.tx_mute_button_status=="PRESSED"){ %>
+      <div class="mute-button red">
+        <% if(ch.audio_mute=="ON"){ %>
+        <span>Receiver Muted</span>
+        <% } %>
+        <span></span>
+        <% if(ch.tx_mute_button_status=="PRESSED"){ %>
+        <span>TRANSMITTER MUTE PRESSED</span>
+        <% } %>
+      </div>
+      <% }else{ %>
+      <div class="mute-button">NOT MUTED</div>
+      <% } %>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><small>RF Level</small><br /><%= ch.rx_rf_lvl %>dbm</td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <br /><small>Time: </small><%= ch.batt_run_time %> <br /><small
+        >Health: </small
+      ><%= ch.batt_health %> <br /><small>Temp: </small><%= ch.batt_temp_f %>F
+    </td>
+  </tr>
+</table>
+
+<% } %>

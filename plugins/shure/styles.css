@@ -1,0 +1,34 @@
+table.channel {
+  width: 120px;
+  height: 400px;
+  background-color: black;
+  border: gray 1px solid;
+  border-collapse: collapse;
+  color: white;
+  text-align: center;
+  float: left;
+}
+table td {
+  border: #666 1px solid;
+}
+
+.chan_name {
+  width: 100px;
+  color: #b2ff33 !important;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.mute-button {
+  background-color: #222;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 4px;
+}
+.mute-button.red {
+  background-color: red;
+}
+
+small {
+  color: gray;
+}
