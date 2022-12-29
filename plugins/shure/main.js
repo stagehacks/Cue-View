@@ -20,18 +20,11 @@ exports.config = {
 const blankChannel = {
   chan_name: '?',
   batt_bars: 255,
-  batt_charge: '',
-  batt_cycle: '',
-  batt_health: '',
-  batt_run_time: '',
-  batt_temp_c: '',
-  batt_temp_f: '',
-  batt_type: '',
-  audio_gain: '',
-  audio_mute: '',
-  tx_mute_button_status: '',
+  audio_gain: 0,
   audio_lvl: 0,
   rx_rf_lvl: 0,
+  rf_antenna: 0,
+  tx_type: 0,
 };
 
 exports.ready = function ready(_device) {
@@ -70,29 +63,19 @@ exports.data = function data(_device, message) {
           device.data.channelCount = chi;
         }
         device.draw();
-      } else if (m[2] === 'BATT_RUN_TIME') {
-        ch.batt_run_time = Number(m[3]);
-      } else if (m[2] === 'BATT_TEMP_F') {
-        ch.batt_temp_f = Number(m[3]);
-      } else if (m[2] === 'BATT_HEALTH') {
-        ch.batt_health = Number(m[3]);
-      } else if (m[2] === 'BATT_BARS') {
-        ch.batt_bars = Number(m[3]);
-      } else if (m[2] === 'AUDIO_GAIN') {
-        ch.audio_gain = Number(m[3]) - 18;
-      } else if (m[2] === 'AUDIO_MUTE') {
-        ch.audio_mute = m[3];
-      } else if (m[2] === 'TX_MUTE_BUTTON_STATUS') {
-        ch.tx_mute_button_status = m[3];
-      } else if (m[2] === 'AUDIO_LVL') {
-        ch.audio_lvl = Number(m[3]);
-      } else if (m[2] === 'RX_RF_LVL') {
-        ch.rx_rf_lvl = Number(m[3]) - 128;
-      } else if (m[2] === 'RF_ANTENNA') {
-        ch.rf_antenna = m[3];
-      } else if (m[2] === 'TX_TYPE') {
-        ch.tx_type = m[3];
-      } else if (m[1] === 'DEVICE_ID') {
+      } else if (msgParts[2] === 'BATT_BARS') {
+        channel.batt_bars = Number(msgParts[3]);
+      } else if (msgParts[2] === 'AUDIO_GAIN') {
+        channel.audio_gain = Number(msgParts[3]) - 18;
+      } else if (msgParts[2] === 'AUDIO_LVL') {
+        channel.audio_lvl = Number(msgParts[3]);
+      } else if (msgParts[2] === 'RX_RF_LVL') {
+        channel.rx_rf_lvl = Number(msgParts[3]) - 128;
+      } else if (msgParts[2] === 'RF_ANTENNA') {
+        channel.rf_antenna = msgParts[3];
+      } else if (msgParts[2] === 'TX_TYPE') {
+        channel.tx_type = msgParts[3];
+      } else if (msgParts[1] === 'DEVICE_ID') {
         const id = msg.substring(15).slice(0, -1).trim();
         this.deviceInfoUpdate(device, 'defaultName', id);
       } else if (m[1] === 'FW_VER') {
