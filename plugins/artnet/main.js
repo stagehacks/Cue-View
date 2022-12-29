@@ -4,6 +4,7 @@ exports.config = {
   defaultName: 'Art-Net',
   connectionType: 'UDPsocket',
   heartbeatInterval: 10000,
+  defaultPort: 6454,
   searchOptions: {
     type: 'UDPsocket',
     searchBuffer: Buffer.from([0x00]),
@@ -15,8 +16,6 @@ exports.config = {
     },
   },
 };
-
-exports.defaultPort = 6454;
 
 exports.ready = function ready(_device) {
   const device = _device;
