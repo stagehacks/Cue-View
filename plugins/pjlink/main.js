@@ -13,7 +13,6 @@ exports.config = {
     devicePort: 4352,
     listenPort: 4352,
     validateResponse(msg, info) {
-      console.log(msg.toString());
       return msg.toString().indexOf('%2ACKN=') >= 0;
     },
   },
