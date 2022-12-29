@@ -8,13 +8,11 @@ exports.config = {
   defaultPort: 2202,
   mayChangePort: false,
   searchOptions: {
-    type: 'UDPsocket',
-    searchBuffer: Buffer.from([0x25, 0x32, 0x53, 0x52, 0x43, 0x48, 0x0d]),
-    devicePort: 4352,
-    listenPort: 4352,
+    type: 'TCPport',
+    searchBuffer: Buffer.from('< GET DEVICE_ID >', 'ascii'),
+    testPort: 3032,
     validateResponse(msg, info) {
-      console.log(msg.toString());
-      return msg.toString().indexOf('%2ACKN=') >= 0;
+      return msg.toString().indexOf('DEVICE_ID');
     },
   },
 };
