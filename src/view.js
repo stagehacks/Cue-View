@@ -298,19 +298,14 @@ module.exports.getPinnedDevices = function getPinnedDevices() {
 };
 
 module.exports.toggleSlotButtons = function toggleSlotButtons(slotIndex) {
-  if (slotIndex === 1) {
-    document.getElementById('save-slot-1').classList.add('active');
-    document.getElementById('save-slot-2').classList.remove('active');
-    document.getElementById('save-slot-3').classList.remove('active');
-  } else if (slotIndex === 2) {
-    document.getElementById('save-slot-1').classList.remove('active');
-    document.getElementById('save-slot-2').classList.add('active');
-    document.getElementById('save-slot-3').classList.remove('active');
-  } else if (slotIndex === 3) {
-    document.getElementById('save-slot-1').classList.remove('active');
-    document.getElementById('save-slot-2').classList.remove('active');
-    document.getElementById('save-slot-3').classList.add('active');
+  // remove all currently active classes
+  const currentActiveSlots = document.getElementsByClassName('active');
+  for (let i = 0; i < currentActiveSlots.length; i++) {
+    const slotButton = currentActiveSlots[i];
+    slotButton.classList.remove('active');
   }
+  // add the active class to the newly selected slot
+  document.getElementById(`save-slot-${slotIndex}`).classList.add('active');
 };
 
 module.exports.selectPreviousDevice = function selectPreviousDevice() {

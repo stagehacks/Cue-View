@@ -76,20 +76,21 @@ window.init = function init() {
     }
   };
 
-  document.getElementById('save-slot-1').onclick = function slot1click(e) {
-    e.stopPropagation();
-    SAVESLOTS.loadSlot(1);
-  };
+  const saveSlots = document.getElementsByClassName('save-slot');
 
-  document.getElementById('save-slot-2').onclick = function slot2click(e) {
-    e.stopPropagation();
-    SAVESLOTS.loadSlot(2);
-  };
-
-  document.getElementById('save-slot-3').onclick = function slot3click(e) {
-    e.stopPropagation();
-    SAVESLOTS.loadSlot(3);
-  };
+  for (let i = 0; i < saveSlots.length; i++) {
+    const saveSlot = saveSlots[i];
+    saveSlot.addEventListener('click', (event) => {
+      // get save slot from button id save-slot-1 = 1
+      const saveSlotIndex = parseInt(
+        event.target.id.replace('save-slot-', ''),
+        10
+      );
+      if (saveSlotIndex) {
+        SAVESLOTS.loadSlot(saveSlotIndex);
+      }
+    });
+  }
 
   document.getElementById('refresh-device-button').onclick =
     function refreshClick(e) {
