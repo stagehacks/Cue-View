@@ -56,6 +56,12 @@ a {
   -webkit-app-region: drag;
   z-index: 1000;
 }
+#view-buttons-bar .active {
+  background-color: rgba(255, 255, 255, 0.3);
+  color: white;
+  border: #61c650;
+  border-style: solid;
+}
 #view-buttons-bar button {
   background-color: rgba(255, 255, 255, 0.07);
   width: 26px;
@@ -292,10 +298,6 @@ button:hover {
 }
 button:focus {
   outline: none;
-}
-button.active {
-  background-color: rgba(255, 255, 255, 0.3);
-  color: white;
 }
 button:disabled {
   background: rgba(255, 255, 255, 0.03);
