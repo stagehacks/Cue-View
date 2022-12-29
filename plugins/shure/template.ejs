@@ -3,7 +3,7 @@
   <h2><%= data.version || "" %></h2>
 </header>
 
-<% for(let i=1; i<=4; i++){ %> <% let ch = data.channels[i]; %>
+<% for(let i=1; i<=data.channelCount; i++){ %> <% let ch = data.channels[i]; %>
 <table class="channel">
   <tr>
     <td colspan="3"><small><%= i %></small></td>
@@ -19,21 +19,21 @@
           class="bar"
           style="height: <%= 90- ((ch.rx_rf_lvl + 90) * 2) %>"></div>
       </div>
-      <small><%= ch.rx_rf_lvl %><br />dBm</small>
+      <small><%= ch.rx_rf_lvl %><br /><small>dBm</small></small>
     </td>
     <td>
       <small>audio</small>
       <div class="bar-wrapper green">
         <div class="bar" style="height: <%= 90- (ch.audio_lvl * 2) %>"></div>
       </div>
-      <small><%= ch.audio_lvl %><br />dBFS</small>
+      <small><%= ch.audio_lvl %><br /><small>dBFS</small></small>
     </td>
     <td>
       <small>gain</small>
       <div class="bar-wrapper pink">
         <div class="bar" style="height: <%= 60- (ch.audio_gain * 1.4) %>"></div>
       </div>
-      <small><%= ch.audio_gain %><br />dB</small>
+      <small><%= ch.audio_gain %><br /><small>dB</small></small>
     </td>
   </tr>
   <tr>

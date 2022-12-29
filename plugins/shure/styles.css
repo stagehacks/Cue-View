@@ -25,6 +25,8 @@ table td {
   width: 20px;
   height: 90px;
   margin: 0px auto;
+  margin-top: 5px;
+  margin-bottom: 5px;
 
   border-radius: 7px;
   border: #111 1px solid;
