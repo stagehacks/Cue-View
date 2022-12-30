@@ -1,4 +1,5 @@
 /* eslint-disable global-require */
+/* eslint-disable import/no-dynamic-require */
 const fs = require('fs');
 const _ = require('lodash');
 const path = require('path');
@@ -15,63 +16,37 @@ module.exports.init = function init(callback) {
   console.log(`Loading plugin files... ${pluginDirectoryPath}`);
 
   fs.readdir(pluginDirectoryPath, (err, files) => {
-    files.forEach((plugin) => {
-      if (plugin[0] !== '.') {
-        console.log(`${plugin} started`);
+    files.forEach((pluginDir) => {
+      if (pluginDir[0] !== '.') {
+        allPlugins[pluginDir] = require(path.join(pluginDirectoryPath, `/${pluginDir}/main.js`));
 
-        // eslint-disable-next-line import/no-dynamic-require
-        allPlugins[plugin] = require(path.join(
-          pluginDirectoryPath,
-          `/${plugin}/main.js`
-        ));
+        const plugin = allPlugins[pluginDir];
 
-        const p = allPlugins[plugin];
-
-        p.deviceInfoUpdate = function deviceInfoUpdate(device, param, value) {
+        plugin.deviceInfoUpdate = function deviceInfoUpdate(device, param, value) {
           DEVICE.infoUpdate(device, param, value);
         };
-        p.draw = (device) => {
+        plugin.draw = (device) => {
           VIEW.draw(device);
         };
 
-        p.template = _.template(
-          fs.readFileSync(
-            path.join(pluginDirectoryPath, `/${plugin}/template.ejs`),
-            'utf8'
-          )
+        plugin.template = _.template(
+          fs.readFileSync(path.join(pluginDirectoryPath, `/${pluginDir}/template.ejs`), 'utf8')
         );
 
-        p.info = _.template(
-          fs.readFileSync(
-            path.join(pluginDirectoryPath, `/${plugin}/info.html`),
-            'utf8'
-          )
-        );
+        plugin.info = _.template(fs.readFileSync(path.join(pluginDirectoryPath, `/${pluginDir}/info.html`), 'utf8'));
 
-        // if (p.heartbeatTimeout === undefined || p.heartbeatTimeout < 50) {
-        if (p.config.heartbeatTimeout) {
-          p.heartbeatTimeout = p.config.heartbeatInterval * 1.5;
+        if (plugin.config.heartbeatTimeout) {
+          plugin.heartbeatTimeout = plugin.config.heartbeatInterval * 1.5;
         } else {
-          p.heartbeatTimeout = 10000;
-        }
-        // }
-
-        if (p.config.heartbeatInterval) {
-          p.heartbeatInterval = Math.max(50, p.config.heartbeatInterval);
-        } else {
-          p.heartbeatInterval = 5000;
+          plugin.heartbeatTimeout = 10000;
         }
 
-        // p.fields = {};
-        // if(p.config.fields){
-        //   p.config.fields.forEach(field => {
-        //     p.fields[field.key] = field.value;
-        //   });
-        // }
-
-        // if (p.heartbeatInterval === undefined || p.heartbeatInterval < 50) {
-        //   p.heartbeatInterval = 5000;
-        // }
+        if (plugin.config.heartbeatInterval) {
+          plugin.heartbeatInterval = Math.max(50, plugin.config.heartbeatInterval);
+        } else {
+          plugin.heartbeatInterval = 5000;
+        }
+        console.log(`${pluginDir} loaded`);
       }
     });
 
