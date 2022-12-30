@@ -6,7 +6,6 @@ const os = require('os');
 const ip = require('ip');
 
 const DEVICE = require('./device.js');
-// const SEARCH = require('./search.js');
 const PLUGINS = require('./plugins.js');
 
 let searching = false;
@@ -45,16 +44,7 @@ function searchAll() {
   searching = true;
   ipcRenderer.send('disableSearchAll', '');
   document.getElementById('search-button').style.opacity = 0.2;
-
-  // Removed this block to fix #21
-  // "After adding devices via search, searching again leaves all devices stuck in reload state"
-  //
-  // Object.keys(DEVICE.all).forEach((i) => {
-  //   DEVICE.infoUpdate(DEVICE.all[i], 'status', 'refresh');
-  // });
-
   console.log('Searching...');
-
   allServers = getServers();
   let TCPFlag = true;
   if (allServers.length > 2046) {
@@ -64,25 +54,25 @@ function searchAll() {
     TCPFlag = false;
   }
 
-  Object.keys(PLUGINS.all).forEach((p) => {
-    const plugin = PLUGINS.all[p];
+  Object.keys(PLUGINS.all).forEach((pluginType) => {
+    const plugin = PLUGINS.all[pluginType];
 
     try {
-      const t = plugin.config.searchOptions.type;
+      const searchType = plugin.config.searchOptions.type;
 
-      if (t === 'TCPport') {
+      if (searchType === 'TCPport') {
         if (TCPFlag) {
-          searchTCP(p, plugin.config);
+          searchTCP(pluginType, plugin.config);
         }
-      } else if (t === 'Bonjour') {
-        searchBonjour(p, plugin.config);
-      } else if (t === 'UDPsocket') {
-        searchUDP(p, plugin.config);
-      } else if (t === 'multicast') {
-        searchMulticast(p, plugin.config);
+      } else if (searchType === 'Bonjour') {
+        searchBonjour(pluginType, plugin.config);
+      } else if (searchType === 'UDPsocket') {
+        searchUDP(pluginType, plugin.config);
+      } else if (searchType === 'multicast') {
+        searchMulticast(pluginType, plugin.config);
       }
     } catch (err) {
-      console.error(`Unable to search for plugin ${p}`);
+      console.error(`Unable to search for plugin ${pluginType}`);
     }
   });
 
@@ -103,8 +93,8 @@ function searchAll() {
 }
 module.exports.searchAll = searchAll;
 
-function searchBonjour(pluginType, plugin) {
-  bonjour.find({ type: plugin.searchOptions.bonjourName }, (e) => {
+function searchBonjour(pluginType, pluginConfig) {
+  bonjour.find({ type: pluginConfig.searchOptions.bonjourName }, (e) => {
     const validAddresses = [];
     e.addresses.forEach((address) => {
       if (address.indexOf(':') === -1) {
@@ -121,26 +111,26 @@ function searchBonjour(pluginType, plugin) {
   });
 }
 
-function searchTCP(pluginType, plugin) {
+function searchTCP(pluginType, pluginConfig) {
   for (let i = 0; i < allServers.length; i++) {
-    TCPtest(allServers[i], pluginType, plugin);
+    TCPtest(allServers[i], pluginType, pluginConfig);
   }
 }
 
-function TCPtest(ipAddr, pluginType, plugin) {
+function TCPtest(ipAddr, pluginType, pluginConfig) {
   const client = net.createConnection(
-    plugin.searchOptions.testPort,
+    pluginConfig.searchOptions.testPort,
     ipAddr,
     () => {
-      client.write(plugin.searchOptions.searchBuffer);
+      client.write(pluginConfig.searchOptions.searchBuffer);
     }
   );
   client.on('data', (data) => {
-    if (plugin.searchOptions.validateResponse(data)) {
+    if (pluginConfig.searchOptions.validateResponse(data)) {
       DEVICE.registerDevice({
         type: pluginType,
-        defaultName: plugin.defaultName,
-        port: plugin.defaultPort,
+        defaultName: pluginConfig.defaultName,
+        port: pluginConfig.defaultPort,
         addresses: [ipAddr],
       });
     }
@@ -151,47 +141,17 @@ function TCPtest(ipAddr, pluginType, plugin) {
   });
 }
 
-function searchUDP(pluginType, plugin) {
+function searchUDP(pluginType, pluginConfig) {
   const i = searchSockets.push(dgram.createSocket('udp4')) - 1;
 
-  searchSockets[i].bind(plugin.searchOptions.listenPort, () => {
-    // searchSockets[i].send(
-    //   plugin.searchOptions.searchBuffer,
-    //   plugin.searchOptions.devicePort,
-    //   '255.255.255.255',
-    //   (err) => {
-    //     // console.log(err)
-    //   }
-    // );
-    // setTimeout(() => {
-    //   searchSockets[i].send(
-    //     plugin.searchOptions.searchBuffer,
-    //     plugin.searchOptions.devicePort,
-    //     '255.255.255.255',
-    //     (err) => {
-    //       // console.log(err)
-    //     }
-    //   );
-    // }, 100);
-    // setTimeout(() => {
-    //   console.log('send')
-    //   searchSockets[i].send(
-    //     plugin.searchOptions.searchBuffer,
-    //     plugin.searchOptions.devicePort,
-    //     '255.255.255.255',
-    //     (err) => {
-    //       // console.log(err)
-    //     }
-    //   );
-    // }, 400);
-
+  searchSockets[i].bind(pluginConfig.searchOptions.listenPort, () => {
     searchSockets[i].on('message', (msg, info) => {
-      if (plugin.searchOptions.validateResponse(msg, info, DEVICE.all)) {
+      if (pluginConfig.searchOptions.validateResponse(msg, info, DEVICE.all)) {
         searchSockets[i].close();
         DEVICE.registerDevice({
           type: pluginType,
-          defaultName: plugin.defaultName,
-          port: plugin.defaultPort,
+          defaultName: pluginConfig.config.defaultName,
+          port: pluginConfig.config.defaultPort,
           addresses: [info.address],
         });
       }
@@ -200,8 +160,8 @@ function searchUDP(pluginType, plugin) {
   searchSockets[i].on('listening', () => {
     searchSockets[i].setBroadcast(true);
     searchSockets[i].send(
-      plugin.searchOptions.searchBuffer,
-      plugin.searchOptions.devicePort,
+      pluginConfig.searchOptions.searchBuffer,
+      pluginConfig.searchOptions.devicePort,
       '255.255.255.255',
       (err) => {
         // console.log(err)
@@ -210,20 +170,20 @@ function searchUDP(pluginType, plugin) {
   });
 }
 
-function searchMulticast(pluginType, plugin) {
+function searchMulticast(pluginType, pluginConfig) {
   const socket = dgram.createSocket('udp4');
   socket.on('message', (msg, info) => {
-    if (plugin.searchOptions.validateResponse(msg, info)) {
+    if (pluginConfig.searchOptions.validateResponse(msg, info)) {
       socket.close();
       DEVICE.registerDevice({
         type: pluginType,
-        defaultName: plugin.defaultName,
-        port: plugin.defaultPort,
+        defaultName: pluginConfig.config.defaultName,
+        port: pluginConfig.config.defaultPort,
         addresses: [info.address],
       });
     }
   });
-  socket.bind(plugin.searchOptions.port, () => {
-    socket.addMembership(plugin.searchOptions.address);
+  socket.bind(pluginConfig.searchOptions.port, () => {
+    socket.addMembership(pluginConfig.searchOptions.address);
   });
 }
