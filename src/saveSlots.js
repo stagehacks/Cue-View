@@ -8,6 +8,13 @@ let savedDevices = [];
 const storedSlots = localStorage.getItem('savedSlots');
 if (storedSlots) {
   savedSlots = JSON.parse(storedSlots);
+  // can probably be removed but I've noticed some older versions left some [null] slots in the savedSlots
+  savedSlots = savedSlots.map((savedSlot) => {
+    if (savedSlot.length === 1 && savedSlot[0] === null) {
+      return [];
+    }
+    return savedSlot;
+  });
 }
 
 const storedDevices = localStorage.getItem('savedDevices');
@@ -68,12 +75,26 @@ module.exports.saveAll = function saveAll() {
 
   savedSlots[activeSlot] = [];
   for (let i = 0; i < currentPins.length; i++) {
-    savedSlots[activeSlot][i] = {
-      addresses: currentPins[i].addresses,
-      type: currentPins[i].type,
-      id: currentPins[i].id,
-    };
+    if (currentPins[i]) {
+      // only include saved devices
+      if (currentPins[i].id in DEVICE.all) {
+        savedSlots[activeSlot][i] = {
+          addresses: currentPins[i].addresses,
+          type: currentPins[i].type,
+          id: currentPins[i].id,
+        };
+      }
+    }
   }
+
+  // can probably be removed but I've noticed some older versions left some [null] slots in the savedSlots
+  savedSlots = savedSlots.map((savedSlot) => {
+    if (savedSlot.length === 1 && savedSlot[0] === null) {
+      return [];
+    }
+    return savedSlot;
+  });
+
   localStorage.setItem('savedSlots', JSON.stringify(savedSlots));
   console.log(
     `Saved ${currentPins.length} pinned devices to slot ${activeSlot}!`
@@ -94,24 +115,29 @@ module.exports.saveAll = function saveAll() {
     };
     i++;
   });
+
   localStorage.setItem('savedDevices', JSON.stringify(savedDevices));
+  console.log(`Saved ${savedDevices.length} devices to storage!`);
 };
 
-module.exports.deleteFromSlots = function deleteFromSlots(device) {
-  for (let i = 1; i <= 3; i++) {
-    console.log(savedSlots);
-    for (let j = 0; j < savedSlots[i].length; j++) {
-      if (savedSlots[i][j].id === device.id) {
-        delete savedSlots[i][j];
-      }
-    }
+module.exports.removeDevice = function removeDevice(_device) {
+  // remove devices from local savedDevices
+  savedDevices = savedDevices.filter((device) => device.id !== _device.id);
+
+  // remove devices from all saved slots
+  for (let i = 1; i < savedSlots.length; i++) {
+    savedSlots[i] = savedSlots[i].filter((device) => device.id !== _device.id);
   }
+
+  // things might have changed so run a save
+  this.saveAll();
 };
 
 module.exports.reloadActiveSlot = function reloadActiveSlot() {
   loadSlot(activeSlot);
 };
 
-module.exports.resetSlots = function resetSlots() {
-  localStorage.clear();
+module.exports.clearSavedData = function clearSavedData() {
+  localStorage.removeItem('savedSlots');
+  localStorage.removeItem('savedDevices');
 };

@@ -173,8 +173,8 @@ ipcRenderer.on('deleteActive', (event, message) => {
   VIEW.selectPreviousDevice();
 });
 
-ipcRenderer.on('resetViews', (event, message) => {
-  SAVESLOTS.resetSlots();
+ipcRenderer.on('clearSavedData', (event, message) => {
+  SAVESLOTS.clearSavedData();
 });
 
 ipcRenderer.on('loadSlot', (event, slot) => {

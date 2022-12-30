@@ -24,9 +24,9 @@ const menuTemplate = [
     submenu: [
       {
         label: 'Clear Saved Data',
-        id: 'resetViews',
+        id: 'clearSavedData',
         click(menuItem, window, event) {
-          mainWindow.webContents.send('resetViews');
+          mainWindow.webContents.send('clearSavedData');
         },
       },
       {
