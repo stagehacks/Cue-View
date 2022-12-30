@@ -173,7 +173,7 @@ function initDeviceConnection(id) {
   } else if (plugins[type].config.connectionType === 'UDPsocket') {
     device.connection = udp.createSocket('udp4');
 
-    device.connection.bind({ port: plugins[type].defaultPort }, () => {
+    device.connection.bind({ port: plugins[type].config.defaultPort }, () => {
       plugins[type].ready(device);
 
       device.connection.on('message', (msg, info) => {
