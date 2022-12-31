@@ -223,8 +223,7 @@ module.exports.deleteActive = function deleteActive() {
   if (choice) {
     VIEW.removeDeviceFromList(device);
     delete devices[device.id];
-    SAVESLOTS.deleteFromSlots(device);
-    SAVESLOTS.saveAll();
+    SAVESLOTS.removeDevice(device);
     SAVESLOTS.reloadActiveSlot();
   }
 };
