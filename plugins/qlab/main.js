@@ -229,48 +229,54 @@ exports.data = function data(_device, oscData) {
   } else if (
     match(oscAddressParts, ['reply', 'cue_id', '*', 'preWaitElapsed'])
   ) {
-    const json = JSON.parse(oscData.args[0]);
-    const workspace = device.data.workspaces[json.workspace_id];
-    const cue = workspace.cues[json.address.substring(55, 91)];
+    const oscArgs = JSON.parse(oscData.args[0]);
+    if (oscArgs.status !== 'error') {
+      const workspace = device.data.workspaces[oscArgs.workspace_id];
+      const cue = workspace.cues[oscArgs.address.substring(55, 91)];
 
-    cue.preWaitElapsed = json.data;
-    lastElapsedUpdate = Date.now();
+      cue.preWaitElapsed = oscArgs.data;
+      lastElapsedUpdate = Date.now();
 
-    device.update('updateCueData', {
-      cue,
-      allCues: workspace.cues,
-      workspace,
-    });
+      device.update('updateCueData', {
+        cue,
+        allCues: workspace.cues,
+        workspace,
+      });
+    }
   } else if (
     match(oscAddressParts, ['reply', 'cue_id', '*', 'actionElapsed'])
   ) {
-    const json = JSON.parse(oscData.args[0]);
-    const workspace = device.data.workspaces[json.workspace_id];
-    const cue = workspace.cues[json.address.substring(55, 91)];
+    const oscArgs = JSON.parse(oscData.args[0]);
+    if (oscArgs.status !== 'error') {
+      const workspace = device.data.workspaces[oscArgs.workspace_id];
+      const cue = workspace.cues[oscArgs.address.substring(55, 91)];
 
-    cue.actionElapsed = json.data;
-    lastElapsedUpdate = Date.now();
+      cue.actionElapsed = oscArgs.data;
+      lastElapsedUpdate = Date.now();
 
-    device.update('updateCueData', {
-      cue,
-      allCues: workspace.cues,
-      workspace,
-    });
+      device.update('updateCueData', {
+        cue,
+        allCues: workspace.cues,
+        workspace,
+      });
+    }
   } else if (
     match(oscAddressParts, ['reply', 'cue_id', '*', 'postWaitElapsed'])
   ) {
-    const json = JSON.parse(oscData.args[0]);
-    const workspace = device.data.workspaces[json.workspace_id];
-    const cue = workspace.cues[json.address.substring(55, 91)];
+    const oscArgs = JSON.parse(oscData.args[0]);
+    if (oscArgs.status !== 'error') {
+      const workspace = device.data.workspaces[oscArgs.workspace_id];
+      const cue = workspace.cues[oscArgs.address.substring(55, 91)];
 
-    cue.postWaitElapsed = json.data;
-    lastElapsedUpdate = Date.now();
+      cue.postWaitElapsed = oscArgs.data;
+      lastElapsedUpdate = Date.now();
 
-    device.update('updateCueData', {
-      cue,
-      allCues: workspace.cues,
-      workspace,
-    });
+      device.update('updateCueData', {
+        cue,
+        allCues: workspace.cues,
+        workspace,
+      });
+    }
   } else if (
     match(oscAddressParts, ['update', 'workspace', '*', 'cue_id', '*'])
   ) {
