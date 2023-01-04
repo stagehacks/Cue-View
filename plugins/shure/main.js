@@ -3,8 +3,8 @@ const _ = require('lodash');
 exports.config = {
   defaultName: 'Shure Wireless',
   connectionType: 'TCPsocket',
-  heartbeatInterval: 10000,
-  heartbeatTimeout: 15000,
+  heartbeatInterval: 30000,
+  heartbeatTimeout: 35000,
   defaultPort: 2202,
   mayChangePort: false,
   searchOptions: {
@@ -78,6 +78,7 @@ exports.data = function data(_device, message) {
         channel.rf_antenna = msgParts[3];
       } else if (msgParts[2] === 'TX_TYPE') {
         channel.tx_type = msgParts[3];
+        device.draw();
       } else if (msgParts[1] === 'DEVICE_ID') {
         const id = msg.substring(15).slice(0, -1).trim();
         this.deviceInfoUpdate(device, 'defaultName', id);
@@ -89,10 +90,46 @@ exports.data = function data(_device, message) {
       channel.rx_rf_lvl = Number(msgParts[4]) - 128;
       channel.audio_lvl = Number(msgParts[5]);
       if (channelNumber === 4) {
-        device.draw();
+        device.update('updateSample', {
+          channels: device.data.channels,
+        });
       }
     }
   });
+};
+
+exports.update = function update(device, doc, updateType, data) {
+  for (let i = 1; i < data.channels.length; i++) {
+    const channel = data.channels[i];
+
+    const $rf = doc.getElementById(`ch-${i}-rf`);
+    if ($rf) {
+      $rf.style.height = 90 - (channel.rx_rf_lvl + 90) * 2;
+    }
+
+    const $audio = doc.getElementById(`ch-${i}-audio`);
+    if ($audio) {
+      $audio.style.height = 90 - channel.audio_lvl * 2;
+    }
+
+    const $rfA = doc.getElementById(`ch-${i}-a`);
+    const $rfB = doc.getElementById(`ch-${i}-b`);
+
+    if ($rfA) {
+      if (channel.rf_antenna.charAt(0) === 'A') {
+        $rfA.style.color = '#53c3c3';
+      } else {
+        $rfA.style.color = '#333';
+      }
+    }
+    if ($rfB) {
+      if (channel.rf_antenna.charAt(1) === 'B') {
+        $rfB.style.color = '#53c3c3';
+      } else {
+        $rfB.style.color = '#333';
+      }
+    }
+  }
 };
 
 exports.heartbeat = function heartbeat(device) {
