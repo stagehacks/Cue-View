@@ -1,7 +1,7 @@
 exports.config = {
   defaultName: 'Dataton Watchout',
   connectionType: 'TCPsocket',
-  heartbeatInterval: 500,
+  heartbeatInterval: 250,
   defaultPort: 3040,
   mayChangePort: false,
   searchOptions: {
@@ -19,11 +19,11 @@ exports.ready = function ready(device) {
 };
 
 exports.data = function data(_device, _message) {
-  const message = message.toString();
+  const message = _message.toString();
   const device = _device;
 
   if (message.substring(0, 5) === 'Ready') {
-    device.send('getStatus\n');
+    // device.send('getStatus\n');
   } else if (message.substring(0, 5) === 'Reply') {
     const arr = message.split(' ');
 
@@ -35,10 +35,7 @@ exports.data = function data(_device, _message) {
       device.data.showName += `${arr[i]} `;
     }
 
-    device.data.showName = device.data.showName.substring(
-      1,
-      device.data.showName.length - 2
-    );
+    device.data.showName = device.data.showName.substring(1, device.data.showName.length - 2);
 
     i--;
     device.data.busy = arr[i + 2];
