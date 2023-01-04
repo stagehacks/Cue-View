@@ -12,23 +12,33 @@
     <td colspan="3" class="chan_name"><%= ch.chan_name %></td>
   </tr>
   <tr>
-    <td>
+    <td style="width: 40px">
+      <div class="rf-indicator-wrapper">
+        <span class="rf-indicator" id="ch-<%= i %>-a">&#11044;</span>
+        <span class="rf-indicator" id="ch-<%= i %>-b">&#11044;</span>
+      </div>
       <small>rf</small>
       <div class="bar-wrapper orange">
         <div
           class="bar"
+          id="ch-<%= i %>-rf"
           style="height: <%= 90- ((ch.rx_rf_lvl + 90) * 2) %>"></div>
       </div>
       <small><%= ch.rx_rf_lvl %><br /><small>dBm</small></small>
     </td>
-    <td>
+    <td style="width: 40px">
+      <div class="rf-indicator-wrapper">&nbsp;</div>
       <small>audio</small>
       <div class="bar-wrapper green">
-        <div class="bar" style="height: <%= 90- (ch.audio_lvl * 2) %>"></div>
+        <div
+          class="bar"
+          id="ch-<%= i %>-audio"
+          style="height: <%= 90- (ch.audio_lvl * 2) %>"></div>
       </div>
       <small><%= ch.audio_lvl %><br /><small>dBFS</small></small>
     </td>
-    <td>
+    <td style="width: 40px">
+      <div class="rf-indicator-wrapper">&nbsp;</div>
       <small>gain</small>
       <div class="bar-wrapper pink">
         <div class="bar" style="height: <%= 60- (ch.audio_gain * 1.4) %>"></div>

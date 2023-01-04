@@ -1,6 +1,6 @@
 table.channel {
   width: 120px;
-  height: 300px;
+  height: 320px;
   background-color: #1a1a1d;
   border: #3b3c42 1px solid;
   border-collapse: collapse;
@@ -12,6 +12,7 @@ table.channel {
 }
 table td {
   border: #3b3c42 1px solid;
+  vertical-align: top;
 }
 
 .chan_name {
@@ -55,6 +56,7 @@ table td {
   border: #333 2px solid;
   border-radius: 5px;
   padding: 2px;
+  margin: 10px auto;
   position: relative;
 }
 .batt-wrapper.green {
@@ -78,6 +80,17 @@ table td {
   border-radius: 2px;
   color: #1a1a1d;
   padding-top: 9px;
+}
+
+.rf-indicator-wrapper {
+  line-height: 8px;
+  margin-bottom: 4px;
+  font-size: 6px;
+  padding-top: 4px;
+  letter-spacing: 1px;
+}
+.rf-indicator {
+  color: #333;
 }
 
 small {
