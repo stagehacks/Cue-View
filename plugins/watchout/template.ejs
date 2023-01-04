@@ -13,10 +13,14 @@
 		</td>
 	</tr>
 	<tr>
-		<% var seconds = Math.floor(data.position/1000) %>
-		<% var minutes = Math.floor(seconds/60) %>
-		<% var millis = data.position %>
-		<td colspan="2"><h1><%= minutes %>:<%= ((seconds%60)+"").padStart(2, "0") %>.<%= millis%1000 %></h1></td>
+		<% if(data.position){ %>
+			<% var seconds = Math.floor(data.position/1000) %>
+			<% var minutes = Math.floor(seconds/60) %>
+			<% var millis = data.position %>
+			<td colspan="2"><h1><%= minutes %>:<%= ((seconds%60)+"").padStart(2, "0") %>.<%= millis%1000 %></h1></td>
+		<% }else{ %>
+			<td colspan="2"><h1>00:00.00</h1></td>
+		<% } %>
 	</tr>
 
 	<tr>
