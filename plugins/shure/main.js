@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const Channel = require('./channel');
 
 exports.config = {
   defaultName: 'Shure Wireless',
@@ -17,26 +17,15 @@ exports.config = {
   },
 };
 
-const blankChannel = {
-  chan_name: '?',
-  batt_bars: 255,
-  batt_run_time: 65535,
-  audio_gain: 0,
-  audio_lvl: 0,
-  rx_rf_lvl: 0,
-  rf_antenna: 0,
-  tx_type: 0,
-};
-
 exports.ready = function ready(_device) {
   const device = _device;
   device.data.channelCount = 0;
   device.data.channels = [
     {},
-    _.clone(blankChannel),
-    _.clone(blankChannel),
-    _.clone(blankChannel),
-    _.clone(blankChannel),
+    new Channel(),
+    new Channel(),
+    new Channel(),
+    new Channel(),
   ];
 };
 
