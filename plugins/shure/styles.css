@@ -1,8 +1,8 @@
 table.channel {
   width: 120px;
   height: 300px;
-  background-color: black;
-  border: gray 1px solid;
+  background-color: #1a1a1d;
+  border: #3b3c42 1px solid;
   border-collapse: collapse;
   color: white;
   text-align: center;
@@ -11,7 +11,7 @@ table.channel {
   margin-bottom: 20px;
 }
 table td {
-  border: #666 1px solid;
+  border: #3b3c42 1px solid;
 }
 
 .chan_name {
@@ -28,23 +28,24 @@ table td {
   margin-top: 5px;
   margin-bottom: 5px;
 
-  border-radius: 7px;
-  border: #111 1px solid;
+  border-radius: 6px;
+  outline: #1a1a1d 2px solid;
+  outline-offset: -1px;
   overflow: hidden;
 }
 .bar-wrapper.green {
-  background: linear-gradient(0deg, greenyellow, yellow 80%, red);
+  background: linear-gradient(0deg, #4742af, #554ed4 30%, #554ed4 80%, #df664d);
 }
 .bar-wrapper.pink {
-  background: linear-gradient(0deg, hotpink, hotpink 80%, red);
+  background: linear-gradient(0deg, #383943, #4e505d 40%);
 }
 .bar-wrapper.orange {
-  background: linear-gradient(0deg, orange, yellow 80%);
+  background: linear-gradient(0deg, #50c3c3, #5bdfe0 30%, #5bdfe0 80%);
 }
 .bar {
   width: 20px;
-  background-color: #333;
-  border-bottom: white 1px solid;
+  background-color: #202124;
+  outline: rgba(255, 255, 255, 0.1) 1px solid;
 }
 
 .batt-wrapper {
@@ -54,16 +55,34 @@ table td {
   border: #333 2px solid;
   border-radius: 5px;
   padding: 2px;
+  position: relative;
 }
 .batt-wrapper.green {
   border-color: greenyellow;
 }
-.batt-bar {
-  height: 100%;
-  background-color: greenyellow;
+.batt-knob {
+  background-color: #333;
+  position: absolute;
+  right: -5px;
+  top: 10px;
+  width: 5px;
+  height: 16px;
   border-radius: 2px;
+}
+.batt-knob.green {
+  background-color: greenyellow;
+}
+.batt-bar {
+  height: 26px;
+  background: linear-gradient(0deg, rgb(145, 220, 33), greenyellow 100%);
+  border-radius: 2px;
+  color: #1a1a1d;
+  padding-top: 9px;
 }
 
 small {
-  color: gray;
+  color: dimgray;
+}
+small small {
+  color: #444;
 }
