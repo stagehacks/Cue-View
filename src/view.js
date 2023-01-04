@@ -28,10 +28,8 @@ function drawDeviceFrame(id) {
   // scrollbar styles are inline to prevent the styles flickering in
   str += '<style>';
   str += '::-webkit-scrollbar {background-color: black;width: 12px;}';
-  str +=
-    '::-webkit-scrollbar-track, ::-webkit-scrollbar-corner {background-color: #2b2b2b;}';
-  str +=
-    '::-webkit-scrollbar-thumb {background-color: #6b6b6b;border-radius: 16px;border: 3px solid #2b2b2b;}';
+  str += '::-webkit-scrollbar-track, ::-webkit-scrollbar-corner {background-color: #2b2b2b;}';
+  str += '::-webkit-scrollbar-thumb {background-color: #6b6b6b;border-radius: 16px;border: 3px solid #2b2b2b;}';
   str += '::-webkit-scrollbar-button {display:none;}';
   str += 'body{visibility: hidden;}';
   str += '</style>';
@@ -90,9 +88,7 @@ module.exports.draw = function draw(device) {
   const $deviceDrawArea = document.getElementById(`device-${d.id}-draw-area`);
 
   if ($deviceDrawArea) {
-    const scriptEl = $deviceDrawArea.contentWindow.document
-      .createRange()
-      .createContextualFragment(generateBodyHTML(d));
+    const scriptEl = $deviceDrawArea.contentWindow.document.createRange().createContextualFragment(generateBodyHTML(d));
     $deviceDrawArea.contentWindow.document.body.replaceChildren(scriptEl);
   } else {
     drawDeviceFrame(d.id);
@@ -103,12 +99,7 @@ module.exports.draw = function draw(device) {
 module.exports.update = function update(device, type, data) {
   const doc = document.getElementById(`device-${device.id}-draw-area`);
   if (doc) {
-    PLUGINS.all[device.type].update(
-      device,
-      doc.contentWindow.document,
-      type,
-      data
-    );
+    PLUGINS.all[device.type].update(device, doc.contentWindow.document, type, data);
   }
 };
 
@@ -131,10 +122,7 @@ module.exports.addDeviceToList = function addDeviceToList(device) {
   if (elem == null) {
     document
       .getElementById('device-list')
-      .insertAdjacentHTML(
-        'beforeend',
-        `<a class='device' id='${d.id}'>${html}</a>`
-      );
+      .insertAdjacentHTML('beforeend', `<a class='device' id='${d.id}'>${html}</a>`);
   } else {
     elem.innerHTML = html;
   }
@@ -160,9 +148,7 @@ function switchDevice(id) {
     cols--;
   }
 
-  document.getElementById(
-    'all-devices'
-  ).style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  document.getElementById('all-devices').style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
 
   if (id === undefined) {
     // document.getElementById('refresh-device-button').style.opacity = 0.2;
@@ -179,31 +165,21 @@ function switchDevice(id) {
 
   if (!$deviceWrapper) {
     const html = `<div class="col device-wrapper" id="device-${i}"><img id="device-${i}-pinned" class="device-pin" src="src/img/outline_push_pin_white_18dp.png"><iframe id="device-${i}-draw-area" class="draw-area"></iframe></div>`;
-    document
-      .getElementById('all-devices')
-      .insertAdjacentHTML('afterbegin', html);
+    document.getElementById('all-devices').insertAdjacentHTML('afterbegin', html);
 
     $deviceWrapper = document.getElementById(`device-${i}`);
   }
 
   window.switchClass(document.getElementById(id), 'active-device');
   drawDeviceFrame(id);
-  window.switchClass(
-    document.getElementById(`device-${id}`),
-    'active-device-outline'
-  );
+  window.switchClass(document.getElementById(`device-${id}`), 'active-device-outline');
 
   document.getElementById('device-settings-table').style.display = 'block';
-  document.getElementById('device-settings-plugin-dropdown').value =
-    activeDevice.type;
-  document.getElementById('device-settings-name').value =
-    activeDevice.displayName || activeDevice.defaultName || '';
-  document.getElementById('device-settings-ip').value =
-    activeDevice.addresses[0] || '';
-  document.getElementById('device-settings-port').value =
-    activeDevice.port || '';
-  document.getElementById('device-settings-pin').checked =
-    activeDevice.pinIndex;
+  document.getElementById('device-settings-plugin-dropdown').value = activeDevice.type;
+  document.getElementById('device-settings-name').value = activeDevice.displayName || activeDevice.defaultName || '';
+  document.getElementById('device-settings-ip').value = activeDevice.addresses[0] || '';
+  document.getElementById('device-settings-port').value = activeDevice.port || '';
+  document.getElementById('device-settings-pin').checked = activeDevice.pinIndex;
 
   if (activeDevice.plugin.config.mayChangePort) {
     document.getElementById('device-settings-port').disabled = false;
@@ -237,9 +213,7 @@ function updateFields() {
 
       if (field.type === 'textinput') {
         const rowHTML = `<tr><th>${field.label}:</th><td colspan="3" id="${field.key}"></td></tr>`;
-        document
-          .getElementById('device-settings-fields')
-          .insertAdjacentHTML('beforeend', rowHTML);
+        document.getElementById('device-settings-fields').insertAdjacentHTML('beforeend', rowHTML);
         document.getElementById(field.key).appendChild($elem);
       }
     });
@@ -284,9 +258,7 @@ module.exports.resetPinned = function resetPinned() {
   activeDevice = false;
 
   try {
-    document
-      .querySelector('#device-list .active-device')
-      .classList.remove('active-device');
+    document.querySelector('#device-list .active-device').classList.remove('active-device');
   } catch (err) {
     //
   }
@@ -322,17 +294,13 @@ module.exports.selectNextDevice = function selectNextDevice() {
     return;
   }
   const keys = Object.keys(DEVICE.all);
-  const prevIndex = Math.min(
-    keys.length - 1,
-    keys.indexOf(activeDevice.id) + 1
-  );
+  const prevIndex = Math.min(keys.length - 1, keys.indexOf(activeDevice.id) + 1);
   switchDevice(keys[prevIndex]);
 };
 
 function populatePluginLists() {
   let typeSelect = '';
-  let addSelect =
-    '<option value="" disabled selected hidden>&nbsp;+&nbsp;</option>';
+  let addSelect = '<option value="" disabled selected hidden>&nbsp;+&nbsp;</option>';
 
   Object.keys(PLUGINS.all).forEach((pluginType) => {
     const plugin = PLUGINS.all[pluginType];
@@ -340,7 +308,6 @@ function populatePluginLists() {
     typeSelect += `<option value='${pluginType}'>${plugin.config.defaultName}</option>`;
   });
 
-  document.getElementById('device-settings-plugin-dropdown').innerHTML =
-    typeSelect;
+  document.getElementById('device-settings-plugin-dropdown').innerHTML = typeSelect;
   document.getElementById('add-device-button').innerHTML = addSelect;
 }
