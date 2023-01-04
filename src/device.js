@@ -299,7 +299,7 @@ function heartbeat() {
         initDeviceConnection(deviceID);
       } else if (Date.now() - d.lastMessage > d.heartbeatTimeout) {
         infoUpdate(d, 'status', 'broken');
-      } else if (d.port !== undefined && d.addresses.length > 0) {
+      } else if (d.port !== undefined && d.addresses.length > 0 && d.send) {
         PLUGINS.all[d.type].heartbeat(d);
       } else {
         //
