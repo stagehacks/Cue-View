@@ -80,9 +80,7 @@ exports.update = function update(_device, _document, updateType, updateData) {
         data.universe.slotElems[i].innerText = data.universe.slots[i];
       }
 
-      document.getElementById(
-        `universe-${data.universeIndex}-sequence`
-      ).innerText = data.universe.sequence;
+      document.getElementById(`universe-${data.universeIndex}-sequence`).innerText = data.universe.sequence;
     } else {
       device.draw();
       device.update('elementCache');
@@ -90,8 +88,7 @@ exports.update = function update(_device, _document, updateType, updateData) {
   } else if (updateType === 'elementCache') {
     device.data.orderedUniverses.forEach((universeIndex) => {
       for (let i = 0; i < 512; i++) {
-        device.data.universes[universeIndex].slotElems[i] =
-          document.getElementById(`${universeIndex}-${i}`);
+        device.data.universes[universeIndex].slotElems[i] = document.getElementById(`${universeIndex}-${i}`);
       }
       device.data.universes[universeIndex].slotElemsSet = true;
     });
