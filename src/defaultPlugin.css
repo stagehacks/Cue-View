@@ -104,3 +104,16 @@ table.cv-table td {
   color: #fdea08;
   margin: 1px;
 }
+button {
+  display: block;
+  box-sizing: content-box;
+  background-color: rgba(255, 255, 255, 0.15);
+  height: 28px;
+  padding: 2px 20px;
+  margin: 0px;
+  border: rgba(255, 255, 255, 0.1) 1px solid;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+}
