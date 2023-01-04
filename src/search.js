@@ -15,16 +15,14 @@ function getServers() {
   const interfaces = os.networkInterfaces();
   const result = [];
 
+  console.log(interfaces);
+
   Object.keys(interfaces).forEach((key) => {
     const addresses = interfaces[key];
     for (let i = addresses.length; i--; ) {
       const address = addresses[i];
 
-      if (
-        address.family === 'IPv4' &&
-        !address.internal &&
-        address.address.substring(0, 3) !== '169'
-      ) {
+      if (address.family === 'IPv4' && !address.internal && address.address.substring(0, 3) !== '169') {
         const subnet = ip.subnet(address.address, address.netmask);
         let current = ip.toLong(subnet.firstAddress);
         const last = ip.toLong(subnet.lastAddress) - 1;
@@ -118,13 +116,9 @@ function searchTCP(pluginType, pluginConfig) {
 }
 
 function TCPtest(ipAddr, pluginType, pluginConfig) {
-  const client = net.createConnection(
-    pluginConfig.searchOptions.testPort,
-    ipAddr,
-    () => {
-      client.write(pluginConfig.searchOptions.searchBuffer);
-    }
-  );
+  const client = net.createConnection(pluginConfig.searchOptions.testPort, ipAddr, () => {
+    client.write(pluginConfig.searchOptions.searchBuffer);
+  });
   client.on('data', (data) => {
     if (pluginConfig.searchOptions.validateResponse(data)) {
       DEVICE.registerDevice({
@@ -150,8 +144,8 @@ function searchUDP(pluginType, pluginConfig) {
         searchSockets[i].close();
         DEVICE.registerDevice({
           type: pluginType,
-          defaultName: pluginConfig.config.defaultName,
-          port: pluginConfig.config.defaultPort,
+          defaultName: pluginConfig.defaultName,
+          port: pluginConfig.defaultPort,
           addresses: [info.address],
         });
       }
@@ -177,8 +171,8 @@ function searchMulticast(pluginType, pluginConfig) {
       socket.close();
       DEVICE.registerDevice({
         type: pluginType,
-        defaultName: pluginConfig.config.defaultName,
-        port: pluginConfig.config.defaultPort,
+        defaultName: pluginConfig.defaultName,
+        port: pluginConfig.defaultPort,
         addresses: [info.address],
       });
     }
