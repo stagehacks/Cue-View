@@ -121,14 +121,16 @@ function TCPtest(ipAddr, pluginType, pluginConfig) {
   });
   client.on('data', (data) => {
     if (pluginConfig.searchOptions.validateResponse(data)) {
-      DEVICE.registerDevice({
-        type: pluginType,
-        defaultName: pluginConfig.defaultName,
-        port: pluginConfig.defaultPort,
-        addresses: [ipAddr],
-      });
+      client.end(
+        '',
+        DEVICE.registerDevice({
+          type: pluginType,
+          defaultName: pluginConfig.defaultName,
+          port: pluginConfig.defaultPort,
+          addresses: [ipAddr],
+        })
+      );
     }
-    client.end();
   });
   client.on('error', (err) => {
     // no device here
