@@ -26,8 +26,7 @@ function registerDevice(newDevice) {
   if (newDevice.addresses.length > 0) {
     const existing = _.find(devices, (e) => {
       const typeMatch = e.type === newDevice.type;
-      const addressMatch =
-        JSON.stringify(e.addresses) === JSON.stringify(newDevice.addresses);
+      const addressMatch = JSON.stringify(e.addresses) === JSON.stringify(newDevice.addresses);
       return typeMatch && addressMatch;
     });
 
@@ -68,10 +67,7 @@ function registerDevice(newDevice) {
 
   devices[id].plugin = PLUGINS.all[newDevice.type];
 
-  if (
-    Object.keys(devices[id].fields).length === 0 &&
-    PLUGINS.all[newDevice.type].config.fields
-  ) {
+  if (Object.keys(devices[id].fields).length === 0 && PLUGINS.all[newDevice.type].config.fields) {
     PLUGINS.all[newDevice.type].config.fields.forEach((field) => {
       devices[id].fields[field.key] = field.value;
     });
@@ -142,7 +138,6 @@ function initDeviceConnection(id) {
     };
   } else if (plugins[type].config.connectionType === 'TCPsocket') {
     device.connection = new net.Socket();
-
     device.connection.connect(
       {
         port: device.port,
@@ -183,14 +178,9 @@ function initDeviceConnection(id) {
     });
 
     device.send = (data) => {
-      device.connection.send(
-        Buffer.from(data),
-        device.port,
-        device.addresses[0],
-        (err) => {
-          // console.log(err);
-        }
-      );
+      device.connection.send(Buffer.from(data), device.port, device.addresses[0], (err) => {
+        // console.log(err);
+      });
     };
   } else if (plugins[type].config.connectionType === 'multicast') {
     device.connection = udp.createSocket('udp4');
@@ -215,9 +205,7 @@ module.exports.initDeviceConnection = initDeviceConnection;
 module.exports.deleteActive = function deleteActive() {
   const device = VIEW.getActiveDevice();
   const choice = confirm(
-    `Are you sure you want to delete ${device.type} device "${
-      device.displayName || device.defaultName
-    }"?`
+    `Are you sure you want to delete ${device.type} device "${device.displayName || device.defaultName}"?`
   );
 
   if (choice) {
