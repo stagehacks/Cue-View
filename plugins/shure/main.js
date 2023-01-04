@@ -20,6 +20,7 @@ exports.config = {
 const blankChannel = {
   chan_name: '?',
   batt_bars: 255,
+  batt_run_time: 65535,
   audio_gain: 0,
   audio_lvl: 0,
   rx_rf_lvl: 0,
@@ -65,6 +66,8 @@ exports.data = function data(_device, message) {
         device.draw();
       } else if (msgParts[2] === 'BATT_BARS') {
         channel.batt_bars = Number(msgParts[3]);
+      } else if (msgParts[2] === 'BATT_RUN_TIME') {
+        channel.batt_run_time = Number(msgParts[3]);
       } else if (msgParts[2] === 'AUDIO_GAIN') {
         channel.audio_gain = Number(msgParts[3]) - 18;
       } else if (msgParts[2] === 'AUDIO_LVL') {
