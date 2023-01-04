@@ -35,15 +35,9 @@ const valuesForKeysString =
   '"mode","parent","cartRows","cartColumns","cartPosition","displayName","preWaitElapsed",' +
   '"actionElapsed","postWaitElapsed","isPaused"]';
 
-const cueTemplate = _.template(
-  fs.readFileSync(path.join(__dirname, `cue.ejs`))
-);
-const tileTemplate = _.template(
-  fs.readFileSync(path.join(__dirname, `tile.ejs`))
-);
-const cartTemplate = _.template(
-  fs.readFileSync(path.join(__dirname, `cart.ejs`))
-);
+const cueTemplate = _.template(fs.readFileSync(path.join(__dirname, `cue.ejs`)));
+const tileTemplate = _.template(fs.readFileSync(path.join(__dirname, `tile.ejs`)));
+const cartTemplate = _.template(fs.readFileSync(path.join(__dirname, `cart.ejs`)));
 
 exports.ready = function ready(device) {
   device.send(`/version`);
@@ -72,15 +66,10 @@ exports.data = function data(_device, oscData) {
         cueLists: {},
         cues: {},
       };
-      device.send(
-        `/workspace/${wksp.uniqueID}/connect`,
-        device.fields.passcode
-      );
+      device.send(`/workspace/${wksp.uniqueID}/connect`, device.fields.passcode);
     });
   } else if (match(oscAddressParts, ['reply', 'workspace', '*', 'connect'])) {
-    device.send(`/workspace/${oscAddressParts[2]}/updates`, [
-      { type: 'i', value: 1 },
-    ]);
+    device.send(`/workspace/${oscAddressParts[2]}/updates`, [{ type: 'i', value: 1 }]);
 
     device.send(`/workspace/${oscAddressParts[2]}/cueLists`);
   } else if (match(oscAddressParts, ['reply', 'workspace', '*', 'cueLists'])) {
@@ -112,14 +101,7 @@ exports.data = function data(_device, oscData) {
     }
   } else if (
     match(oscAddressParts, ['reply', 'cue_id', '*', 'children']) ||
-    match(oscAddressParts, [
-      'reply',
-      'workspace',
-      '*',
-      'cue_id',
-      '*',
-      'children',
-    ])
+    match(oscAddressParts, ['reply', 'workspace', '*', 'cue_id', '*', 'children'])
   ) {
     const json = JSON.parse(oscData.args[0]);
     const workspace = device.data.workspaces[json.workspace_id];
@@ -134,14 +116,7 @@ exports.data = function data(_device, oscData) {
     }
   } else if (
     match(oscAddressParts, ['reply', 'cue_id', '*', 'valuesForKeys']) ||
-    match(oscAddressParts, [
-      'reply',
-      'workspace',
-      '*',
-      'cue_id',
-      '*',
-      'valuesForKeys',
-    ])
+    match(oscAddressParts, ['reply', 'workspace', '*', 'cue_id', '*', 'valuesForKeys'])
   ) {
     const json = JSON.parse(oscData.args[0]);
     const cueValues = json.data;
@@ -226,26 +201,24 @@ exports.data = function data(_device, oscData) {
       allCues: workspace.cues,
       workspace,
     });
-  } else if (
-    match(oscAddressParts, ['reply', 'cue_id', '*', 'preWaitElapsed'])
-  ) {
+  } else if (match(oscAddressParts, ['reply', 'cue_id', '*', 'preWaitElapsed'])) {
     const oscArgs = JSON.parse(oscData.args[0]);
     if (oscArgs.status !== 'error') {
       const workspace = device.data.workspaces[oscArgs.workspace_id];
-      const cue = workspace.cues[oscArgs.address.substring(55, 91)];
+      if (workspace) {
+        const cue = workspace.cues[oscArgs.address.substring(55, 91)];
 
-      cue.preWaitElapsed = oscArgs.data;
-      lastElapsedUpdate = Date.now();
+        cue.preWaitElapsed = oscArgs.data;
+        lastElapsedUpdate = Date.now();
 
-      device.update('updateCueData', {
-        cue,
-        allCues: workspace.cues,
-        workspace,
-      });
+        device.update('updateCueData', {
+          cue,
+          allCues: workspace.cues,
+          workspace,
+        });
+      }
     }
-  } else if (
-    match(oscAddressParts, ['reply', 'cue_id', '*', 'actionElapsed'])
-  ) {
+  } else if (match(oscAddressParts, ['reply', 'cue_id', '*', 'actionElapsed'])) {
     const oscArgs = JSON.parse(oscData.args[0]);
     if (oscArgs.status !== 'error') {
       const workspace = device.data.workspaces[oscArgs.workspace_id];
@@ -260,9 +233,7 @@ exports.data = function data(_device, oscData) {
         workspace,
       });
     }
-  } else if (
-    match(oscAddressParts, ['reply', 'cue_id', '*', 'postWaitElapsed'])
-  ) {
+  } else if (match(oscAddressParts, ['reply', 'cue_id', '*', 'postWaitElapsed'])) {
     const oscArgs = JSON.parse(oscData.args[0]);
     if (oscArgs.status !== 'error') {
       const workspace = device.data.workspaces[oscArgs.workspace_id];
@@ -277,9 +248,7 @@ exports.data = function data(_device, oscData) {
         workspace,
       });
     }
-  } else if (
-    match(oscAddressParts, ['update', 'workspace', '*', 'cue_id', '*'])
-  ) {
+  } else if (match(oscAddressParts, ['update', 'workspace', '*', 'cue_id', '*'])) {
     const workspace = device.data.workspaces[oscAddressParts[2]];
 
     if (workspace) {
@@ -288,38 +257,24 @@ exports.data = function data(_device, oscData) {
 
       if (cueID !== '[root group of cue lists') {
         if (cueLists.includes(cueID)) {
-          device.send(
-            `/workspace/${workspace.uniqueID}/cue_id/${cueID}/children`
-          );
+          device.send(`/workspace/${workspace.uniqueID}/cue_id/${cueID}/children`);
         }
 
-        device.send(
-          `/workspace/${oscAddressParts[2]}/cue_id/${cueID}/valuesForKeys`,
-          [{ type: 's', value: valuesForKeysString }]
-        );
+        device.send(`/workspace/${oscAddressParts[2]}/cue_id/${cueID}/valuesForKeys`, [
+          { type: 's', value: valuesForKeysString },
+        ]);
       }
     }
   } else if (match(oscAddressParts, ['update', 'workspace', '*'])) {
     // occurs when cue lists are reordered or a list is deleted
     device.send(`/workspace/${oscAddressParts[2]}/cueLists`);
-  } else if (
-    match(oscAddressParts, ['update', 'workspace', '*', 'dashboard'])
-  ) {
+  } else if (match(oscAddressParts, ['update', 'workspace', '*', 'dashboard'])) {
     // this workspace might be new, let's check
     if (device.data.workspaces[oscAddressParts[2]] === undefined) {
       console.log('new workspace!');
       device.send('/workspaces');
     }
-  } else if (
-    match(oscAddressParts, [
-      'update',
-      'workspace',
-      '*',
-      'cueList',
-      '*',
-      'playbackPosition',
-    ])
-  ) {
+  } else if (match(oscAddressParts, ['update', 'workspace', '*', 'cueList', '*', 'playbackPosition'])) {
     const workspace = device.data.workspaces[oscAddressParts[2]];
 
     if (workspace) {
@@ -330,9 +285,7 @@ exports.data = function data(_device, oscData) {
         device.update('updatePlaybackPosition', { cue });
       }
     }
-  } else if (
-    match(oscAddressParts, ['update', 'workspace', '*', 'disconnect'])
-  ) {
+  } else if (match(oscAddressParts, ['update', 'workspace', '*', 'disconnect'])) {
     delete device.data.workspaces[oscAddressParts[2]];
     device.draw();
   } else {
@@ -366,11 +319,9 @@ exports.update = function update(device, doc, updateType, data) {
       }
     }
   } else if (updateType === 'updatePlaybackPosition') {
-    Array.from(doc.getElementsByClassName('playback-position')).forEach(
-      ($elem, index, array) => {
-        $elem.classList.remove('playback-position');
-      }
-    );
+    Array.from(doc.getElementsByClassName('playback-position')).forEach(($elem, index, array) => {
+      $elem.classList.remove('playback-position');
+    });
 
     const $elem = doc.getElementById(data.cue.uniqueID);
     $elem.classList.add('playback-position');
@@ -393,10 +344,9 @@ function addCueToWorkspace(_workspace, cue) {
 }
 
 function getValuesForKeys(device, workspaceID, cue) {
-  device.send(
-    `/workspace/${workspaceID}/cue_id/${cue.uniqueID}/valuesForKeys`,
-    [{ type: 's', value: valuesForKeysString }]
-  );
+  device.send(`/workspace/${workspaceID}/cue_id/${cue.uniqueID}/valuesForKeys`, [
+    { type: 's', value: valuesForKeysString },
+  ]);
   if (cue.cues) {
     cue.cues.forEach((childCue) => {
       getValuesForKeys(device, workspaceID, childCue);
