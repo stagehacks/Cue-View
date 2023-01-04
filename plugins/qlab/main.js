@@ -68,9 +68,13 @@ exports.data = function data(_device, oscData) {
       };
       device.send(`/workspace/${wksp.uniqueID}/connect`, device.fields.passcode);
     });
+
+    if (Object.keys(device.data.workspaces).length === 0) {
+      device.data.permission = 'no workspaces';
+      device.draw();
+    }
   } else if (match(oscAddressParts, ['reply', 'workspace', '*', 'connect'])) {
     device.send(`/workspace/${oscAddressParts[2]}/updates`, [{ type: 'i', value: 1 }]);
-
     device.send(`/workspace/${oscAddressParts[2]}/cueLists`);
   } else if (match(oscAddressParts, ['reply', 'workspace', '*', 'cueLists'])) {
     this.deviceInfoUpdate(device, 'status', 'ok');
@@ -81,9 +85,10 @@ exports.data = function data(_device, oscData) {
     workspace.cues = {};
 
     if (json.status === 'denied') {
-      device.data.permission = false;
+      device.data.permission = 'denied';
+      device.draw();
     } else if (json.data) {
-      device.data.permission = true;
+      device.data.permission = 'ok';
 
       json.data.forEach((cueList) => {
         workspace.cueLists[cueList.uniqueID] = cueList;
