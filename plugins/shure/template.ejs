@@ -39,10 +39,14 @@
   <tr>
     <td colspan="3">
       <% if(ch.batt_bars==255){ %>
-      <div class="batt-wrapper"></div>
+      <div class="batt-wrapper"><div class="batt-knob"></div></div>
       <% }else{ %>
       <div class="batt-wrapper green">
-        <div class="batt-bar" style="width: <%= ch.batt_bars * 16 %>"></div>
+        <div class="batt-bar" style="width: <%= ch.batt_bars * 16 %>">
+          <% if(ch.batt_run_time<=65532){ %> <%= Math.floor(ch.batt_run_time/60)
+          %>: <%= ch.batt_run_time%60 %> <% } %>
+        </div>
+        <div class="batt-knob green"></div>
       </div>
       <% } %>
     </td>
