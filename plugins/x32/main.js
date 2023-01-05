@@ -10,7 +10,7 @@ exports.config = {
     devicePort: 10023,
     listenPort: 0,
     validateResponse(msg, info) {
-      return msg.toString().indexOf('/xinfo') === 0;
+      return msg.toString().includes('/xinfo') === 0;
     },
   },
 };
@@ -69,9 +69,7 @@ exports.data = function data(device, oscData) {
     for (let i = 0; i < 70; i++) {
       if (i >= 0 && i < 32) {
         // These are channel meters
-        d.data.X32.inputs.channels[i].meter = Console.getBehringerDB(
-          buf.readFloatLE(offset)
-        );
+        d.data.X32.inputs.channels[i].meter = Console.getBehringerDB(buf.readFloatLE(offset));
       }
 
       offset += 4;
@@ -84,14 +82,10 @@ exports.data = function data(device, oscData) {
     for (let i = 0; i < 49; i++) {
       if (i === 22) {
         // STEREO LEFT METER
-        d.data.X32.main.stereo.meter[0] = Console.getBehringerDB(
-          buf.readFloatLE(offset)
-        );
+        d.data.X32.main.stereo.meter[0] = Console.getBehringerDB(buf.readFloatLE(offset));
       } else if (i === 23) {
         // STEREO RIGHT METER
-        d.data.X32.main.stereo.meter[1] = Console.getBehringerDB(
-          buf.readFloatLE(offset)
-        );
+        d.data.X32.main.stereo.meter[1] = Console.getBehringerDB(buf.readFloatLE(offset));
       }
       offset += 4;
     }
@@ -101,9 +95,7 @@ exports.data = function data(device, oscData) {
     if (addr[0] === 'ch') {
       const channel = Number(addr[1]);
       d.data.X32.inputs.channels[channel - 1].fader = oscData.args[0];
-      d.data.X32.inputs.channels[channel - 1].faderDB = Console.getBehringerDB(
-        oscData.args[0]
-      );
+      d.data.X32.inputs.channels[channel - 1].faderDB = Console.getBehringerDB(oscData.args[0]);
     } else if (addr[0] === 'main') {
       d.data.X32.main.stereo.fader = oscData.args[0];
       d.data.X32.main.stereo.faderDB = Console.getBehringerDB(oscData.args[0]);

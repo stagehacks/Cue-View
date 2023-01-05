@@ -10,7 +10,7 @@ exports.config = {
     devicePort: 10024,
     listenPort: 0,
     validateResponse(msg, info) {
-      return msg.toString().indexOf('/xinfo') === 0;
+      return msg.toString().startWith('/xinfo');
     },
   },
 };
@@ -74,31 +74,25 @@ exports.data = function data(device, buf) {
     d.send('/lr/mix/on\x00\x00\x00\x00');
 
     for (let i = 0; i <= 32; i++) {
-      d.send(
-        Buffer.from(
-          `/ch/${i.toString().padStart(2, '0')}/config/name\x00\x00\x00\x00`
-        )
-      );
+      d.send(Buffer.from(`/ch/${i.toString().padStart(2, '0')}/config/name\x00\x00\x00\x00`));
     }
     d.draw();
   } else if (msg[0] === '/meters/0') {
     // console.log(msg)
-  } else if (msg[0].indexOf('/mix/fader') >= 0) {
+  } else if (msg[0].includes('/mix/fader')) {
     const addr = parseAddress(msg[0]);
     const channel = Number(addr[1]);
 
     if (addr[0] === 'ch') {
       d.data.channelFaders[channel - 1] = buf.readFloatBE(24);
-      d.data.channelFadersDB[channel - 1] = convertToDBTheBehringerWay(
-        buf.readFloatBE(24)
-      );
+      d.data.channelFadersDB[channel - 1] = convertToDBTheBehringerWay(buf.readFloatBE(24));
     } else if (addr[0] === 'lr') {
       d.data.stereoFader = buf.readFloatBE(20);
       d.data.stereoFaderDB = convertToDBTheBehringerWay(buf.readFloatBE(20));
     }
 
     d.draw();
-  } else if (msg[0].indexOf('/mix/on') >= 0) {
+  } else if (msg[0].includes('/mix/on')) {
     const addr = parseAddress(msg[0]);
     const channel = Number(addr[1]);
 
@@ -109,13 +103,13 @@ exports.data = function data(device, buf) {
     }
     device.draw();
     device.send(`/ch/${addr[1]}/mix/fader\x00\x00\x00\x00`);
-  } else if (msg[0].indexOf('/config/name') > 0) {
+  } else if (msg[0].includes('/config/name')) {
     const addr = parseAddress(msg[0]);
     const channel = Number(addr[1]);
     d.data.channelNames[channel - 1] = msg[4];
     d.draw();
     d.send(`/ch/${addr[1]}/config/color\x00\x00\x00\x00`);
-  } else if (msg[0].indexOf('/config/color') > 0) {
+  } else if (msg[0].includes('/config/color')) {
     const addr = parseAddress(msg[0]);
     const channel = Number(addr[1]);
     d.data.channelColors[channel - 1] = buf.readInt8(27);

@@ -118,7 +118,7 @@ function searchBonjour(pluginType, pluginConfig) {
   bonjour.find({ type: pluginConfig.searchOptions.bonjourName }, (e) => {
     const validAddresses = [];
     e.addresses.forEach((address) => {
-      if (address.indexOf(':') === -1) {
+      if (!address.includes(':')) {
         validAddresses.push(address);
       }
     });

@@ -144,7 +144,7 @@ function switchDevice(id) {
   if (pinnedDevices.length > 0) {
     cols += pinnedDevices.length;
   }
-  if (pinnedDevices.indexOf(activeDevice) >= 0 || id === undefined) {
+  if (pinnedDevices.includes(activeDevice) || id === undefined) {
     cols--;
   }
 
@@ -229,7 +229,7 @@ module.exports.pinActiveDevice = function pinActiveDevice() {
   if (activeDevice === undefined) {
     return;
   }
-  if (pinnedDevices.indexOf(DEVICE.all[activeDevice.id]) === -1) {
+  if (!pinnedDevices.includes(DEVICE.all[activeDevice.id])) {
     pinnedDevices.push(DEVICE.all[activeDevice.id]);
   }
   DEVICE.changeActivePinIndex(true);
