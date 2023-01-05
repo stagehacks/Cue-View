@@ -10,23 +10,29 @@ const PLUGINS = require('./plugins.js');
 
 let searching = false;
 let allServers = false;
+const validInterfaces = {};
 
 function getServers() {
   const interfaces = os.networkInterfaces();
   const result = [];
 
-  console.log(interfaces);
-
   Object.keys(interfaces).forEach((key) => {
     const addresses = interfaces[key];
+
     for (let i = addresses.length; i--; ) {
       const address = addresses[i];
-
       if (address.family === 'IPv4' && !address.internal && address.address.substring(0, 3) !== '169') {
         const subnet = ip.subnet(address.address, address.netmask);
         let current = ip.toLong(subnet.firstAddress);
         const last = ip.toLong(subnet.lastAddress) - 1;
-        console.log(`range ${subnet.firstAddress} - ${subnet.lastAddress}`);
+        // console.log(`range ${subnet.firstAddress} - ${subnet.lastAddress}`);
+        address.broadcastAddress = subnet.broadcastAddress;
+
+        if (!validInterfaces[key]) {
+          validInterfaces[key] = [];
+        }
+        validInterfaces[key].push(address);
+
         while (current++ < last) result.push(ip.fromLong(current));
       }
     }
@@ -123,6 +129,7 @@ function TCPtest(ipAddr, pluginType, pluginConfig) {
     if (pluginConfig.searchOptions.validateResponse(data)) {
       client.end(
         '',
+        'utf8',
         DEVICE.registerDevice({
           type: pluginType,
           defaultName: pluginConfig.defaultName,
@@ -138,32 +145,38 @@ function TCPtest(ipAddr, pluginType, pluginConfig) {
 }
 
 function searchUDP(pluginType, pluginConfig) {
-  const i = searchSockets.push(dgram.createSocket('udp4')) - 1;
+  for (let i = 0; i < Object.keys(validInterfaces).length; i++) {
+    const interfaceID = Object.keys(validInterfaces)[i];
+    const interfaceObj = validInterfaces[interfaceID];
 
-  searchSockets[i].bind(pluginConfig.searchOptions.listenPort, () => {
-    searchSockets[i].on('message', (msg, info) => {
-      if (pluginConfig.searchOptions.validateResponse(msg, info, DEVICE.all)) {
-        searchSockets[i].close();
-        DEVICE.registerDevice({
-          type: pluginType,
-          defaultName: pluginConfig.defaultName,
-          port: pluginConfig.defaultPort,
-          addresses: [info.address],
-        });
-      }
+    const j = searchSockets.push(dgram.createSocket('udp4')) - 1;
+
+    searchSockets[j].bind(pluginConfig.searchOptions.listenPort, () => {
+      searchSockets[j].on('message', (msg, info) => {
+        if (pluginConfig.searchOptions.validateResponse(msg, info, DEVICE.all)) {
+          searchSockets[j].close();
+          DEVICE.registerDevice({
+            type: pluginType,
+            defaultName: pluginConfig.defaultName,
+            port: pluginConfig.defaultPort,
+            addresses: [info.address],
+          });
+        }
+      });
     });
-  });
-  searchSockets[i].on('listening', () => {
-    searchSockets[i].setBroadcast(true);
-    searchSockets[i].send(
-      pluginConfig.searchOptions.searchBuffer,
-      pluginConfig.searchOptions.devicePort,
-      '255.255.255.255',
-      (err) => {
-        // console.log(err)
-      }
-    );
-  });
+
+    searchSockets[j].on('listening', () => {
+      searchSockets[j].setBroadcast(true);
+      searchSockets[j].send(
+        pluginConfig.searchOptions.searchBuffer,
+        pluginConfig.searchOptions.devicePort,
+        interfaceObj[0].broadcastAddress,
+        (err) => {
+          // console.log(err);
+        }
+      );
+    });
+  }
 }
 
 function searchMulticast(pluginType, pluginConfig) {
