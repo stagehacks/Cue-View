@@ -65,6 +65,16 @@ const menuTemplate = [
         },
       },
       { type: 'separator' },
+      {
+        label: 'Network Information...',
+        accelerator: 'CommandOrControl+I',
+        id: 'window4',
+        enabled: true,
+        click(menuItem, window, event) {
+          openNetworkInfoWindow();
+        },
+      },
+      { type: 'separator' },
       { role: 'toggleDevTools' },
     ],
   },
@@ -245,12 +255,16 @@ ipcMain.on('setAutoUpdate', (event, _autoUpdate) => {
 });
 
 ipcMain.on('openNetworkInfoWindow', (event, arg) => {
+  openNetworkInfoWindow();
+});
+
+function openNetworkInfoWindow() {
   if (!networkInfoWindow || (networkInfoWindow && networkInfoWindow.isDestroyed())) {
     networkInfoWindow = new BrowserWindow(networkInfoWin);
     networkInfoWindow.loadFile('networkInterfaces.html');
   }
   networkInfoWindow.show();
-});
+}
 
 // this can be set to true to bypass the download update dialog and skip straight to install prompt
 autoUpdater.autoDownload = false;
