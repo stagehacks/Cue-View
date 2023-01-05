@@ -1,0 +1,72 @@
+<header>
+  <h1><%= listName %></h1>
+  <h2><%= data.version || "" %></h2>
+</header>
+
+<% for(let i=1; i<=data.channelCount; i++){ %> <% let ch = data.channels[i]; %>
+<table class="channel">
+  <tr>
+    <td colspan="3"><small><%= i %></small></td>
+  </tr>
+  <tr>
+    <td colspan="3" class="chan_name"><%= ch.chan_name %></td>
+  </tr>
+  <tr>
+    <td style="width: 40px">
+      <div class="rf-indicator-wrapper">
+        <span class="rf-indicator" id="ch-<%= i %>-a">&#11044;</span>
+        <span class="rf-indicator" id="ch-<%= i %>-b">&#11044;</span>
+      </div>
+      <small>rf</small>
+      <div class="bar-wrapper orange">
+        <div
+          class="bar"
+          id="ch-<%= i %>-rf"
+          style="height: <%= 90- ((ch.rx_rf_lvl + 90) * 2) %>"></div>
+      </div>
+      <small><%= ch.rx_rf_lvl %><br /><small>dBm</small></small>
+    </td>
+    <td style="width: 40px">
+      <div class="rf-indicator-wrapper">&nbsp;</div>
+      <small>audio</small>
+      <div class="bar-wrapper green">
+        <div
+          class="bar"
+          id="ch-<%= i %>-audio"
+          style="height: <%= 90- (ch.audio_lvl * 2) %>"></div>
+      </div>
+      <small><%= ch.audio_lvl %><br /><small>dBFS</small></small>
+    </td>
+    <td style="width: 40px">
+      <div class="rf-indicator-wrapper">&nbsp;</div>
+      <small>gain</small>
+      <div class="bar-wrapper pink">
+        <div class="bar" style="height: <%= 60- (ch.audio_gain * 1.4) %>"></div>
+      </div>
+      <small><%= ch.audio_gain %><br /><small>dB</small></small>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="3">
+      <% if(ch.batt_bars==255){ %>
+      <div class="batt-wrapper"><div class="batt-knob"></div></div>
+      <% }else{ %>
+      <div class="batt-wrapper green">
+        <div class="batt-bar" style="width: <%= ch.batt_bars * 16 %>">
+          <% if(ch.batt_run_time<=65532){ %> <%= Math.floor(ch.batt_run_time/60)
+          %>: <%= ch.batt_run_time%60 %> <% } %>
+        </div>
+        <div class="batt-knob green"></div>
+      </div>
+      <% } %>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="3">
+      <% if(ch.tx_type=="UNKN"){ %> &nbsp;<small>No Transmitter</small>&nbsp; <%
+      }else{ %> <%= ch.tx_type %> <% } %>
+    </td>
+  </tr>
+</table>
+
+<% } %>
