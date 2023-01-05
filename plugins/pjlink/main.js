@@ -144,12 +144,17 @@ exports.data = function data(_device, message) {
 
 exports.heartbeat = function heartbeat(device) {
   passwordMD5 = md5(`${passwordSeed}${device.fields.password}`);
-  if (device.fields.password.length > 0) {
+  if (device.fields.password.length > 0 && device.data.passwordOK) {
     device.send(
       `${passwordMD5}%1POWR ?\r%1INPT ?\r%1AVMT ?\r%1ERST ?\r%1LAMP ?\r%1NAME ?\r%1INF1 ?\r%1INF2 ?\r%2SNUM ?\r%2SVER ?\r`
     );
-  } else {
+  } else if (device.fields.password.length > 0) {
+    device.send(`${passwordMD5}%1POWR ?\r`);
+  } else if (device.data.passwordOK) {
     device.send(`%1POWR ?\r%1INPT ?\r%1AVMT ?\r%1ERST ?\r%1LAMP ?\r%1NAME ?\r%1INF1 ?\r%1INF2 ?\r%2SNUM ?\r%2SVER ?\r`);
+  } else {
+    device.send(`%1POWR ?\r`);
   }
+
   device.draw();
 };
