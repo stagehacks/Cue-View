@@ -7,6 +7,7 @@ const _ = require('lodash');
 const PLUGINS = require('./plugins.js');
 const VIEW = require('./view.js');
 const SAVESLOTS = require('./saveSlots.js');
+const SEARCH = require('./search.js');
 
 const devices = {};
 module.exports.all = devices;
@@ -62,6 +63,9 @@ function registerDevice(newDevice) {
       } else {
         this.draw();
       }
+    },
+    getNetworkInterfaces() {
+      return SEARCH.getNetworkInterfaces();
     },
   };
 

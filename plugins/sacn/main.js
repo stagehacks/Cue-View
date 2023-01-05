@@ -22,9 +22,15 @@ exports.ready = function ready(device) {
   d.data.source = 'Unknown Source';
   d.data.orderedUniverses = [];
 
+  const networkInterfaces = d.getNetworkInterfaces();
+
   // device.draw();
   for (let i = 1; i <= 16; i++) {
-    d.connection.addMembership(getMulticastGroup(i));
+    for (let j = 0; j < Object.keys(networkInterfaces).length; j++) {
+      const networkInterfaceID = Object.keys(networkInterfaces)[j];
+      const networkInterface = networkInterfaces[networkInterfaceID];
+      d.connection.addMembership(getMulticastGroup(i), networkInterface[0].address);
+    }
   }
 };
 
@@ -108,9 +114,7 @@ exports.update = function update(_device, doc, updateType, updateData) {
   } else if (updateType === 'elementCache') {
     device.data.orderedUniverses.forEach((universeIndex) => {
       for (let i = 0; i < 512; i++) {
-        device.data.universes[universeIndex].slotElems[i] = doc.getElementById(
-          `${universeIndex}-${i}`
-        );
+        device.data.universes[universeIndex].slotElems[i] = doc.getElementById(`${universeIndex}-${i}`);
       }
       device.data.universes[universeIndex].slotElemsSet = true;
     });

@@ -10,11 +10,12 @@ const PLUGINS = require('./plugins.js');
 
 let searching = false;
 let allServers = false;
-const validInterfaces = {};
+let validInterfaces = {};
 
 function getServers() {
   const interfaces = os.networkInterfaces();
   const result = [];
+  validInterfaces = {};
 
   Object.keys(interfaces).forEach((key) => {
     const addresses = interfaces[key];
@@ -39,6 +40,11 @@ function getServers() {
   });
   return result;
 }
+function getNetworkInterfaces() {
+  getServers();
+  return validInterfaces;
+}
+module.exports.getNetworkInterfaces = getNetworkInterfaces;
 
 const searchSockets = [];
 function searchAll() {
@@ -183,16 +189,23 @@ function searchMulticast(pluginType, pluginConfig) {
   const socket = dgram.createSocket('udp4');
   socket.on('message', (msg, info) => {
     if (pluginConfig.searchOptions.validateResponse(msg, info)) {
-      socket.close();
-      DEVICE.registerDevice({
-        type: pluginType,
-        defaultName: pluginConfig.defaultName,
-        port: pluginConfig.defaultPort,
-        addresses: [info.address],
+      socket.close(() => {
+        DEVICE.registerDevice({
+          type: pluginType,
+          defaultName: pluginConfig.defaultName,
+          port: pluginConfig.defaultPort,
+          addresses: [info.address],
+        });
       });
     }
   });
+
   socket.bind(pluginConfig.searchOptions.port, () => {
-    socket.addMembership(pluginConfig.searchOptions.address);
+    for (let i = 0; i < Object.keys(validInterfaces).length; i++) {
+      const interfaceID = Object.keys(validInterfaces)[i];
+      const interfaceObj = validInterfaces[interfaceID];
+
+      socket.addMembership(pluginConfig.searchOptions.address, interfaceObj[0].address);
+    }
   });
 }
