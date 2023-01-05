@@ -1,0 +1,52 @@
+<header>
+  <h1><%= listName %></h1>
+  <h2><%= data.channel.firmwareRevision %></h2>
+</header>
+
+<table class="channel">
+  <tr>
+    <td colspan="3" class="chan_name"><%= data.channel.name %></td>
+  </tr>
+  <tr>
+    <td style="width: 60px">
+      <div class="rf-indicator-wrapper">
+        <span class="rf-indicator" id="ch-rf1">1</span>
+        <span class="rf-indicator" id="ch-rf2">2</span>
+      </div>
+      <small>rf</small>
+      <div class="bar-wrapper orange">
+        <div class="bar" id="ch-rf"></div>
+      </div>
+      <small>
+        TODO<br />
+        <small>dB</small>
+      </small>
+    </td>
+    <td style="width: 60px">
+      <div class="rf-indicator-wrapper">&nbsp;</div>
+      <small>audio</small>
+      <div class="bar-wrapper green">
+        <div class="bar" id="ch-audio"></div>
+      </div>
+      <small>
+        TODO<br />
+        <small>dB</small>
+      </small>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="3">
+      <div class="batt-wrapper">
+        <div class="batt-bar" style="width: 100%">
+          TODO
+        </div>
+        <div class="batt-knob"></div>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="3">
+      TODO [msg and states]
+    </td>
+  </tr>
+</table>

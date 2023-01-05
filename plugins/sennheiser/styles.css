@@ -1,0 +1,101 @@
+table.channel {
+  width: 120px;
+  height: 320px;
+  background-color: #1a1a1d;
+  border: #3b3c42 1px solid;
+  border-collapse: collapse;
+  color: white;
+  text-align: center;
+  float: left;
+  margin: 2px;
+  margin-bottom: 20px;
+}
+table td {
+  border: #3b3c42 1px solid;
+  vertical-align: top;
+}
+
+.chan_name {
+  width: 100px;
+  color: white !important;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.bar-wrapper {
+  width: 20px;
+  height: 90px;
+  margin: 0px auto;
+  margin-top: 5px;
+  margin-bottom: 5px;
+
+  border-radius: 6px;
+  outline: #1a1a1d 2px solid;
+  outline-offset: -1px;
+  overflow: hidden;
+}
+.bar-wrapper.green {
+  background: linear-gradient(0deg, #4742af, #554ed4 30%, #554ed4 80%, #df664d);
+}
+.bar-wrapper.pink {
+  background: linear-gradient(0deg, #383943, #4e505d 40%);
+}
+.bar-wrapper.orange {
+  background: linear-gradient(0deg, #50c3c3, #5bdfe0 30%, #5bdfe0 80%);
+}
+.bar {
+  width: 20px;
+  background-color: #202124;
+  outline: rgba(255, 255, 255, 0.1) 1px solid;
+}
+
+.batt-wrapper {
+  width: 84px;
+  height: 35px;
+  margin: 0px auto;
+  border: #333 2px solid;
+  border-radius: 5px;
+  padding: 2px;
+  margin: 10px auto;
+  position: relative;
+}
+.batt-wrapper.green {
+  border-color: greenyellow;
+}
+.batt-knob {
+  background-color: #333;
+  position: absolute;
+  right: -5px;
+  top: 10px;
+  width: 5px;
+  height: 16px;
+  border-radius: 2px;
+}
+.batt-knob.green {
+  background-color: greenyellow;
+}
+.batt-bar {
+  height: 26px;
+  background: linear-gradient(0deg, rgb(145, 220, 33), greenyellow 100%);
+  border-radius: 2px;
+  color: #1a1a1d;
+  padding-top: 9px;
+}
+
+.rf-indicator-wrapper {
+  line-height: 8px;
+  margin-bottom: 4px;
+  font-size: 6px;
+  padding-top: 4px;
+  letter-spacing: 1px;
+}
+.rf-indicator {
+  color: #333;
+}
+
+small {
+  color: dimgray;
+}
+small small {
+  color: #444;
+}
