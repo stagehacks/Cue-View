@@ -3,8 +3,8 @@ const Channel = require('./channel');
 exports.config = {
   defaultName: 'Shure Wireless',
   connectionType: 'TCPsocket',
-  heartbeatInterval: 30000,
-  heartbeatTimeout: 35000,
+  heartbeatInterval: 5000,
+  heartbeatTimeout: 10000,
   defaultPort: 2202,
   mayChangePort: false,
   searchOptions: {
@@ -20,13 +20,7 @@ exports.config = {
 exports.ready = function ready(_device) {
   const device = _device;
   device.data.channelCount = 0;
-  device.data.channels = [
-    {},
-    new Channel(),
-    new Channel(),
-    new Channel(),
-    new Channel(),
-  ];
+  device.data.channels = [{}, new Channel(), new Channel(), new Channel(), new Channel()];
 };
 
 exports.data = function data(_device, message) {
