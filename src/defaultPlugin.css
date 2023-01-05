@@ -11,14 +11,14 @@ header {
   position: fixed;
   top: 0px;
   left: 0px;
-  height: 36px;
+  height: 33px;
   width: 100%;
-  box-sizing: content-box;
-  white-space: nowrap;
+  box-sizing: border-box;
+  padding-right: 34px;
   overflow: hidden;
-
   background-color: #111111;
   border-bottom: black 1px solid;
+  -webkit-user-select: none;
   -webkit-app-region: drag;
 }
 h1,
@@ -32,11 +32,13 @@ h6 {
 
 header h1,
 header h2 {
-  margin: 8px;
+  margin: 4px;
   margin-left: 20px;
   font-weight: normal;
   font-size: 18px;
   float: left;
+  height: 24px;
+  overflow: hidden;
 }
 header h2 {
   color: #b6b6b6;
