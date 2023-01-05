@@ -93,18 +93,18 @@ exports.update = function update(_device, doc, updateType, updateData) {
     if ($elem && data.universe.slotElemsSet) {
       if (data.universe.priority > 0) {
         for (let i = 0; i < 512; i++) {
-          data.universe.slotElems[i].innerText = data.universe.slots[i];
+          data.universe.slotElems[i].textContent = data.universe.slots[i];
         }
 
         const $code = doc.getElementById(`universe-${data.universeIndex}-code`);
         if (data.startCode === 0xdd) {
-          $code.innerText = 'Net3';
+          $code.textContent = 'Net3';
         } else if (data.startCode === 0x17) {
-          $code.innerText = 'Text';
+          $code.textContent = 'Text';
         } else if (data.startCode === 0xcf) {
-          $code.innerText = 'SIP';
+          $code.textContent = 'SIP';
         } else if (data.startCode === 0xcc) {
-          $code.innerText = 'RDM';
+          $code.textContent = 'RDM';
         }
       }
     } else {
