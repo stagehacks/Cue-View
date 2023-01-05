@@ -1,0 +1,86 @@
+<html>
+  <head>
+    <title>Network Information</title>
+    <style type="text/css">
+      body {
+        margin: 0px;
+        color: white;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont;
+        user-select: none;
+        background-color: rgba(0, 0, 0, 0.3);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 12px;
+        padding-left: 10px;
+      }
+      th {
+        text-align: left;
+        background-color: rgba(100, 100, 100, 0.3);
+        border-top: #868686 1px solid;
+        border-bottom: #444 1px solid;
+        border-right: #868686 1px solid;
+        font-weight: normal;
+        height: 36px;
+      }
+      td {
+        border-bottom: dimgray 1px solid;
+      }
+      p {
+        color: #a0a0a0;
+        margin: 17px 13px;
+        font-size: 14px;
+      }
+      button {
+        box-sizing: content-box;
+        height: 25px;
+        border: none;
+        outline: none;
+        padding: 1px 10px;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+
+        color: white;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      button:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+      button:focus {
+        outline: none;
+      }
+      span {
+        border-radius: 4px;
+        padding: 2px 4px;
+      }
+      .if-en {
+        background-color: #1565c0;
+      }
+      .if-ut {
+        background-color: #bf360c;
+      }
+    </style>
+  </head>
+</html>
+<p>Attached Network Interfaces:</p>
+<button onclick="location.reload()">Refresh</button>
+<table>
+  <tr>
+    <th>ID</th>
+    <th>IP Address</th>
+    <th>Subnet Mask</th>
+    <th>Searchable Addresses</th>
+  </tr>
+  <tbody id="network-interfaces"></tbody>
+</table>
+
+<script>
+  window.init();
+</script>

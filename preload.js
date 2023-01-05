@@ -106,6 +106,11 @@ window.init = function init() {
     SAVESLOTS.saveAll();
   };
 
+  document.getElementById('network-info-button').onclick = function fooBar(e) {
+    ipcRenderer.send('openNetworkInfoWindow');
+    console.log('FOO');
+  };
+
   document.onkeyup = function keyUp(e) {
     if (e.key === 'ArrowUp') {
       VIEW.selectPreviousDevice();

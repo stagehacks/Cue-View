@@ -1,11 +1,4 @@
-const {
-  app,
-  BrowserWindow,
-  Menu,
-  ipcMain,
-  nativeTheme,
-  dialog,
-} = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, nativeTheme, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
 
@@ -16,6 +9,7 @@ let autoUpdate = false;
 let manualUpdateCheck = false;
 let menuObj;
 let mainWindow;
+let networkInfoWindow;
 
 const menuTemplate = [
   ...(isMac ? [{ role: 'appMenu' }] : []),
@@ -95,10 +89,7 @@ const menuTemplate = [
         id: 'devicePin',
         enabled: false,
         click(menuItem, window, event) {
-          mainWindow.webContents.send(
-            'setActiveDevicePinned',
-            menuItem.checked
-          );
+          mainWindow.webContents.send('setActiveDevicePinned', menuItem.checked);
         },
       },
       {
@@ -163,6 +154,18 @@ const windowWin = {
     contextIsolation: false,
     nodeIntegration: true,
     preload: path.join(__dirname, 'preload.js'),
+  },
+};
+
+const networkInfoWin = {
+  width: 700,
+  height: 350,
+  backgroundColor: '#333333',
+  show: false,
+  webPreferences: {
+    contextIsolation: false,
+    nodeIntegration: true,
+    preload: path.join(__dirname, 'networkInterfaces.js'),
   },
 };
 
@@ -236,11 +239,17 @@ ipcMain.on('setAutoUpdate', (event, _autoUpdate) => {
   autoUpdate = _autoUpdate;
 
   // update menu item for enabling/disabling auto update
-  menuTemplate[menuTemplate.length - 1].submenu[2].label = autoUpdate
-    ? 'Disable Auto Update'
-    : 'Enable Auto Update';
+  menuTemplate[menuTemplate.length - 1].submenu[2].label = autoUpdate ? 'Disable Auto Update' : 'Enable Auto Update';
   menuObj = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menuObj);
+});
+
+ipcMain.on('openNetworkInfoWindow', (event, arg) => {
+  if (!networkInfoWindow || (networkInfoWindow && networkInfoWindow.isDestroyed())) {
+    networkInfoWindow = new BrowserWindow(networkInfoWin);
+    networkInfoWindow.loadFile('networkInterfaces.html');
+  }
+  networkInfoWindow.show();
 });
 
 // this can be set to true to bypass the download update dialog and skip straight to install prompt

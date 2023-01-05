@@ -27,6 +27,9 @@ a {
 .left {
   float: left;
 }
+.right {
+  float: right;
+}
 
 #main {
   box-sizing: border-box;
@@ -133,7 +136,7 @@ a {
   /* position: absolute;
   bottom: 210px;
   left: 0px;*/
-  width: 100%;
+  width: 262px;
   height: 30px;
   padding-right: 10px;
   /*background: linear-gradient(#2f2f2f 0%, #2c2c2c 100%);*/

@@ -28,6 +28,8 @@ function getServers() {
         const last = ip.toLong(subnet.lastAddress) - 1;
         // console.log(`range ${subnet.firstAddress} - ${subnet.lastAddress}`);
         address.broadcastAddress = subnet.broadcastAddress;
+        address.firstSearchAddress = subnet.firstAddress;
+        address.lastSearchAddress = subnet.lastAddress;
 
         if (!validInterfaces[key]) {
           validInterfaces[key] = [];
