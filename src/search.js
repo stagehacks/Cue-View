@@ -23,10 +23,19 @@ function getServers() {
     for (let i = addresses.length; i--; ) {
       const address = addresses[i];
       if (address.family === 'IPv4' && !address.internal && address.address.substring(0, 3) !== '169') {
-        const subnet = ip.subnet(address.address, address.netmask);
+        let subnet = ip.subnet(address.address, address.netmask);
         let current = ip.toLong(subnet.firstAddress);
-        const last = ip.toLong(subnet.lastAddress) - 1;
+        let last = ip.toLong(subnet.lastAddress) - 1;
+        address.searchTruncated = false;
+
+        if (last - current > 2296) {
+          subnet = ip.subnet(address.address, '255.255.248.0');
+          last = ip.toLong(subnet.lastAddress) - 1;
+          address.searchTruncated = true;
+        }
+
         // console.log(`range ${subnet.firstAddress} - ${subnet.lastAddress}`);
+
         address.broadcastAddress = subnet.broadcastAddress;
         address.firstSearchAddress = subnet.firstAddress;
         address.lastSearchAddress = subnet.lastAddress;
@@ -59,7 +68,7 @@ function searchAll() {
   console.log('Searching...');
   allServers = getServers();
   let TCPFlag = true;
-  if (allServers.length > 2046) {
+  if (allServers.length > 2296) {
     alert(
       'Unable to search for TCP devices - subnet too large!\n\nCue View requires subnet 255.255.248.0 (/21) or smaller.'
     );
