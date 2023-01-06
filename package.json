@@ -21,18 +21,18 @@
   "repository": "https://github.com/stagehacks/Cue-View",
   "devDependencies": {
     "@electron/notarize": "^1.2.3",
-    "electron": "^21.3.0",
+    "electron": "^21.3.3",
     "electron-builder": "^23.6.0",
-    "eslint": "^8.27.0",
+    "eslint": "^8.31.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-import": "^2.26.0",
-    "prettier": "^2.7.1"
+    "prettier": "^2.8.1"
   },
   "dependencies": {
     "bonjour": "^3.5.0",
     "electron-updater": "^5.3.0",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "netmask": "^2.0.2",
     "osc": "^2.4.3",
@@ -40,12 +40,12 @@
   },
   "build": {
     "appId": "com.stagehacks.cueview",
-    "icon": "./src/img/",
+    "icon": "src/assets/img/",
     "artifactName": "${name}.${os}.v${version}.${ext}",
     "afterSign": "notarize.js",
     "mac": {
       "category": "Utilities",
-      "icon": "./src/img/icon.icns",
+      "icon": "src/assets/img/icon.icns",
       "hardenedRuntime": true,
       "electronLanguages": [
         "en"
@@ -56,7 +56,7 @@
     },
     "win": {
       "target": "NSIS",
-      "icon": "./src/img/icon.ico",
+      "icon": "src/assets/img/icon.ico",
       "publish": [
         "github"
       ]

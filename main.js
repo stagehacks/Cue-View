@@ -4,6 +4,7 @@ const path = require('path');
 
 const isMac = process.platform === 'darwin';
 const isWin = process.platform === 'win32';
+const isLinux = process.platform === 'linux';
 
 let autoUpdate = false;
 let manualUpdateCheck = false;
@@ -190,6 +191,10 @@ const createWindow = () => {
     mainWindow = new BrowserWindow(windowMac);
   } else {
     mainWindow = new BrowserWindow(windowWin);
+  }
+
+  if (isLinux) {
+    mainWindow.setIcon(path.join(__dirname, 'src', 'assets', 'img', 'icon.png'));
   }
 
   mainWindow.loadFile('index.html');

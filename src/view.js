@@ -33,7 +33,7 @@ function drawDeviceFrame(id) {
   str += '::-webkit-scrollbar-button {display:none;}';
   str += 'body{visibility: hidden;}';
   str += '</style>';
-  str += "<link href='src/defaultPlugin.css' rel='stylesheet' type='text/css'>";
+  str += "<link href='src/assets/css/plugin_default.css' rel='stylesheet' type='text/css'>";
   str += '</head><body>';
 
   str += generateBodyHTML(d);
@@ -164,7 +164,7 @@ function switchDevice(id) {
   let $deviceWrapper = document.getElementById(`device-${i}`);
 
   if (!$deviceWrapper) {
-    const html = `<div class="col device-wrapper" id="device-${i}"><img id="device-${i}-pinned" class="device-pin" src="src/img/outline_push_pin_white_18dp.png"><iframe id="device-${i}-draw-area" class="draw-area"></iframe></div>`;
+    const html = `<div class="col device-wrapper" id="device-${i}"><img id="device-${i}-pinned" class="device-pin" src="src/assets/img/outline_push_pin_white_18dp.png"><iframe id="device-${i}-draw-area" class="draw-area"></iframe></div>`;
     document.getElementById('all-devices').insertAdjacentHTML('afterbegin', html);
 
     $deviceWrapper = document.getElementById(`device-${i}`);
