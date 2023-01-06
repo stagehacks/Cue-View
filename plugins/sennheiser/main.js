@@ -10,7 +10,8 @@ exports.config = {
   searchOptions: {
     type: 'UDPsocket',
     searchBuffer: Buffer.from('Name\r', 'ascii'),
-    testPort: 53212,
+    devicePort: 53212,
+    listenPort: 53212,
     validateResponse(msg, info) {
       return msg.toString().includes('Name');
     },
