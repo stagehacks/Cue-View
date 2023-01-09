@@ -27,8 +27,6 @@ function registerDevice(newDevice, discoveryMethod) {
     return false;
   }
 
-  // console.log("Registered new "+newDevice.type)
-
   const id = newDevice.id || uuid();
   devices[id] = {
     id,
@@ -195,7 +193,6 @@ function initDeviceConnection(id) {
 
     device.send = (data) => {};
   }
-  // device.plugin = plugins[type];
 
   return true;
 }
@@ -233,7 +230,6 @@ module.exports.changeActiveType = function changeActiveType(newType) {
   initDeviceConnection(device.id);
   VIEW.draw(device);
   VIEW.updateFields();
-  // SAVESLOTS.saveAll();
 };
 
 module.exports.changeActiveIP = function changeActiveIP(newIP) {
@@ -269,7 +265,6 @@ module.exports.changeActivePinIndex = function changeActivePinIndex(newPin) {
 module.exports.changePinIndex = function changePinIndex(device, newPin) {
   const d = device;
   d.pinIndex = newPin;
-  // SAVESLOTS.saveAll();
 };
 module.exports.refreshActive = function refreshActive() {
   const device = VIEW.getActiveDevice();

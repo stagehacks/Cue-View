@@ -26,7 +26,6 @@ exports.ready = function ready(device) {
 
   const networkInterfaces = d.getNetworkInterfaces();
 
-  // device.draw();
   for (let i = 1; i <= 16; i++) {
     for (let j = 0; j < Object.keys(networkInterfaces).length; j++) {
       const networkInterfaceID = Object.keys(networkInterfaces)[j];
@@ -117,7 +116,6 @@ exports.update = function update(_device, doc, updateType, updateData) {
         $code.textContent = 'RDM';
       }
     } else {
-      // console.log('x');
       device.draw();
       device.update('elementCache');
     }

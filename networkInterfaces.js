@@ -7,7 +7,6 @@ window.init = function init() {
   for (let i = 0; i < Object.keys(networkInterfaces).length; i++) {
     const interfaceID = Object.keys(networkInterfaces)[i];
     const interfaceObj = networkInterfaces[interfaceID];
-    console.log(interfaceObj);
 
     html += `<tr><td><span class="if-${interfaceID.substring(0, 2)}">${interfaceID}</span></td>`;
     html += `<td>${interfaceObj[0].address}</td>`;

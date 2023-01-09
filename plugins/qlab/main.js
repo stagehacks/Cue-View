@@ -287,7 +287,6 @@ exports.data = function data(_device, oscData) {
   } else if (match(oscAddressParts, ['update', 'workspace', '*', 'dashboard'])) {
     // this workspace might be new, let's check
     if (device.data.workspaces[oscAddressParts[2]] === undefined) {
-      console.log('new workspace!');
       device.send('/workspaces');
     }
   } else if (match(oscAddressParts, ['update', 'workspace', '*', 'cueList', '*', 'playbackPosition'])) {

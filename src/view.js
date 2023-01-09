@@ -2,7 +2,6 @@ const { ipcRenderer } = require('electron');
 const DEVICE = require('./device.js');
 const PLUGINS = require('./plugins.js');
 const { saveAll } = require('./saveSlots.js');
-// const _ = require('lodash/function');
 
 const pinnedDevices = [];
 module.exports.pinnedDevices = pinnedDevices;
@@ -41,9 +40,6 @@ function drawDeviceFrame(id) {
   str += '</head><body>';
 
   str += generateBodyHTML(d);
-
-  // str += "<script src='node_modules/lodash/core.min.js'></script>";
-  // str += "<script src='./plugins/" +d.type +"/update.js'></script>";
 
   str += '</body></html>';
 
@@ -158,14 +154,12 @@ function switchDevice(id) {
   document.getElementById('all-devices').style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
 
   if (id === undefined) {
-    // document.getElementById('refresh-device-button').style.opacity = 0.2;
     document.getElementById('refresh-device-button').disabled = true;
     document.getElementById('device-settings-table').style.display = 'none';
     return;
   }
 
   document.getElementById('refresh-device-button').disabled = false;
-  // document.getElementById('refresh-device-button').style.opacity = 1;
 
   const i = DEVICE.all[id].id;
   const $deviceWrapper = document.getElementById(`device-${i}`);
@@ -173,8 +167,6 @@ function switchDevice(id) {
   if (!$deviceWrapper) {
     const html = `<div class="col device-wrapper" id="device-${i}"><img id="device-${i}-pinned" class="device-pin" src="src/assets/img/outline_push_pin_white_18dp.png"><iframe id="device-${i}-draw-area" class="draw-area"></iframe></div>`;
     document.getElementById('all-devices').insertAdjacentHTML('afterbegin', html);
-
-    // $deviceWrapper = document.getElementById(`device-${i}`);
   }
 
   window.switchClass(document.getElementById(id), 'active-device');
@@ -210,7 +202,7 @@ function updateFields() {
     fields.forEach((field) => {
       const $elem = document.createElement('input');
       $elem.type = 'text';
-      $elem.value = activeDevice.fields[field.key]; // || field.value;
+      $elem.value = activeDevice.fields[field.key];
       $elem.name = field.key;
       $elem.onchange = function onchange(e) {
         activeDevice.fields[field.key] = $elem.value;
