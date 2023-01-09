@@ -12,7 +12,7 @@ const SEARCH = require('./search.js');
 const devices = {};
 module.exports.all = devices;
 
-function registerDevice(newDevice) {
+function registerDevice(newDevice, discoveryMethod) {
   if (PLUGINS.all[newDevice.type] === undefined) {
     console.error(`Plugin for device ${newDevice.type} does not exist.`);
     return true;
@@ -23,17 +23,9 @@ function registerDevice(newDevice) {
     initElements[i].style.display = 'none';
   }
 
-  // only register device if it hasn't already been added
-  if (newDevice.addresses.length > 0) {
-    const existing = _.find(devices, (e) => {
-      const typeMatch = e.type === newDevice.type;
-      const addressMatch = JSON.stringify(e.addresses) === JSON.stringify(newDevice.addresses);
-      return typeMatch && addressMatch;
-    });
-
-    if (existing) {
-      return false;
-    }
+  // prevent duplicate devices from being added via search
+  if (isDeviceAlreadyAdded(newDevice) && discoveryMethod === 'fromSearch') {
+    return false;
   }
 
   // console.log("Registered new "+newDevice.type)
@@ -331,3 +323,24 @@ function heartbeat() {
   // }
 }
 setInterval(heartbeat, 100);
+
+function isDeviceAlreadyAdded(newDevice) {
+  let deviceAlreadyAdded = false;
+
+  if (newDevice.addresses.length === 0) {
+    return false;
+  }
+
+  for (let i = 0; i < Object.keys(devices).length; i++) {
+    const device = devices[Object.keys(devices)[i]];
+    const typeMatch = device.type === newDevice.type;
+    const addressMatch = JSON.stringify(device.addresses) === JSON.stringify(newDevice.addresses);
+    const idMatch = device.id === newDevice.id;
+    if (typeMatch && addressMatch && !idMatch) {
+      deviceAlreadyAdded = true;
+      break;
+    }
+  }
+  return deviceAlreadyAdded;
+}
+module.exports.isDeviceAlreadyAdded = isDeviceAlreadyAdded;

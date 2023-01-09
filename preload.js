@@ -95,12 +95,15 @@ window.init = function init() {
   };
 
   document.getElementById('add-device-button').onchange = function addDeviceClick(e) {
-    DEVICE.registerDevice({
-      type: e.target.value,
-      defaultName: 'New Device',
-      port: undefined,
-      addresses: [],
-    });
+    DEVICE.registerDevice(
+      {
+        type: e.target.value,
+        defaultName: 'New Device',
+        port: undefined,
+        addresses: [],
+      },
+      'fromAddButton'
+    );
     e.target.selectedIndex = 0;
 
     SAVESLOTS.saveAll();

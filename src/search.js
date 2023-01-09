@@ -123,12 +123,15 @@ function searchBonjour(pluginType, pluginConfig) {
       }
     });
 
-    DEVICE.registerDevice({
-      type: pluginType,
-      defaultName: e.name,
-      port: e.port,
-      addresses: validAddresses,
-    });
+    DEVICE.registerDevice(
+      {
+        type: pluginType,
+        defaultName: e.name,
+        port: e.port,
+        addresses: validAddresses,
+      },
+      'fromSearch'
+    );
   });
 }
 
@@ -147,12 +150,15 @@ function TCPtest(ipAddr, pluginType, pluginConfig) {
       client.end(
         '',
         'utf8',
-        DEVICE.registerDevice({
-          type: pluginType,
-          defaultName: pluginConfig.defaultName,
-          port: pluginConfig.defaultPort,
-          addresses: [ipAddr],
-        })
+        DEVICE.registerDevice(
+          {
+            type: pluginType,
+            defaultName: pluginConfig.defaultName,
+            port: pluginConfig.defaultPort,
+            addresses: [ipAddr],
+          },
+          'fromSearch'
+        )
       );
     }
   });
@@ -172,12 +178,15 @@ function searchUDP(pluginType, pluginConfig) {
       searchSockets[j].on('message', (msg, info) => {
         if (pluginConfig.searchOptions.validateResponse(msg, info, DEVICE.all)) {
           searchSockets[j].close();
-          DEVICE.registerDevice({
-            type: pluginType,
-            defaultName: pluginConfig.defaultName,
-            port: pluginConfig.defaultPort,
-            addresses: [info.address],
-          });
+          DEVICE.registerDevice(
+            {
+              type: pluginType,
+              defaultName: pluginConfig.defaultName,
+              port: pluginConfig.defaultPort,
+              addresses: [info.address],
+            },
+            'fromSearch'
+          );
         }
       });
     });
@@ -201,12 +210,15 @@ function searchMulticast(pluginType, pluginConfig) {
   socket.on('message', (msg, info) => {
     if (pluginConfig.searchOptions.validateResponse(msg, info)) {
       socket.close(() => {
-        DEVICE.registerDevice({
-          type: pluginType,
-          defaultName: pluginConfig.defaultName,
-          port: pluginConfig.defaultPort,
-          addresses: [info.address],
-        });
+        DEVICE.registerDevice(
+          {
+            type: pluginType,
+            defaultName: pluginConfig.defaultName,
+            port: pluginConfig.defaultPort,
+            addresses: [info.address],
+          },
+          'fromSearch'
+        );
       });
     }
   });
