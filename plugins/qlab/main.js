@@ -213,45 +213,55 @@ exports.data = function data(_device, oscData) {
       if (workspace) {
         const cue = workspace.cues[oscArgs.address.substring(55, 91)];
 
-        cue.preWaitElapsed = oscArgs.data;
-        lastElapsedUpdate = Date.now();
+        if (cue) {
+          cue.preWaitElapsed = oscArgs.data;
+          lastElapsedUpdate = Date.now();
 
-        device.update('updateCueData', {
-          cue,
-          allCues: workspace.cues,
-          workspace,
-        });
+          device.update('updateCueData', {
+            cue,
+            allCues: workspace.cues,
+            workspace,
+          });
+        }
       }
     }
   } else if (match(oscAddressParts, ['reply', 'cue_id', '*', 'actionElapsed'])) {
     const oscArgs = JSON.parse(oscData.args[0]);
     if (oscArgs.status !== 'error') {
       const workspace = device.data.workspaces[oscArgs.workspace_id];
-      const cue = workspace.cues[oscArgs.address.substring(55, 91)];
+      if (workspace) {
+        const cue = workspace.cues[oscArgs.address.substring(55, 91)];
 
-      cue.actionElapsed = oscArgs.data;
-      lastElapsedUpdate = Date.now();
+        if (cue) {
+          cue.actionElapsed = oscArgs.data;
+          lastElapsedUpdate = Date.now();
 
-      device.update('updateCueData', {
-        cue,
-        allCues: workspace.cues,
-        workspace,
-      });
+          device.update('updateCueData', {
+            cue,
+            allCues: workspace.cues,
+            workspace,
+          });
+        }
+      }
     }
   } else if (match(oscAddressParts, ['reply', 'cue_id', '*', 'postWaitElapsed'])) {
     const oscArgs = JSON.parse(oscData.args[0]);
     if (oscArgs.status !== 'error') {
       const workspace = device.data.workspaces[oscArgs.workspace_id];
-      const cue = workspace.cues[oscArgs.address.substring(55, 91)];
+      if (workspace) {
+        const cue = workspace.cues[oscArgs.address.substring(55, 91)];
 
-      cue.postWaitElapsed = oscArgs.data;
-      lastElapsedUpdate = Date.now();
+        if (cue) {
+          cue.postWaitElapsed = oscArgs.data;
+          lastElapsedUpdate = Date.now();
 
-      device.update('updateCueData', {
-        cue,
-        allCues: workspace.cues,
-        workspace,
-      });
+          device.update('updateCueData', {
+            cue,
+            allCues: workspace.cues,
+            workspace,
+          });
+        }
+      }
     }
   } else if (match(oscAddressParts, ['update', 'workspace', '*', 'cue_id', '*'])) {
     const workspace = device.data.workspaces[oscAddressParts[2]];
