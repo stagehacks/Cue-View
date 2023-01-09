@@ -205,6 +205,7 @@ module.exports.deleteActive = function deleteActive() {
   );
 
   if (choice) {
+    device.connection.destroy();
     VIEW.removeDeviceFromList(device);
     delete devices[device.id];
     SAVESLOTS.removeDevice(device);
