@@ -1,9 +1,10 @@
 exports.config = {
   defaultName: 'X32 Mixer',
   connectionType: 'osc-udp',
-  heartbeatInterval: 9000,
   defaultPort: 10023,
   mayChangePort: false,
+  heartbeatInterval: 9000,
+  heartbeatTimeout: 11000,
   searchOptions: {
     type: 'UDPsocket',
     searchBuffer: Buffer.from([0x2f, 0x78, 0x69, 0x6e, 0x66, 0x6f]),
