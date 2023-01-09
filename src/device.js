@@ -44,7 +44,9 @@ function registerDevice(newDevice, discoveryMethod) {
     pinIndex: false,
     lastDrawn: 0,
     lastHeartbeat: 0,
+    lastMessage: 0,
     heartbeatInterval: PLUGINS.all[newDevice.type].heartbeatInterval,
+    heartbeatTimeout: PLUGINS.all[newDevice.type].heartbeatTimeout,
     draw() {
       VIEW.draw(this);
     },
@@ -168,6 +170,7 @@ function initDeviceConnection(id) {
 
       device.connection.on('message', (msg, info) => {
         plugins[type].data(device, msg);
+        device.lastMessage = Date.now();
         infoUpdate(device, 'status', 'ok');
       });
     });
@@ -185,6 +188,7 @@ function initDeviceConnection(id) {
 
       device.connection.on('message', (msg, info) => {
         plugins[type].data(device, msg);
+        device.lastMessage = Date.now();
         infoUpdate(device, 'status', 'ok');
       });
     });
@@ -204,7 +208,9 @@ module.exports.deleteActive = function deleteActive() {
   );
 
   if (choice) {
-    device.connection.destroy();
+    if (device.plugin.connectionType === 'TCPsocket') {
+      device.connection.destroy();
+    }
     VIEW.removeDeviceFromList(device);
     delete devices[device.id];
     SAVESLOTS.removeDevice(device);

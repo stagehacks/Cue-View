@@ -35,17 +35,9 @@ module.exports.init = function init(callback) {
 
         plugin.info = _.template(fs.readFileSync(path.join(pluginDirectoryPath, `/${pluginDir}/info.html`), 'utf8'));
 
-        if (plugin.config.heartbeatTimeout) {
-          plugin.heartbeatTimeout = plugin.config.heartbeatInterval * 1.5;
-        } else {
-          plugin.heartbeatTimeout = 10000;
-        }
+        plugin.heartbeatTimeout = plugin.config.heartbeatTimeout;
+        plugin.heartbeatInterval = plugin.config.heartbeatInterval;
 
-        if (plugin.config.heartbeatInterval) {
-          plugin.heartbeatInterval = Math.max(50, plugin.config.heartbeatInterval);
-        } else {
-          plugin.heartbeatInterval = 5000;
-        }
         console.log(`${pluginDir} loaded`);
       }
     });

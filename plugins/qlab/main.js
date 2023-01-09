@@ -7,8 +7,8 @@ exports.config = {
   connectionType: 'osc',
   defaultPort: 53000,
   mayChangePort: true,
-  heartbeatInterval: 500,
-  heartbeatTimeout: 5000,
+  heartbeatInterval: 100,
+  heartbeatTimeout: 9000,
   searchOptions: {
     type: 'Bonjour',
     bonjourName: 'qlab',
@@ -303,7 +303,12 @@ exports.data = function data(_device, oscData) {
     }
   } else if (match(oscAddressParts, ['update', 'workspace', '*', 'disconnect'])) {
     delete device.data.workspaces[oscAddressParts[2]];
+    if (Object.keys(device.data.workspaces).length === 0) {
+      device.data.permission = 'no workspaces';
+    }
     device.draw();
+  } else if (match(oscAddressParts, ['reply', 'thump'])) {
+    // intermittent connection check even if nothing's happening
   } else {
     // console.log(address)
   }
@@ -392,7 +397,16 @@ exports.heartbeat = function heartbeat(device) {
     interval = 1;
   }
 
-  if (heartbeatCount % interval === 0) {
+  if (heartbeatCount % 20 === 0 && device.data.workspaces && Object.keys(device.data.workspaces).length === 0) {
+    device.send(`/version`);
+    device.send('/workspaces');
+  }
+
+  if (heartbeatCount % 50 === 0) {
+    device.send(`/thump`);
+  }
+
+  if (heartbeatCount % interval === 0 && device.data.workspaces && Object.keys(device.data.workspaces).length > 0) {
     device.send(`/cue_id/active/preWaitElapsed`);
     device.send(`/cue_id/active/actionElapsed`);
     device.send(`/cue_id/active/postWaitElapsed`);
