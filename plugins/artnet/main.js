@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 exports.config = {
   defaultName: 'Art-Net',
   connectionType: 'UDPsocket',
@@ -43,7 +41,7 @@ exports.data = function data(_device, buf) {
   universe.slots = buf.slice(18);
   device.data.ip = device.addresses[0];
 
-  if (!_.includes(device.data.orderedUniverses, universeIndex)) {
+  if (!device.data.orderedUniverses.includes(universeIndex)) {
     device.data.orderedUniverses.push(universeIndex);
     device.data.orderedUniverses.sort();
     universe.slotElems = [];
@@ -77,10 +75,10 @@ exports.update = function update(_device, _document, updateType, updateData) {
 
     if ($elem && data.universe.slotElemsSet) {
       for (let i = 0; i < 512; i++) {
-        data.universe.slotElems[i].innerText = data.universe.slots[i];
+        data.universe.slotElems[i].textContent = data.universe.slots[i];
       }
 
-      document.getElementById(`universe-${data.universeIndex}-sequence`).innerText = data.universe.sequence;
+      document.getElementById(`universe-${data.universeIndex}-sequence`).textContent = data.universe.sequence;
     } else {
       device.draw();
       device.update('elementCache');

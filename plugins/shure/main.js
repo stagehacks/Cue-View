@@ -10,9 +10,9 @@ exports.config = {
   searchOptions: {
     type: 'TCPport',
     searchBuffer: Buffer.from('< GET DEVICE_ID >', 'ascii'),
-    testPort: 3032,
+    testPort: 2202,
     validateResponse(msg, info) {
-      return msg.toString().indexOf('DEVICE_ID');
+      return msg.toString().includes('DEVICE_ID');
     },
   },
 };

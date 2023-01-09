@@ -317,8 +317,8 @@ select.button:focus {
   font-family: 'Material Icons';
   font-style: normal;
   font-weight: 400;
-  src: local('img/Material Icons'), local('img/MaterialIcons-Regular'),
-    url(img/MaterialIcons-Regular.ttf) format('truetype');
+  src: local('Material Icons'), local('MaterialIcons-Regular'),
+    url(../font/MaterialIcons-Regular.ttf) format('truetype');
 }
 .material-icons {
   font-family: 'Material Icons';
