@@ -309,24 +309,6 @@ function heartbeat() {
       d.lastHeartbeat = Date.now();
     }
   });
-
-  // for (let i in devices) {
-  //   const device = devices[i];
-  //   if (Date.now() >= device.lastHeartbeat + device.heartbeatInterval) {
-  //     if (device.status == 'broken') {
-  //       initDeviceConnection(i);
-  //     } else if (Date.now() - device.lastMessage > device.heartbeatTimeout) {
-  //       infoUpdate(device, 'status', 'broken');
-  //     } else {
-  //       if (device.port != undefined && device.addresses.length > 0) {
-  //         PLUGINS.all[device.type].heartbeat(device);
-  //       } else {
-  //         // console.error("Invalid IP/Port on device "+device.name)
-  //       }
-  //     }
-  //     device.lastHeartbeat = Date.now();
-  //   }
-  // }
 }
 setInterval(heartbeat, 100);
 
