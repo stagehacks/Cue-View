@@ -402,7 +402,7 @@ exports.heartbeat = function heartbeat(device) {
     device.send('/workspaces');
   }
 
-  if (heartbeatCount % 40 === 0) {
+  if (heartbeatCount % 16 === 0) {
     device.send(`/thump`);
   }
 
