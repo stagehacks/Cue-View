@@ -259,7 +259,28 @@ ipcMain.on('setDevicePin', (event, arg) => {
   menuObj.getMenuItemById('devicePin').checked = arg;
 });
 
-// Autoupdate logic
+ipcMain.on('openNetworkInfoWindow', (event, arg) => {
+  openNetworkInfoWindow();
+});
+
+function openNetworkInfoWindow() {
+  if (!networkInfoWindow || (networkInfoWindow && networkInfoWindow.isDestroyed())) {
+    if (isMac) {
+      networkInfoWindow = new BrowserWindow(networkInfoMac);
+    } else {
+      networkInfoWindow = new BrowserWindow(networkInfoWin);
+      networkInfoWindow.removeMenu();
+    }
+    networkInfoWindow.loadFile('networkInterfaces.html');
+  }
+  networkInfoWindow.show();
+}
+
+
+
+
+
+// Autoupdate logic below
 ipcMain.on('checkForUpdates', (event, arg) => {
   autoUpdater.checkForUpdates();
 });
@@ -272,22 +293,6 @@ ipcMain.on('setAutoUpdate', (event, _autoUpdate) => {
   menuObj = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menuObj);
 });
-
-ipcMain.on('openNetworkInfoWindow', (event, arg) => {
-  openNetworkInfoWindow();
-});
-
-function openNetworkInfoWindow() {
-  if (!networkInfoWindow || (networkInfoWindow && networkInfoWindow.isDestroyed())) {
-    if (isMac) {
-      networkInfoWindow = new BrowserWindow(networkInfoMac);
-    } else {
-      networkInfoWindow = new BrowserWindow(networkInfoWin);
-    }
-    networkInfoWindow.loadFile('networkInterfaces.html');
-  }
-  networkInfoWindow.show();
-}
 
 // this can be set to true to bypass the download update dialog and skip straight to install prompt
 autoUpdater.autoDownload = false;
