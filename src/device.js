@@ -70,7 +70,7 @@ function registerDevice(newDevice, discoveryMethod) {
 
   VIEW.addDeviceToList(devices[id]);
   initDeviceConnection(id);
-  return true;
+  return devices[id];
 }
 module.exports.registerDevice = registerDevice;
 

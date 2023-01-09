@@ -95,7 +95,7 @@ window.init = function init() {
   };
 
   document.getElementById('add-device-button').onchange = function addDeviceClick(e) {
-    DEVICE.registerDevice(
+    const newDevice = DEVICE.registerDevice(
       {
         type: e.target.value,
         defaultName: 'New Device',
@@ -106,6 +106,7 @@ window.init = function init() {
     );
     e.target.selectedIndex = 0;
 
+    VIEW.switchDevice(newDevice.id);
     SAVESLOTS.saveAll();
   };
 
