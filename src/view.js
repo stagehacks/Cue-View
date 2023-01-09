@@ -168,9 +168,6 @@ function switchDevice(id) {
     document.getElementById('all-devices').insertAdjacentHTML('afterbegin', html);
 
     $deviceWrapper = document.getElementById(`device-${i}`);
-    $deviceWrapper.onclick = function (e) {
-      switchDevice(i);
-    };
   }
 
   window.switchClass(document.getElementById(id), 'active-device');
