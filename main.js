@@ -147,7 +147,6 @@ const windowMac = {
   transparent: true,
   frame: false,
   show: false,
-  // backgroundColor: "#333333",
   vibrancy: 'window',
   visualEffectState: 'followWindow',
   webPreferences: {
@@ -165,6 +164,21 @@ const windowWin = {
     contextIsolation: false,
     nodeIntegration: true,
     preload: path.join(__dirname, 'preload.js'),
+  },
+};
+
+const networkInfoMac = {
+  width: 700,
+  height: 350,
+  // transparent: true,
+  frame: true,
+  show: false,
+  vibrancy: 'window',
+  visualEffectState: 'followWindow',
+  webPreferences: {
+    contextIsolation: false,
+    nodeIntegration: true,
+    preload: path.join(__dirname, 'networkInterfaces.js'),
   },
 };
 
@@ -265,7 +279,11 @@ ipcMain.on('openNetworkInfoWindow', (event, arg) => {
 
 function openNetworkInfoWindow() {
   if (!networkInfoWindow || (networkInfoWindow && networkInfoWindow.isDestroyed())) {
-    networkInfoWindow = new BrowserWindow(networkInfoWin);
+    if (isMac) {
+      networkInfoWindow = new BrowserWindow(networkInfoMac);
+    } else {
+      networkInfoWindow = new BrowserWindow(networkInfoWin);
+    }
     networkInfoWindow.loadFile('networkInterfaces.html');
   }
   networkInfoWindow.show();
