@@ -20,6 +20,10 @@ function drawDeviceFrame(id) {
     return true;
   }
 
+  $deviceDrawArea.onclick = function (e) {
+    console.log('oo');
+  };
+
   const d = DEVICE.all[id];
 
   let str = '<html><head>';
@@ -47,6 +51,9 @@ function drawDeviceFrame(id) {
   $deviceDrawArea.contentWindow.document.open();
   $deviceDrawArea.contentWindow.document.write(str);
   $deviceDrawArea.contentWindow.document.close();
+  $deviceDrawArea.contentWindow.document.onclick = function (e) {
+    switchDevice(d.id);
+  };
 
   if (d.pinIndex) {
     $devicePinned.style.display = 'block';
@@ -161,13 +168,13 @@ function switchDevice(id) {
   // document.getElementById('refresh-device-button').style.opacity = 1;
 
   const i = DEVICE.all[id].id;
-  let $deviceWrapper = document.getElementById(`device-${i}`);
+  const $deviceWrapper = document.getElementById(`device-${i}`);
 
   if (!$deviceWrapper) {
     const html = `<div class="col device-wrapper" id="device-${i}"><img id="device-${i}-pinned" class="device-pin" src="src/assets/img/outline_push_pin_white_18dp.png"><iframe id="device-${i}-draw-area" class="draw-area"></iframe></div>`;
     document.getElementById('all-devices').insertAdjacentHTML('afterbegin', html);
 
-    $deviceWrapper = document.getElementById(`device-${i}`);
+    // $deviceWrapper = document.getElementById(`device-${i}`);
   }
 
   window.switchClass(document.getElementById(id), 'active-device');
