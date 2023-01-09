@@ -8,7 +8,7 @@ exports.config = {
   defaultPort: 53000,
   mayChangePort: true,
   heartbeatInterval: 100,
-  heartbeatTimeout: 9000,
+  heartbeatTimeout: 5000,
   searchOptions: {
     type: 'Bonjour',
     bonjourName: 'qlab',
