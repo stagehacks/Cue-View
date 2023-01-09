@@ -2,7 +2,6 @@ const { v4: uuid } = require('uuid');
 const osc = require('osc');
 const net = require('net');
 const udp = require('dgram');
-const _ = require('lodash');
 
 const PLUGINS = require('./plugins.js');
 const VIEW = require('./view.js');
