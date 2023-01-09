@@ -1,8 +1,10 @@
 exports.config = {
   defaultName: 'Art-Net',
   connectionType: 'UDPsocket',
-  heartbeatInterval: 10000,
   defaultPort: 6454,
+  mayChangePort: false,
+  heartbeatInterval: 5000,
+  heartbeatTimeout: 15000,
   searchOptions: {
     type: 'UDPsocket',
     searchBuffer: Buffer.from([0x00]),

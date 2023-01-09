@@ -5,9 +5,10 @@ const path = require('path');
 exports.config = {
   defaultName: 'QLab',
   connectionType: 'osc',
-  heartbeatInterval: 50,
-  heartbeatTimeout: 2000,
+  defaultPort: 53000,
   mayChangePort: true,
+  heartbeatInterval: 500,
+  heartbeatTimeout: 5000,
   searchOptions: {
     type: 'Bonjour',
     bonjourName: 'qlab',
