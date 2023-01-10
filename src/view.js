@@ -19,10 +19,6 @@ function drawDeviceFrame(id) {
     return true;
   }
 
-  $deviceDrawArea.onclick = function (e) {
-    console.log('oo');
-  };
-
   const d = DEVICE.all[id];
 
   let str = '<html><head>';
