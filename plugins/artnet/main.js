@@ -10,7 +10,6 @@ exports.config = {
     searchBuffer: Buffer.from([0x00]),
     devicePort: 6454,
     listenPort: 6454,
-    mayChangePort: false,
     validateResponse(msg, info, devices) {
       return msg.toString('utf8', 0, 7) === 'Art-Net';
     },
