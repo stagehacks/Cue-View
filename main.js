@@ -1,6 +1,7 @@
-const { app, BrowserWindow, Menu, ipcMain, nativeTheme, dialog } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, nativeTheme, dialog, shell } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
+const packageInfo = require('./package.json');
 
 const isMac = process.platform === 'darwin';
 const isWin = process.platform === 'win32';
@@ -276,11 +277,7 @@ function openNetworkInfoWindow() {
   networkInfoWindow.show();
 }
 
-
-
-
-
-// Autoupdate logic below
+// ONLY Autoupdate logic below
 ipcMain.on('checkForUpdates', (event, arg) => {
   autoUpdater.checkForUpdates();
 });
@@ -311,7 +308,7 @@ autoUpdater.on('update-available', (updateInfo) => {
   if (isMac) {
     dialogOpts = {
       type: 'info',
-      buttons: ['Download', 'Cancel'],
+      buttons: ['Download', 'Cancel', 'View Release Notes'],
       title: 'Update Available',
       message: title,
       detail: msg,
@@ -319,16 +316,19 @@ autoUpdater.on('update-available', (updateInfo) => {
   } else {
     dialogOpts = {
       type: 'info',
-      buttons: ['Download', 'Cancel'],
+      buttons: ['Download', 'Cancel', 'View Release Notes'],
       title: 'Update Available',
       message: msg,
     };
   }
 
   dialog.showMessageBox(mainWindow, dialogOpts).then((returnValue) => {
-    // download was clicked
     if (returnValue.response === 0) {
+      // download was clicked
       autoUpdater.downloadUpdate();
+    } else if (returnValue.response === 2) {
+      // view release notes clicked
+      shell.openExternal(`${packageInfo.repository}/releases/tag/v${updateInfo.version}`);
     }
   });
 });
@@ -343,7 +343,7 @@ autoUpdater.on('update-downloaded', (event) => {
     dialogOpts = {
       type: 'info',
       buttons: ['Install', 'Later'],
-      title: 'Update Available',
+      title: 'Update Downloaded',
       message: title,
       detail: msg,
     };
@@ -351,7 +351,7 @@ autoUpdater.on('update-downloaded', (event) => {
     dialogOpts = {
       type: 'info',
       buttons: ['Install', 'Later'],
-      title: 'Update Available',
+      title: 'Update Downloaded',
       message: msg,
     };
   }
