@@ -11,7 +11,7 @@ exports.config = {
     devicePort: 10023,
     listenPort: 0,
     validateResponse(msg, info) {
-      return msg.toString().includes('/xinfo') === 0;
+      return msg.toString().includes('/xinfo');
     },
   },
 };
