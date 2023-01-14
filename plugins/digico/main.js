@@ -7,6 +7,7 @@ exports.config = {
   heartbeatTimeout: 11000,
   searchOptions: {
     type: 'UDPsocket',
+    // send "/Console/Name/?" this is what the iPad sends to check connection
     searchBuffer: Buffer.from([
       0x2f, 0x43, 0x6f, 0x6e, 0x73, 0x6f, 0x6c, 0x65, 0x2f, 0x4e, 0x61, 0x6d, 0x65, 0x2f, 0x3f,
     ]),
@@ -20,13 +21,30 @@ exports.config = {
   },
 };
 
-exports.ready = function ready(device) {
-  const d = device;
-  d.data = new DiGiCo();
-  d.send('/Console/Name/?');
-  d.send('/Console/Session/Filename/?');
-};
+exports.ready = function ready(_device) {
+  const device = _device;
+  device.data = new DiGiCo();
+  // This is what the DiGiCo iPad app sends on connection
+  device.send('/Console/Name/?');
+  device.send('/Console/Session/Filename/?');
+  device.send('/Console/Channels/?');
+  device.send('/Console/Input_Channels/modes/?');
+  device.send('/Console/Group_Outputs/modes/?');
+  device.send('/Console/Aux_Outputs/modes/?');
+  device.send('/Console/Multis/?');
 
+  device.send('/Snapshots/Surface_Snapshot/?');
+
+  device.send('/Snapshots/Current_Snapshot/?');
+
+  device.send('/Input_Channels/?');
+
+  device.send('/Layout/Layout/Banks/?');
+
+  // These are also sent by the iPad app but aren't queries (?) so may potentially write to console?
+  // device.send('/Meters/clear');
+  // device.send('/Meters/clear');
+};
 exports.data = function data(_device, oscData) {
   const device = _device;
   this.deviceInfoUpdate(device, 'status', 'ok');
@@ -46,6 +64,7 @@ class DiGiCo {
     this.Control_Groups = {};
     this.Group_Outputs = {};
     this.Matrix_Outputs = {};
+    this.Layout = {};
   }
 }
 
