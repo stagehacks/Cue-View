@@ -30,7 +30,6 @@ tr td:first-child {
   padding: 1px 6px;
   border-radius: 10px;
   color: black;
-  font-family: PlexMono !important;
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -136,12 +135,7 @@ input[type='range']::-webkit-slider-runnable-track {
 
 .meter {
   height: 3px;
-  background: linear-gradient(
-    90deg,
-    rgba(19, 126, 30, 1) 0%,
-    rgba(255, 238, 30, 1) 85%,
-    rgba(255, 0, 0, 1) 100%
-  );
+  background: linear-gradient(90deg, rgba(19, 126, 30, 1) 0%, rgba(255, 238, 30, 1) 85%, rgba(255, 0, 0, 1) 100%);
 }
 
 /* need to find a way to match the color of this with the table row */

@@ -16,10 +16,10 @@ exports.config = {
   },
 };
 
-exports.ready = function ready(device) {
-  const d = device;
-  d.data.X32 = new Console();
-  d.send('/xinfo');
+exports.ready = function ready(_device) {
+  const device = _device;
+  device.data = new Console();
+  device.send('/xinfo');
 
   device.send('/batchsubscribe', [
     { type: 's', value: '/ch/meters' },
@@ -44,25 +44,25 @@ function parseAddress(msg) {
   return addr;
 }
 
-exports.data = function data(device, oscData) {
-  this.deviceInfoUpdate(device, 'status', 'ok');
+exports.data = function data(_device, oscData) {
+  this.deviceInfoUpdate(_device, 'status', 'ok');
 
-  const d = device;
+  const device = _device;
 
   if (oscData.address === '/xinfo') {
-    d.data.X32.info.name = oscData.args[1];
-    d.data.X32.info.ip = oscData.args[0];
-    d.data.X32.info.firmware = oscData.args[3];
-    d.data.X32.info.model = oscData.args[2];
+    device.data.info.name = oscData.args[1];
+    device.data.info.ip = oscData.args[0];
+    device.data.info.firmware = oscData.args[3];
+    device.data.info.model = oscData.args[2];
 
-    this.deviceInfoUpdate(device, 'defaultName', d.data.X32.info.name);
+    this.deviceInfoUpdate(_device, 'defaultName', device.data.info.name);
 
-    d.send('/main/st/config/name');
+    device.send('/main/st/config/name');
 
     for (let i = 0; i <= 32; i++) {
-      d.send(`/ch/${i.toString().padStart(2, '0')}/config/name`);
+      device.send(`/ch/${i.toString().padStart(2, '0')}/config/name`);
     }
-    d.draw();
+    device.draw();
   } else if (oscData.address.includes('/ch/meters')) {
     const buf = Buffer.from(oscData.args[0]);
 
@@ -70,12 +70,12 @@ exports.data = function data(device, oscData) {
     for (let i = 0; i < 70; i++) {
       if (i >= 0 && i < 32) {
         // These are channel meters
-        d.data.X32.inputs.channels[i].meter = Console.getBehringerDB(buf.readFloatLE(offset));
+        device.data.inputs.channels[i].meter = Console.getBehringerDB(buf.readFloatLE(offset));
       }
 
       offset += 4;
     }
-    d.draw();
+    device.draw();
   } else if (oscData.address.includes('/main/meters')) {
     const buf = Buffer.from(oscData.args[0]);
     let offset = 4; // skip first 4 bytes they are the length bytes
@@ -83,10 +83,10 @@ exports.data = function data(device, oscData) {
     for (let i = 0; i < 49; i++) {
       if (i === 22) {
         // STEREO LEFT METER
-        d.data.X32.main.stereo.meter[0] = Console.getBehringerDB(buf.readFloatLE(offset));
+        device.data.main.stereo.meter[0] = Console.getBehringerDB(buf.readFloatLE(offset));
       } else if (i === 23) {
         // STEREO RIGHT METER
-        d.data.X32.main.stereo.meter[1] = Console.getBehringerDB(buf.readFloatLE(offset));
+        device.data.main.stereo.meter[1] = Console.getBehringerDB(buf.readFloatLE(offset));
       }
       offset += 4;
     }
@@ -95,56 +95,53 @@ exports.data = function data(device, oscData) {
 
     if (addr[0] === 'ch') {
       const channel = Number(addr[1]);
-      d.data.X32.inputs.channels[channel - 1].fader = oscData.args[0];
-      d.data.X32.inputs.channels[channel - 1].faderDB = Console.getBehringerDB(oscData.args[0]);
+      device.data.inputs.channels[channel - 1].fader = oscData.args[0];
+      device.data.inputs.channels[channel - 1].faderDB = Console.getBehringerDB(oscData.args[0]);
     } else if (addr[0] === 'main') {
-      d.data.X32.main.stereo.fader = oscData.args[0];
-      d.data.X32.main.stereo.faderDB = Console.getBehringerDB(oscData.args[0]);
+      device.data.main.stereo.fader = oscData.args[0];
+      device.data.main.stereo.faderDB = Console.getBehringerDB(oscData.args[0]);
     }
 
-    d.draw();
+    device.draw();
   } else if (oscData.address.includes('/mix/on')) {
     const addr = parseAddress(oscData.address);
     if (addr[0] === 'ch') {
       const channel = Number(addr[1]);
-      d.data.X32.inputs.channels[channel - 1].mute = oscData.args[0];
-      d.send(`/ch/${addr[1]}/mix/fader`);
+      device.data.inputs.channels[channel - 1].mute = oscData.args[0];
+      device.send(`/ch/${addr[1]}/mix/fader`);
     } else if (addr[0] === 'main') {
-      d.data.X32.main.stereo.mute = oscData.args[0];
-      d.send(`/main/${addr[1]}/mix/fader`);
+      device.data.main.stereo.mute = oscData.args[0];
+      device.send(`/main/${addr[1]}/mix/fader`);
     }
-    d.draw();
+    device.draw();
   } else if (oscData.address.includes('/config/name')) {
     const addr = parseAddress(oscData.address);
     if (addr[0] === 'main') {
       if (addr[1] === 'st') {
-        d.data.X32.main.stereo.name = oscData.args[0];
-        if (d.data.X32.main.stereo.name === '') {
-          d.data.X32.main.stereo.name = 'LR';
+        device.data.main.stereo.name = oscData.args[0];
+        if (device.data.main.stereo.name === '') {
+          device.data.main.stereo.name = 'LR';
         }
-        d.send(`/main/${addr[1]}/config/color`);
+        device.send(`/main/${addr[1]}/config/color`);
       }
     } else if (addr[0] === 'ch') {
       const channel = Number(addr[1]);
-      d.data.X32.inputs.channels[channel - 1].name = oscData.args[0];
-      d.send(`/ch/${addr[1]}/config/color`);
+      device.data.inputs.channels[channel - 1].name = oscData.args[0];
+      device.send(`/ch/${addr[1]}/config/color`);
     }
-    d.draw();
+    device.draw();
   } else if (oscData.address.includes('/config/color')) {
     const addr = parseAddress(oscData.address);
     if (addr[0] === 'main') {
-      d.data.X32.main.stereo.color = oscData.args[0];
-      d.send(`/main/${addr[1]}/mix/on`);
+      device.data.main.stereo.color = oscData.args[0];
+      device.send(`/main/${addr[1]}/mix/on`);
     } else if (addr[0] === 'ch') {
       const channel = Number(addr[1]);
-      d.data.X32.inputs.channels[channel - 1].color = oscData.args[0];
-      d.send(`/ch/${addr[1]}/mix/on`);
+      device.data.inputs.channels[channel - 1].color = oscData.args[0];
+      device.send(`/ch/${addr[1]}/mix/on`);
     }
-    d.draw();
-  } else {
-    // console.log(oscData);
+    device.draw();
   }
-  // console.log(msg)
 };
 
 exports.heartbeat = function heartbeat(device) {
