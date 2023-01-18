@@ -3,6 +3,7 @@ table {
   border: #404040 1px solid;
   border-radius: 4px;
   color: #a59baa;
+  width: 100%;
 }
 th {
   font-size: 14px;
@@ -60,6 +61,16 @@ tr.active-cue td.num div {
 }
 tr.active-cue .time {
   border-color: #c78b07;
+}
+
+.list_name {
+  color: lightgray;
+  margin-left: 5px;
+  margin-bottom: 2px;
+}
+
+.list_container {
+  margin-bottom: 10px;
 }
 
 @media screen and (min-width: 0px) and (max-width: 750px) {
