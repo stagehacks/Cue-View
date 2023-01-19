@@ -6,14 +6,14 @@ const Cue = require('./cue');
 exports.config = {
   defaultName: 'ETC Eos',
   connectionType: 'osc',
-  defaultPort: 3032,
+  defaultPort: 3037,
   mayChangePort: true,
   heartbeatInterval: 5000,
   heartbeatTimeout: 6000,
   searchOptions: {
     type: 'TCPport',
     searchBuffer: Buffer.from('\xc0/eos/ping\x00\x00\x2c\x00\x00\x00\xc0', 'ascii'),
-    testPort: 3032,
+    testPort: 3037,
     validateResponse(msg, info) {
       return msg.toString().includes('/eos/out');
     },
