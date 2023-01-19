@@ -30,6 +30,7 @@ exports.ready = function ready(_device) {
 
 exports.data = function data(_device, osc) {
   const device = _device;
+  this.deviceInfoUpdate(device, 'status', 'ok');
 
   const addressParts = osc.address.split('/');
   addressParts.shift();
@@ -50,7 +51,10 @@ exports.data = function data(_device, osc) {
       device.send(`/eos/get/cue/${addressParts[4]}/index/${i}`);
     }
   } else if (match(addressParts, ['eos', 'out', 'get', 'cue', '*', '*', '*', 'list', '*', '*'])) {
-    this.deviceInfoUpdate(device, 'status', 'ok');
+    if (device.data.EOS.cueLists[addressParts[4]] === undefined) {
+      device.data.EOS.cueLists[addressParts[4]] = {};
+      device.send(`/eos/get/cue/${addressParts[4]}/count`);
+    }
     if (device.data.EOS.cueLists[addressParts[4]][addressParts[5]] === undefined) {
       device.data.EOS.cueLists[addressParts[4]][addressParts[5]] = {};
     }
