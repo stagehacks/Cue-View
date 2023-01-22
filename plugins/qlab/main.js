@@ -36,11 +36,14 @@ const valuesForKeysString =
   '"mode","parent","cartRows","cartColumns","cartPosition","displayName","preWaitElapsed",' +
   '"actionElapsed","postWaitElapsed","isPaused"]';
 
-const cueTemplate = _.template(fs.readFileSync(path.join(__dirname, `cue.ejs`)));
-const tileTemplate = _.template(fs.readFileSync(path.join(__dirname, `tile.ejs`)));
-const cartTemplate = _.template(fs.readFileSync(path.join(__dirname, `cart.ejs`)));
-
-exports.ready = function ready(device) {
+exports.ready = function ready(_device) {
+  const device = _device;
+  device.templates = {
+    cue: _.template(fs.readFileSync(path.join(__dirname, `cue.ejs`))),
+    tile: _.template(fs.readFileSync(path.join(__dirname, `tile.ejs`))),
+    cart: _.template(fs.readFileSync(path.join(__dirname, `cart.ejs`))),
+    cuelist: _.template(fs.readFileSync(path.join(__dirname, `cuelist.ejs`))),
+  };
   device.send(`/version`);
   device.send('/workspaces');
 };
@@ -321,8 +324,8 @@ exports.update = function update(device, doc, updateType, data) {
       if (data.cue.type === 'Cue List') {
         $elem.outerHTML = `<h3>${data.workspace.displayName} &mdash; ${data.cue.name}</h3>`;
       } else if (data.cue.type === 'Cart') {
-        $elem.outerHTML = cartTemplate({
-          tileTemplate,
+        $elem.outerHTML = device.templates.cart({
+          tileTemplate: device.templates.tile,
           cueList: data.cue,
           allCues: data.workspace.cues,
         });
@@ -330,12 +333,12 @@ exports.update = function update(device, doc, updateType, data) {
         // checking that the parent cue is a cart cue
         const parentCue = data.workspace.cues[data.cue.parent];
         if (parentCue && parentCue.type === 'Cart') {
-          $elem.outerHTML = tileTemplate(data);
+          $elem.outerHTML = device.templates.tile(data);
         } else {
-          $elem.outerHTML = cueTemplate(data);
+          $elem.outerHTML = device.templates.cue(data);
         }
       } else {
-        $elem.outerHTML = cueTemplate(data);
+        $elem.outerHTML = device.templates.cue(data);
       }
     }
   } else if (updateType === 'updatePlaybackPosition') {

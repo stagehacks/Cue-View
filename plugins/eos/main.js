@@ -23,6 +23,9 @@ exports.config = {
 exports.ready = function ready(_device) {
   const device = _device;
   device.data.EOS = new EOS();
+  device.templates = {
+    cue: _.template(fs.readFileSync(path.join(__dirname, `cue.ejs`))),
+  };
   device.send('/eos/get/cuelist/count');
   device.send('/eos/get/version');
   device.send('/eos/subscribe', [{ type: 'i', value: 1 }]);
@@ -91,14 +94,11 @@ exports.data = function data(_device, osc) {
   }
 };
 
-const cueTemplate = _.template(fs.readFileSync(path.join(__dirname, `cue.ejs`)));
-
 exports.update = function update(device, doc, updateType, data) {
   if (updateType === 'cueData') {
     const $elem = doc.getElementById(data.uid);
-
     if ($elem) {
-      $elem.outerHTML = cueTemplate({
+      $elem.outerHTML = device.templates.cue({
         q: data.cue,
         cueNumber: data.cueNumber,
         isActive: false,

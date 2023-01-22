@@ -38,6 +38,7 @@ function registerDevice(newDevice, discoveryMethod) {
     port: newDevice.port,
     addresses: newDevice.addresses,
     data: {},
+    templates: {},
     fields: newDevice.fields || {},
     pinIndex: false,
     lastDrawn: 0,

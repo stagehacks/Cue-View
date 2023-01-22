@@ -3,13 +3,6 @@
 	<h2>Eos <%= data.version  %></h2>
 </header>
 
-<%
-  const fs = require('fs');
-  const path = require('path');
-  let cueTemplate = _.template(fs.readFileSync(path.join(__dirname, `/plugins/eos/cue.ejs`)));
-%>
-
-
 <% for(var i in data.EOS.cueLists){ %>
 	<div class="list_container">
 		<div class="list_name">List <%= i %></div>
@@ -35,7 +28,7 @@
 			<% for(var j=0; j<cues.length; j++){ %>
 				<% var q = data.EOS.cueLists[i][cues[j]] %>
 				
-				<%= cueTemplate({
+				<%= templates.cue({
 					q: q,
 					cues: cues,
 					cueNumber: cues[j],
