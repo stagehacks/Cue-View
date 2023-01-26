@@ -1,0 +1,45 @@
+<header>
+	<h1><%= listName  %></h1>
+</header>
+
+<div class="program">
+    <h3>Program</h3>
+    <div class="source-wrapper">
+        <% Object.entries(data.source).forEach(([sourceID, state])=>{ %>
+            <% if (state.tally.program) { %>
+                <div id="atem-program-source-<%= sourceID %>" class="atem-input program-active">
+                    <div class="source-label">
+                        <%= state.abbreviation %>
+                    </div>
+                </div>     
+            <% } else { %>   
+                <div id="atem-program-source-<%= sourceID %>" class="atem-input">
+                    <div class="source-label">
+                        <%= state.abbreviation %>
+                    </div>
+                </div>            
+            <% } %>
+        <% }) %>
+    </div>
+  </div>
+  
+  <div class="preview">
+    <h3>Preview</h3>
+    <div class="source-wrapper">
+        <% Object.entries(data.source).forEach(([sourceID, state])=>{ %>
+            <% if (state.tally.preview) { %>
+                <div id="atem-preview-source-<%= sourceID %>" class="atem-input preview-active">
+                    <div class="source-label">
+                        <div><%= state.abbreviation %></div>
+                    </div>
+                </div>     
+            <% } else { %>   
+                <div id="atem-preview-source-<%= sourceID %>" class="atem-input">
+                    <div class="source-label">
+                        <div><%= state.abbreviation %></div>
+                    </div>
+                </div>            
+            <% } %>
+        <% }) %>
+    </div>
+  </div>

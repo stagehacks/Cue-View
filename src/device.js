@@ -2,7 +2,7 @@ const { v4: uuid } = require('uuid');
 const osc = require('osc');
 const net = require('net');
 const udp = require('dgram');
-
+const Atem = require('atem');
 const PLUGINS = require('./plugins.js');
 const VIEW = require('./view.js');
 const SAVESLOTS = require('./saveSlots.js');
@@ -193,6 +193,43 @@ function initDeviceConnection(id) {
     });
 
     device.send = (data) => {};
+  } else if (plugins[type].config.connectionType === 'atem') {
+    device.connection = new Atem(device.addresses[0]);
+    device.connection.on('connectionStateChange', (state) => {
+      plugins[type].ready(device);
+      infoUpdate(device, 'status', 'ok');
+      const msg = {
+        event: 'connectionStateChange',
+        state,
+      };
+      plugins[type].data(device, msg);
+    });
+
+    device.connection.on('sourceTally', (sourceID, state) => {
+      const msg = {
+        event: 'sourceTally',
+        sourceID,
+        state,
+      };
+      plugins[type].data(device, msg);
+    });
+
+    device.connection.on('sourceConfiguration', (sourceID, sourceConfiguration) => {
+      const msg = {
+        event: 'sourceConfiguration',
+        sourceID,
+        sourceConfiguration,
+      };
+      plugins[type].data(device, msg);
+    });
+
+    device.connection.on('rawCommand', (cmd) => {
+      const msg = {
+        event: 'rawCommand',
+        cmd,
+      };
+      plugins[type].data(device, msg);
+    });
   }
 
   return true;
