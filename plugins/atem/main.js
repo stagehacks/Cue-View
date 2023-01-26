@@ -21,8 +21,17 @@ exports.ready = function ready(_device) {
   console.log('atem ready');
 };
 
+exports.update = function update(device, _document, updateType, data) {
+  const document = _document;
+
+  if (updateType === 'tbar' && document.getElementById('tbar-pos')) {
+    document.getElementById('tbar-pos').value = data;
+  }
+};
+
 exports.data = function data(_device, msg) {
   const device = _device;
+  this.deviceInfoUpdate(device, 'status', 'ok');
   switch (msg.event) {
     case 'sourceConfiguration':
       if (device.data.source === undefined) {
@@ -38,6 +47,7 @@ exports.data = function data(_device, msg) {
       }
 
       device.data.source[msg.sourceID] = {
+        ...device.data.source[msg.sourceID],
         ...msg.sourceConfiguration,
       };
       break;
@@ -57,9 +67,7 @@ exports.data = function data(_device, msg) {
       break;
 
     case 'rawCommand':
-      if (msg.cmd.name === '_ver') {
-        console.log(msg);
-      } else if (msg.cmd.name === '_pin') {
+      if (msg.cmd.name === '_pin') {
         if (msg.cmd.data !== undefined) {
           infoUpdate(device, 'defaultName', msg.cmd.data.toString().trim());
         }
@@ -74,7 +82,9 @@ exports.data = function data(_device, msg) {
           DVEs: msg.cmd.data[6],
           superSources: msg.cmd.data[7],
         };
-        console.log(device);
+      } else if (msg.cmd.name === 'TrPs') {
+        const tbarPos = msg.cmd.data.readUint16BE(4);
+        device.update('tbar', tbarPos);
       }
       break;
     default:

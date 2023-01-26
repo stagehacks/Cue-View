@@ -230,6 +230,10 @@ function initDeviceConnection(id) {
       };
       plugins[type].data(device, msg);
     });
+
+    device.connection.on('connectionLost', () => {
+      console.log('connection lost');
+    });
   }
 
   return true;
