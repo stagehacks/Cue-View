@@ -184,6 +184,12 @@ function switchDevice(id) {
     document.getElementById('device-settings-rx-port').disabled = true;
   }
 
+  if (activeDevice.plugin.config.mayChangeLocalPort === false) {
+    document.getElementById('device-settings-rx-port').disabled = true;
+  } else {
+    document.getElementById('device-settings-rx-port').disabled = false;
+  }
+
   if (activeDevice.plugin.config.localPort) {
     // document.getElementById('device-settings-port-label').textContent = 'Remote\nPort:';
     document.getElementById('device-settings-rx-port-row').style.display = 'table-row';

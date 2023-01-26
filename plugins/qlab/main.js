@@ -8,6 +8,7 @@ exports.config = {
   remotePort: 53000,
   localPort: 53001,
   mayChangePorts: true,
+  mayChangeLocalPort: false,
   heartbeatInterval: 100,
   heartbeatTimeout: 5000,
   searchOptions: {
