@@ -43,7 +43,9 @@ header h2 {
 header h2 {
   color: #b6b6b6;
 }
-
+h3 {
+  font-weight: 300;
+}
 table.cv-table {
   border: none;
   table-layout: fixed;
