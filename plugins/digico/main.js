@@ -29,22 +29,11 @@ exports.config = {
 exports.ready = function ready(_device) {
   const device = _device;
   device.data = new DiGiCo();
-  // This is what the DiGiCo iPad app sends on connection
+
   device.send('/Console/Name/?');
   device.send('/Console/Session/Filename/?');
   device.send('/Console/Channels/?');
-  // device.send('/Console/Input_Channels/modes/?');
-  // device.send('/Console/Group_Outputs/modes/?');
-  // device.send('/Console/Aux_Outputs/modes/?');
-  // device.send('/Console/Multis/?');
-
   device.send('/Snapshots/Current_Snapshot/?');
-
-  // device.send('/Input_Channels/?'); // no response
-
-  // device.send('/Layout/Layout/Banks/?');
-
-  // console.log(device);
 
   // These are also sent by the iPad app but aren't queries (?) so may potentially write to console?
   // device.send('/Meters/clear');
@@ -58,25 +47,23 @@ exports.data = function data(_device, oscData) {
   properties.shift();
   setObjectProperty(device.data, properties, oscData.args);
 
-  // console.log(Object.keys(device.data.Control_Groups).length);
-
-  // console.log(properties);
-  if (properties[1] === 'Control_Groups') {
+  if (properties[0] === 'Console' && properties[1] === 'Control_Groups') {
     for (let i = 1; i <= device.data.Console.Control_Groups; i++) {
       device.send(`/Control_Groups/${i}/?`);
     }
-    console.log('draw');
     device.draw();
-  } else if (properties[0] === 'Control_Groups') {
-    device.update('updateFader', {
-      type: 'Control_Groups',
+  } else if (['Control_Groups', 'Input_Channels', 'Group_Outputs', 'Aux_Outputs'].includes(properties[0])) {
+    device.update('fader', {
+      type: properties[0],
       channel: properties[1],
     });
+
+    // } else if (properties[0] === 'Control_Groups') {
+    //   device.update('fader', {
+    //     type: 'Control_Groups',
+    //     channel: properties[1],
+    //   });
   } else if (properties[0] === 'Console' && properties[1] === 'Input_Channels') {
-    // console.log(properties);
-    // console.log(device.data);
-    // device.send(`/Input_Channels/1/?`);
-    // device.send(`/Input_Channels/2/?`);
     for (let i = 1; i <= device.data.Console.Input_Channels; i++) {
       device.send(`/Input_Channels/${i}/Channel_Input/name`);
       device.send(`/Input_Channels/${i}/mute/?`);
@@ -84,11 +71,11 @@ exports.data = function data(_device, oscData) {
       device.send(`/Input_Channels/${i}/fader/?`);
     }
     device.draw();
-  } else if (properties[0] === 'Input_Channels') {
-    device.update('updateFader', {
-      type: 'Input_Channels',
-      channel: properties[1],
-    });
+    // } else if (properties[0] === 'Input_Channels') {
+    //   device.update('fader', {
+    //     type: 'Input_Channels',
+    //     channel: properties[1],
+    //   });
   } else if (properties[0] === 'Console' && properties[1] === 'Group_Outputs') {
     for (let i = 1; i <= device.data.Console.Group_Outputs; i++) {
       device.send(`/Group_Outputs/${i}/mute/?`);
@@ -97,11 +84,11 @@ exports.data = function data(_device, oscData) {
       device.send(`/Group_Outputs/${i}/Buss_Trim/name/?`);
     }
     device.draw();
-  } else if (properties[0] === 'Group_Outputs') {
-    device.update('updateFader', {
-      type: 'Group_Outputs',
-      channel: properties[1],
-    });
+    // } else if (properties[0] === 'Group_Outputs') {
+    //   device.update('fader', {
+    //     type: 'Group_Outputs',
+    //     channel: properties[1],
+    //   });
   } else if (properties[0] === 'Console' && properties[1] === 'Aux_Outputs') {
     for (let i = 1; i <= device.data.Console.Aux_Outputs; i++) {
       device.send(`/Aux_Outputs/${i}/mute/?`);
@@ -110,11 +97,11 @@ exports.data = function data(_device, oscData) {
       device.send(`/Aux_Outputs/${i}/Buss_Trim/name/?`);
     }
     device.draw();
-  } else if (properties[0] === 'Aux_Outputs') {
-    device.update('updateFader', {
-      type: 'Aux_Outputs',
-      channel: properties[1],
-    });
+    // } else if (properties[0] === 'Aux_Outputs') {
+    //   device.update('fader', {
+    //     type: 'Aux_Outputs',
+    //     channel: properties[1],
+    //   });
   } else if (properties[0] === 'Console' && properties[1] === 'Name') {
     this.deviceInfoUpdate(device, 'defaultName', device.data.Console.Name);
   } else if (properties[0] === 'Snapshots') {
@@ -126,7 +113,6 @@ exports.data = function data(_device, oscData) {
 
 exports.heartbeat = function heartbeat(device) {
   device.send('/Console/Name/?');
-  // device.draw();
   console.log(device.data);
 };
 
@@ -178,14 +164,14 @@ function setObjectProperty(_object, _properties, value) {
 
 const faderTemplate = _.template(fs.readFileSync(path.join(__dirname, `/fader.ejs`)));
 exports.update = function update(device, doc, updateType, data) {
-  if (updateType === 'updateFader') {
+  if (updateType === 'fader') {
     const $elem = doc.getElementById(`${data.type}-${data.channel}`);
     $elem.outerHTML = faderTemplate({
       type: data.type,
       fader: device.data[data.type][data.channel],
       index: data.channel,
     });
-  } else if (updateType === 'updateSnapshot') {
+  } else if (updateType === 'snapshot') {
     const $elem = doc.getElementById(`snapshot`);
     $elem.textContent = `${data.snapshots.Current_Snapshot}`;
   }
