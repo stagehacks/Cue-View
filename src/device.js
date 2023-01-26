@@ -100,6 +100,7 @@ function initDeviceConnection(id) {
     if (plugins[type].config.connectionType.includes('udp')) {
       device.connection = new osc.UDPPort({
         localAddress: '0.0.0.0',
+        localPort: 8001, // added this line
         remoteAddress: device.addresses[0],
         remotePort: device.port,
       });

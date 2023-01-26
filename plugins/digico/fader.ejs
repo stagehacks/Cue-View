@@ -1,0 +1,36 @@
+<tr class="fader" id="<%=type%>-<%=index%>">
+    <td class="fader-channel"><%=index%></td>
+
+    <% if(type=="Control_Groups"){ %>
+        <td class="fader-name lcd-control-group state-<%= fader ? fader.solo : '' %>">
+            <%= fader ? fader.name : "-" %>
+        </td>
+    <% }else if(type=="Input_Channels"){ %>
+        <td class="fader-name lcd-channel-input state-<%= fader ? fader.solo : '' %>">
+            <%= fader ? (fader.Channel_Input ? fader.Channel_Input.name: "") : "" %>
+        </td>
+    <% }else if(type=="Group_Outputs"){ %>
+        <td class="fader-name lcd-group-output state-<%= fader ? fader.solo : '' %>">
+            <%= fader ? (fader.Buss_Trim ? fader.Buss_Trim.name: "") : "" %>
+        </td>
+    <% }else if(type=="Aux_Outputs"){ %>
+        <td class="fader-name lcd-aux-output state-<%= fader ? fader.solo : '' %>">
+            <%= fader ? (fader.Buss_Trim ? fader.Buss_Trim.name: "") : "" %>
+        </td>
+    <% } %>
+    
+    <td class="fader-mute state-<%= fader ? fader.mute : '-' %>"></td>
+
+    <% if(fader){ %>
+        <% let percent = (fader.fader-10)*1.5+100 %>
+        <td class="fader-fader" style="background: linear-gradient(90deg, rgb(150, 150, 150, 0.2) <%=percent%>%, transparent <%=percent%>%);">
+            <% if(fader.fader>-100){ %>
+                <small style="mix-blend-mode: difference;"><%= fader ? Math.round(fader.fader*10.0)/10.0 : '-' %>db</small>
+            <% } %>
+        </td>
+    <% }else{ %>
+        <td>-</td>
+    <% } %>
+    
+   
+</tr>

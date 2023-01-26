@@ -1,0 +1,76 @@
+.column {
+  float: left;
+  margin: 5px;
+}
+.section {
+  border: #333 3px solid;
+  border-bottom: none;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 10px;
+  margin-bottom: 30px;
+}
+.section h3 {
+  font-weight: 300;
+  margin-top: 0px;
+  color: #aaa !important;
+}
+table {
+  border-collapse: collapse;
+  display: block;
+}
+.fader:nth-child(even) {
+  background: #1a1a1a;
+}
+.fader:nth-child(odd) {
+  background: #1f1f1f;
+}
+.fader td {
+  text-align: center;
+  width: 30px;
+  height: 20px;
+  border: black 1px solid;
+}
+.fader .fader-channel {
+  color: #444;
+  font-size: 10px;
+}
+.fader .fader-name {
+  width: 80px;
+  color: black;
+  font-family: monospace;
+}
+.fader .lcd-control-group {
+  background-color: rgb(66, 132, 255);
+}
+.fader .lcd-channel-input {
+  background-color: rgb(135, 175, 235);
+}
+.fader .lcd-group-output {
+  background-color: rgb(241, 71, 48);
+}
+.fader .lcd-aux-output {
+  background-color: rgb(197, 0, 187);
+}
+.fader .fader-name.state-1 {
+  background-color: rgb(0, 185, 0);
+}
+.fader .fader-mute {
+  width: 10px;
+  background-color: #444;
+}
+.fader .fader-mute.state-1 {
+  background-color: red;
+}
+.fader .fader-fader {
+  text-align: left;
+  width: 70px;
+  padding: 0px 10px;
+  color: rgb(68, 68, 68);
+}
+
+#snapshot {
+  font-size: 36px;
+  font-weight: bold;
+  font-family: 'Arial Black', 'Impact';
+}
