@@ -1,8 +1,8 @@
 exports.config = {
   defaultName: 'X Air Mixer',
   connectionType: 'UDPsocket',
-  defaultPort: 10024,
-  mayChangePort: false,
+  remotePort: 10024,
+  mayChangePorts: false,
   heartbeatInterval: 9000,
   heartbeatTimeout: 15000,
   searchOptions: {

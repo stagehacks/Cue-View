@@ -179,7 +179,8 @@ a {
 #device-settings #device-settings-plugin-dropdown {
   width: 170px;
 }
-#device-settings #device-settings-port {
+#device-settings #device-settings-port,
+#device-settings #device-settings-rx-port {
   width: 70px;
 }
 

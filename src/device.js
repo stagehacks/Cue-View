@@ -27,6 +27,16 @@ function registerDevice(newDevice, discoveryMethod) {
     return false;
   }
 
+  // set the local port for the new device
+  let newLocalPort = newDevice.localPort;
+  if (!newLocalPort) {
+    if (PLUGINS.all[newDevice.type].config.localPort) {
+      newLocalPort = PLUGINS.all[newDevice.type].config.localPort;
+    } else {
+      newLocalPort = newDevice.remotePort;
+    }
+  }
+
   const id = newDevice.id || uuid();
   devices[id] = {
     id,
@@ -35,7 +45,8 @@ function registerDevice(newDevice, discoveryMethod) {
     type: newDevice.type,
     displayName: newDevice.displayName,
     defaultName: newDevice.defaultName,
-    port: newDevice.port,
+    remotePort: newDevice.remotePort,
+    localPort: newLocalPort,
     addresses: newDevice.addresses,
     data: {},
     fields: newDevice.fields || {},
@@ -79,11 +90,11 @@ function initDeviceConnection(id) {
 
   infoUpdate(device, 'status', 'new');
 
-  if (device.port === undefined) {
-    device.port = device.plugin.config.defaultPort;
+  if (device.remotePort === undefined) {
+    device.remotePort = device.plugin.config.defaultPort;
   }
 
-  if (device.port === undefined || device.addresses.length === 0) {
+  if (device.remotePort === undefined || device.addresses.length === 0) {
     return true;
   }
   try {
@@ -100,14 +111,14 @@ function initDeviceConnection(id) {
     if (plugins[type].config.connectionType.includes('udp')) {
       device.connection = new osc.UDPPort({
         localAddress: '0.0.0.0',
-        localPort: 8001, // added this line
+        localPort: device.localPort,
         remoteAddress: device.addresses[0],
-        remotePort: device.port,
+        remotePort: device.remotePort,
       });
     } else {
       device.connection = new osc.TCPSocketPort({
         address: device.addresses[0],
-        port: device.port,
+        port: device.remotePort,
       });
     }
     device.connection.open();
@@ -136,7 +147,7 @@ function initDeviceConnection(id) {
     device.connection = new net.Socket();
     device.connection.connect(
       {
-        port: device.port,
+        port: device.remotePort,
         host: device.addresses[0],
       },
       () => {}
@@ -164,7 +175,7 @@ function initDeviceConnection(id) {
   } else if (plugins[type].config.connectionType === 'UDPsocket') {
     device.connection = udp.createSocket('udp4');
 
-    device.connection.bind({ port: plugins[type].config.defaultPort }, () => {
+    device.connection.bind({ port: plugins[type].config.remotePort }, () => {
       plugins[type].ready(device);
 
       device.connection.on('message', (msg, info) => {
@@ -175,14 +186,14 @@ function initDeviceConnection(id) {
     });
 
     device.send = (data) => {
-      device.connection.send(Buffer.from(data), device.port, device.addresses[0], (err) => {
+      device.connection.send(Buffer.from(data), device.remotePort, device.addresses[0], (err) => {
         // console.log(err);
       });
     };
   } else if (plugins[type].config.connectionType === 'multicast') {
     device.connection = udp.createSocket('udp4');
 
-    device.connection.bind(device.port, () => {
+    device.connection.bind(device.remotePort, () => {
       plugins[type].ready(device);
 
       device.connection.on('message', (msg, info) => {
@@ -243,7 +254,7 @@ module.exports.changeActiveIP = function changeActiveIP(newIP) {
 
 module.exports.changeActivePort = function changeActivePort(newPort) {
   const device = VIEW.getActiveDevice();
-  device.port = newPort;
+  device.remotePort = newPort;
 
   initDeviceConnection(device.id);
   VIEW.draw(device);

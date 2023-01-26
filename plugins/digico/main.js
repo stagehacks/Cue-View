@@ -5,8 +5,9 @@ const path = require('path');
 exports.config = {
   defaultName: 'DiGiCo',
   connectionType: 'osc-udp',
-  defaultPort: 8000,
-  mayChangePort: true,
+  remotePort: 8000,
+  localPort: 8001,
+  mayChangePorts: true,
   heartbeatInterval: 2000,
   heartbeatTimeout: 11000,
   searchOptions: {
@@ -65,7 +66,7 @@ exports.data = function data(_device, oscData) {
     //   });
   } else if (properties[0] === 'Console' && properties[1] === 'Input_Channels') {
     for (let i = 1; i <= device.data.Console.Input_Channels; i++) {
-      device.send(`/Input_Channels/${i}/Channel_Input/name`);
+      device.send(`/Input_Channels/${i}/Channel_Input/name`); // yup, no ? at the end of this one
       device.send(`/Input_Channels/${i}/mute/?`);
       device.send(`/Input_Channels/${i}/solo/?`);
       device.send(`/Input_Channels/${i}/fader/?`);

@@ -6,8 +6,8 @@ const Cue = require('./cue');
 exports.config = {
   defaultName: 'ETC Eos',
   connectionType: 'osc',
-  defaultPort: 3032,
-  mayChangePort: true,
+  remotePort: 3032,
+  mayChangePorts: true,
   heartbeatInterval: 5000,
   heartbeatTimeout: 6000,
   searchOptions: {

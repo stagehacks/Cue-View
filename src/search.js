@@ -127,7 +127,7 @@ function searchBonjour(pluginType, pluginConfig) {
       {
         type: pluginType,
         defaultName: e.name,
-        port: e.port,
+        remotePort: e.port,
         addresses: validAddresses,
       },
       'fromSearch'
@@ -154,7 +154,7 @@ function TCPtest(ipAddr, pluginType, pluginConfig) {
           {
             type: pluginType,
             defaultName: pluginConfig.defaultName,
-            port: pluginConfig.defaultPort,
+            remotePort: pluginConfig.remotePort,
             addresses: [ipAddr],
           },
           'fromSearch'
@@ -182,7 +182,7 @@ function searchUDP(pluginType, pluginConfig) {
             {
               type: pluginType,
               defaultName: pluginConfig.defaultName,
-              port: pluginConfig.defaultPort,
+              remotePort: pluginConfig.remotePort,
               addresses: [info.address],
             },
             'fromSearch'
@@ -214,7 +214,7 @@ function searchMulticast(pluginType, pluginConfig) {
           {
             type: pluginType,
             defaultName: pluginConfig.defaultName,
-            port: pluginConfig.defaultPort,
+            remotePort: pluginConfig.remotePort,
             addresses: [info.address],
           },
           'fromSearch'

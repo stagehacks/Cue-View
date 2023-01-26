@@ -3,8 +3,8 @@ const _ = require('lodash');
 exports.config = {
   defaultName: 'sACN',
   connectionType: 'multicast',
-  defaultPort: 5568,
-  mayChangePort: false,
+  remotePort: 5568,
+  mayChangePorts: false,
   heartbeatInterval: 5000,
   heartbeatTimeout: 15000,
   searchOptions: {

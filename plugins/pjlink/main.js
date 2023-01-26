@@ -3,8 +3,8 @@ const md5 = require('md5');
 exports.config = {
   defaultName: 'PJLink Projector',
   connectionType: 'TCPsocket',
-  defaultPort: 4352,
-  mayChangePort: false,
+  remotePort: 4352,
+  mayChangePorts: false,
   heartbeatInterval: 5000,
   heartbeatTimeout: 15000,
   searchOptions: {
