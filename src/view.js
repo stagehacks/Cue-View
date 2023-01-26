@@ -85,7 +85,7 @@ function generateBodyHTML(d) {
       </div>
       <div class="device-info">
         ${PLUGINS.all[d.type].info()}
-      <div>
+      </div>
     `;
   }
 }
