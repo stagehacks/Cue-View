@@ -1,5 +1,11 @@
 <tr class="fader" id="<%=type%>-<%=index%>">
-    <td class="fader-channel"><%=index%></td>
+    <% if(fader && fader.meter>0){ %>
+        <td class="fader-channel" style="background: linear-gradient(0deg, rgba(68, 255, 68, 0.3) <%=fader.meter%>%, transparent <%=fader.meter%>%);">
+            <%=index%>
+        </td>
+    <% }else{ %>
+        <td class="fader-channel"><%=index%></td>
+    <% } %>
 
     <% if(type=="Control_Groups"){ %>
         <td class="fader-name lcd-control-group state-<%= fader ? fader.solo : '' %>">
