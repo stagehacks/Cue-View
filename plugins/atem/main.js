@@ -1,13 +1,12 @@
-const { infoUpdate } = require('../../src/device');
-
 exports.config = {
   defaultName: 'ATEM',
   connectionType: 'atem',
   defaultPort: 9910,
   mayChangePort: false,
-  heartbeatInterval: 5000,
-  heartbeatTimeout: 6000,
+  // heartbeatInterval: 5000,
+  // heartbeatTimeout: 20000,
   searchOptions: {
+    // TODO: actually populate search options
     type: 'UDPsocket',
     searchBuffer: Buffer.from('', 'ascii'),
     testPort: 9910,
@@ -19,72 +18,100 @@ exports.config = {
 
 exports.ready = function ready(_device) {
   console.log('atem ready');
+  const device = _device;
+  device.data = device.connection.state;
+  device.draw();
+
+  // TODO: this is a little hacky but it works? gotta be better way to get initial update going
+  const interval = setInterval(() => {
+    device.update('inputs', device.data.video.mixEffects);
+    device.update('fadeToBlack', device.data.video.mixEffects);
+    device.update(`transitionPosition`, device.data.video.mixEffects);
+    device.update('downstreamKeyers', device.data.video.downstreamKeyers);
+  }, 1000);
+  setTimeout(() => {
+    clearInterval(interval);
+  }, 4000);
 };
 
 exports.update = function update(device, _document, updateType, data) {
   const document = _document;
+  switch (updateType) {
+    case 'downstreamKeyers':
+      for (let i = 0; i < data.length; i++) {
+        const dsk = data[i];
 
-  if (updateType === 'tbar' && document.getElementById('tbar-pos')) {
-    document.getElementById('tbar-pos').value = data;
-  }
-};
-
-exports.data = function data(_device, msg) {
-  const device = _device;
-  this.deviceInfoUpdate(device, 'status', 'ok');
-  switch (msg.event) {
-    case 'sourceConfiguration':
-      if (device.data.source === undefined) {
-        device.data.source = {};
-      }
-      if (device.data.source[msg.sourceID] === undefined) {
-        device.data.source[msg.sourceID] = {
-          tally: {
-            preview: false,
-            program: false,
-          },
-        };
-      }
-
-      device.data.source[msg.sourceID] = {
-        ...device.data.source[msg.sourceID],
-        ...msg.sourceConfiguration,
-      };
-      break;
-    case 'sourceTally':
-      if (device.data.source === undefined) {
-        device.data.source = {};
-      }
-      if (device.data.source[msg.sourceID] === undefined) {
-        device.data.source[msg.sourceID] = {};
-      }
-      device.data.source[msg.sourceID].tally = msg.state;
-      device.draw();
-      break;
-
-    case 'connectionStateChange':
-      device.draw();
-      break;
-
-    case 'rawCommand':
-      if (msg.cmd.name === '_pin') {
-        if (msg.cmd.data !== undefined) {
-          infoUpdate(device, 'defaultName', msg.cmd.data.toString().trim());
+        if (dsk.isAuto) {
+          document.getElementById(`dsk-${i}-auto`).classList.add('atem-red');
+        } else {
+          document.getElementById(`dsk-${i}-auto`).classList.remove('atem-red');
         }
-      } else if (msg.cmd.name === '_top') {
-        device.data.topology = {
-          MEs: msg.cmd.data[0],
-          sources: msg.cmd.data[1],
-          colorGens: msg.cmd.data[2],
-          AUXs: msg.cmd.data[3],
-          DSKs: msg.cmd.data[4],
-          stingers: msg.cmd.data[5],
-          DVEs: msg.cmd.data[6],
-          superSources: msg.cmd.data[7],
-        };
-      } else if (msg.cmd.name === 'TrPs') {
-        const tbarPos = msg.cmd.data.readUint16BE(4);
-        device.update('tbar', tbarPos);
+
+        if (dsk.onAir) {
+          document.getElementById(`dsk-${i}-onair`).classList.add('atem-red');
+        } else {
+          document.getElementById(`dsk-${i}-onair`).classList.remove('atem-red');
+        }
+
+        if (dsk.properties.tie) {
+          document.getElementById(`dsk-${i}-tie`).classList.add('atem-yellow');
+        } else {
+          document.getElementById(`dsk-${i}-tie`).classList.remove('atem-yellow');
+        }
+
+        if (dsk.remainingFrames === dsk.properties.rate) {
+          document.getElementById(`dsk-${i}-rate`).textContent = '1:00';
+        } else {
+          // TODO: format in 0:00 format
+          document.getElementById(`dsk-${i}-rate`).textContent = `00${dsk.remainingFrames}`.slice(-2);
+        }
+      }
+      break;
+    case 'transitionPosition':
+      for (let i = 0; i < data.length; i++) {
+        const tbarId = `me-${i}-tbar-pos`;
+        if (document.getElementById(tbarId)) {
+          document.getElementById(tbarId).value = data[i].transitionPosition.handlePosition;
+        }
+      }
+      break;
+    case 'fadeToBlack':
+      for (let i = 0; i < data.length; i++) {
+        const fadeToBlack = data[i].fadeToBlack;
+        const ftbRateId = `me-${i}-ftb-rate`;
+        const ftbId = `me-${i}-ftb`;
+        if (fadeToBlack.remainingFrames === fadeToBlack.rate) {
+          document.getElementById(ftbRateId).textContent = '1:00';
+        } else {
+          // TODO: format in 0:00 format
+          document.getElementById(ftbRateId).textContent = `00${fadeToBlack.remainingFrames}`.slice(-2);
+        }
+
+        if (fadeToBlack.inTransition || fadeToBlack.isFullyBlack) {
+          document.getElementById(ftbId).classList.add('atem-red');
+        } else {
+          document.getElementById(ftbId).classList.remove('atem-red');
+        }
+      }
+      break;
+    case 'inputs':
+      for (let i = 0; i < data.length; i++) {
+        const programInputs = device.connection.listVisibleInputs('program', i);
+        const previewInputs = device.connection.listVisibleInputs('preview', i);
+
+        Object.entries(device.data.inputs).forEach(([inputId, input]) => {
+          if (programInputs.includes(Number(inputId))) {
+            document.getElementById(`me-${i}-program-input-${inputId}`).classList.add('atem-red');
+          } else {
+            document.getElementById(`me-${i}-program-input-${inputId}`).classList.remove('atem-red');
+          }
+
+          if (previewInputs.includes(Number(inputId))) {
+            document.getElementById(`me-${i}-preview-input-${inputId}`).classList.add('atem-green');
+          } else {
+            document.getElementById(`me-${i}-preview-input-${inputId}`).classList.remove('atem-green');
+          }
+        });
       }
       break;
     default:
@@ -92,4 +119,25 @@ exports.data = function data(_device, msg) {
   }
 };
 
-exports.heartbeat = function heartbeat(device) {};
+exports.data = function data(_device, msg) {
+  const device = _device;
+  this.deviceInfoUpdate(device, 'status', 'ok');
+  device.data = msg.state;
+
+  msg.pathToChange.forEach((path) => {
+    if (path.includes('transitionPosition')) {
+      device.update(`transitionPosition`, device.data.video.mixEffects);
+    } else if (path.includes('downstreamKeyers')) {
+      device.update('downstreamKeyers', device.data.video.downstreamKeyers);
+    } else if (path.includes('fadeToBlack')) {
+      device.update('fadeToBlack', device.data.video.mixEffects);
+    } else if (path.includes('programInput')) {
+      device.update('inputs', device.data.video.mixEffects);
+    } else if (path.includes('previewInput')) {
+      device.update('inputs', device.data.video.mixEffects);
+    } else {
+      console.log(path);
+      console.log(device.data);
+    }
+  });
+};
