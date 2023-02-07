@@ -3,15 +3,17 @@ exports.config = {
   connectionType: 'atem',
   defaultPort: 9910,
   mayChangePort: false,
-  // heartbeatInterval: 5000,
-  // heartbeatTimeout: 20000,
   searchOptions: {
-    // TODO: actually populate search options
-    type: 'UDPsocket',
-    searchBuffer: Buffer.from('', 'ascii'),
-    testPort: 9910,
+    type: 'UDPScan',
+    searchBuffer: Buffer.from([
+      0x10, 0x14, 0x53, 0xab, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3a, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00,
+    ]),
+    listenPort: 0,
+    devicePort: 9910,
     validateResponse(msg, info) {
-      return true;
+      // This is a tad bit hacky but works from what I can see.
+      return Buffer.compare(msg.slice(0, 4), Buffer.from([16, 20, 83, 171])) === 0;
     },
   },
 };
