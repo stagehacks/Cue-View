@@ -45,9 +45,9 @@ exports.update = function update(device, _document, updateType, data) {
   if (updateType.includes('transitionPosition')) {
     for (let i = 0; i < data.video.mixEffects.length; i++) {
       const mixEffect = data.video.mixEffects[i];
-      const tbarId = `me-${i}-tbar-progress`;
+      const tbarId = `me-${i}-tbar-div`;
       if (document.getElementById(tbarId)) {
-        document.getElementById(tbarId).value = mixEffect.transitionPosition.handlePosition;
+        document.getElementById(tbarId).style.height = `${mixEffect.transitionPosition.handlePosition / 100}%`;
       }
       // TODO: format in 0:00 format
       document.getElementById(`me-${i}-transition-rate`).textContent =
