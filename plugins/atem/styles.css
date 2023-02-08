@@ -1,10 +1,17 @@
 h3 {
-  color: #6d6d6d;
+  color: #6d6d6d !important;
+  margin: 0;
+  font-size: medium;
+}
+
+.me-label {
+  margin-top: 0;
+  margin-bottom: 2px;
 }
 
 .atem-input {
-  width: 50px;
-  height: 50px;
+  width: 35px;
+  height: 35px;
   background: white;
   border: 4px solid;
   border-color: #8c8c8c;
@@ -46,6 +53,8 @@ h3 {
   align-items: center;
   justify-content: center;
   height: 100%;
+  font-size: 11px;
+  font-weight: bold;
 }
 
 .transition-container {
@@ -108,6 +117,11 @@ h3 {
 .fade-to-black h3 {
   text-align: center;
 }
+.rate-heading {
+  text-align: center;
+  font-size: small;
+  margin-bottom: 4px;
+}
 
 .dsk-rate,
 .ftb-rate,
@@ -115,11 +129,6 @@ h3 {
   display: flex;
   justify-content: center;
   flex-direction: column;
-}
-
-.ftb-rate,
-.transition-rate {
-  width: 50px;
 }
 
 .dsk-rate-label,

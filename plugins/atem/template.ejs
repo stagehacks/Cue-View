@@ -5,7 +5,7 @@
 <% if (data.video.mixEffects) { %>
 <% Object.entries(data.video.mixEffects).forEach(([meIndex, state])=>{ %>
     <div class="mixeffect_wrapper" id="me-<%= meIndex %>">
-        <h1 class="atem-gray">ME<%= Number(meIndex) + 1 %></h1>
+        <h1 class="atem-gray me-label">ME<%= Number(meIndex) + 1 %></h1>
         <div class="program">
             <h3 class="atem-gray">Program</h3>
             <div class="source-wrapper">
@@ -132,7 +132,7 @@
                                 <div class="source-label">AUTO</div>
                             </div>
                             <div class="transition-rate atem-input clear">
-                                <div class="atem-gray" style="text-align: center">Rate</div>
+                                <div class="atem-gray rate-heading">Rate</div>
                                 <div id="me-<%= meIndex %>-transition-rate" class="transition-rate-label">00</div>
                             </div>
                         </div>
@@ -152,7 +152,7 @@
                                     <div class="source-label">TIE</div>
                                 </div>
                                 <div class="dsk-rate atem-input clear">
-                                    <div class="atem-gray" style="text-align: center">Rate</div>
+                                    <div class="atem-gray rate-heading">Rate</div>
                                     <div id="dsk-<%= dskIndex %>-rate" class="dsk-rate-label">00</div>
                                 </div>
                                 <div id="dsk-<%= dskIndex %>-onair" class="atem-input">
@@ -171,7 +171,7 @@
                     <h3 class="atem-gray">Fade to Black</h3>
                     <div class="source-wrapper">
                         <div class="ftb-rate atem-input clear">
-                            <div class="atem-gray" style="text-align: center">Rate</div>
+                            <div class="atem-gray rate-heading">Rate</div>
                             <div id="me-<%= meIndex %>-ftb-rate" class="ftb-rate-label">00</div>
                         </div>
                         <div id="me-<%= meIndex %>-ftb" class="atem-input">
