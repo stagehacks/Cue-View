@@ -94,3 +94,7 @@ h3 {
   padding: 2px;
   text-align: center;
 }
+
+.hide {
+  display: none;
+}

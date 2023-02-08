@@ -9,20 +9,34 @@
         <div class="program">
             <h3 class="atem-gray">Program</h3>
             <div class="source-wrapper">
-                <% Object.entries(data.inputs).forEach(([inputId, state])=>{ %>
-                    <div id="me-<%= meIndex %>-program-input-<%= inputId %>" class="atem-input">
-                        <div class="source-label"><%= state.shortName %></div>
-                    </div>
+                <% Object.values(data.inputs).sort((a,b)=>a.internalPortType<b.internalPortType).forEach((input)=>{ %>
+                    <% if ([0,1,2,3,4].includes(input.internalPortType)) { %>
+                        <div id="me-<%= meIndex %>-program-input-<%= input.inputId %>" class="atem-input">
+                            <div class="source-label"><%= input.shortName %></div>
+                        </div>
+                    <% } else {%>
+                        <div id="me-<%= meIndex %>-program-input-<%= input.inputId %>" class="atem-input hide">
+                            <div class="source-label"><%= input.shortName %></div>
+                        </div>
+                    <% }%>
+
                 <% }) %>
             </div>
         </div>
         <div class="preview">
             <h3 class="atem-gray">Preview</h3>
             <div class="source-wrapper">
-                <% Object.entries(data.inputs).forEach(([inputId, state])=>{ %>
-                    <div id="me-<%= meIndex %>-preview-input-<%= inputId %>" class="atem-input">
-                        <div class="source-label"><%= state.shortName %></div>
-                    </div>
+                <% Object.values(data.inputs).forEach((input)=>{ %>
+                    <% if ([0,1,2,3,4].includes(input.internalPortType)) { %>
+                        <div id="me-<%= meIndex %>-preview-input-<%= input.inputId %>" class="atem-input">
+                            <div class="source-label"><%= input.shortName %></div>
+                        </div>
+                    <% } else {%>
+                        <div id="me-<%= meIndex %>-preview-input-<%= input.inputId %>" class="atem-input hide">
+                            <div class="source-label"><%= input.shortName %></div>
+                        </div>
+                    <% }%>
+
                 <% }) %>
             </div>
         </div>
@@ -58,19 +72,19 @@
                 </div>
 
                 <div class="source-wrapper empty">
-                    <div id="me-<%= meIndex %>-bkgd" class="atem-input">
+                    <div id="me-<%= meIndex %>-transition-selection-1" class="atem-input">
                         <div class="source-label">BKGD</div>
                     </div>
-                    <div id="me-<%= meIndex %>-key-1" class="atem-input">
+                    <div id="me-<%= meIndex %>-transition-selection-2" class="atem-input">
                         <div class="source-label">KEY 1</div>
                     </div>
-                    <div id="me-<%= meIndex %>-key-2" class="atem-input">
+                    <div id="me-<%= meIndex %>-transition-selection-4" class="atem-input">
                         <div class="source-label">KEY 2</div>
                     </div>
-                    <div id="me-<%= meIndex %>-key-3" class="atem-input">
+                    <div id="me-<%= meIndex %>-transition-selection-8" class="atem-input">
                         <div class="source-label">KEY 3</div>
                     </div>
-                    <div id="me-<%= meIndex %>-key-4" class="atem-input">
+                    <div id="me-<%= meIndex %>-transition-selection-16" class="atem-input">
                         <div class="source-label">KEY 4</div>
                     </div>
                 </div>
@@ -81,19 +95,19 @@
             <h3>Transition Style</h3>
             <div class="source-wrapper" style="flex-direction:column">
                 <div class="source-wrapper empty">
-                    <div id="me-<%= meIndex %>-trans-0" class="atem-input">
+                    <div id="me-<%= meIndex %>-transition-style-0" class="atem-input">
                         <div class="source-label">MIX</div>
                     </div>
-                    <div id="me-<%= meIndex %>-trans-1" class="atem-input">
+                    <div id="me-<%= meIndex %>-transition-style-1" class="atem-input">
                         <div class="source-label">DIP</div>
                     </div>
-                    <div id="me-<%= meIndex %>-trans-2" class="atem-input">
+                    <div id="me-<%= meIndex %>-transition-style-2" class="atem-input">
                         <div class="source-label">WIPE</div>
                     </div>
-                    <div id="me-<%= meIndex %>-trans-4" class="atem-input">
+                    <div id="me-<%= meIndex %>-transition-style-4" class="atem-input">
                         <div class="source-label">STING</div>
                     </div>
-                    <div id="me-<%= meIndex %>-trans-3" class="atem-input">
+                    <div id="me-<%= meIndex %>-transition-style-3" class="atem-input">
                         <div class="source-label">DVE</div>
                     </div>
                 </div>
@@ -117,7 +131,7 @@
                     </div>
                     <div class="transition-rate atem-input empty">
                         <div class="atem-gray" style="text-align: center">Rate</div>
-                        <div id="me-<%= meIndex %>-transition-rate" class="transition-rate-label">1:00</div>
+                        <div id="me-<%= meIndex %>-transition-rate" class="transition-rate-label">00</div>
                     </div>
                 </div>
             </div>
@@ -127,7 +141,7 @@
             <div class="source-wrapper">
                 <div class="ftb-rate atem-input empty">
                     <div class="atem-gray" style="text-align: center">Rate</div>
-                    <div id="me-<%= meIndex %>-ftb-rate" class="ftb-rate-label">1:00</div>
+                    <div id="me-<%= meIndex %>-ftb-rate" class="ftb-rate-label">00</div>
                 </div>
                 <div id="me-<%= meIndex %>-ftb" class="atem-input">
                     <div class="source-label">FTB</div>
@@ -135,8 +149,8 @@
             </div>
         </div>
         
-        <div class="source-wrapper">
-            <progress id="me-<%= meIndex %>-tbar-pos" max="10000" value="0" class="tbar-progress"></progress>
+        <div class="source-wrapper" style="width:100%">
+            <progress id="me-<%= meIndex %>-tbar-progress" max="10000" value="0" class="tbar-progress"></progress>
         </div>
     </div>
 <% }) %>
@@ -153,11 +167,12 @@
                 </div>
                 <div class="dsk-rate atem-input empty">
                     <div class="atem-gray" style="text-align: center">Rate</div>
-                    <div id="dsk-<%= dskIndex %>-rate" class="dsk-rate-label">1:00</div>
+                    <div id="dsk-<%= dskIndex %>-rate" class="dsk-rate-label">00</div>
                 </div>
                 <div id="dsk-<%= dskIndex %>-onair" class="atem-input">
                     <div class="source-label" style="flex-direction: column;">
-                    <div>ON</div> <div>AIR</div></div>
+                        <div>ON</div> <div>AIR</div>
+                    </div>
                 </div>
                 <div id="dsk-<%= dskIndex %>-auto" class="atem-input">
                     <div class="source-label">AUTO</div>
