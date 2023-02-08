@@ -26,8 +26,8 @@ exports.ready = function ready(_device) {
   device.data = device.connection.state;
   device.draw();
 
-  // TODO: this is a little hacky but it works? gotta be better way to get initial update going
-  const interval = setInterval(() => {
+  // TODO: this is a little hacky but it works? gotta be a way to hook into device.draw() to trigger update
+  setInterval(() => {
     device.update('inputs', device.data);
     device.update('fadeToBlack', device.data);
     device.update(`transitionPosition`, device.data);
@@ -35,9 +35,6 @@ exports.ready = function ready(_device) {
     device.update('upstreamKeyers', device.data);
     device.update('transitionProperties', device.data);
   }, 1000);
-  setTimeout(() => {
-    clearInterval(interval);
-  }, 4000);
 };
 
 exports.update = function update(device, _document, updateType, data) {
