@@ -19,6 +19,12 @@ h3 {
   border: 1px solid;
   border-color: #1a1a1a;
   border-radius: 5px;
+  width: fit-content;
+}
+
+.empty {
+  border-color: transparent;
+  background-color: transparent;
 }
 
 .atem-red {
@@ -67,18 +73,21 @@ h3 {
 }
 
 .dsk-rate,
-.ftb-rate {
+.ftb-rate,
+.transition-rate {
   display: flex;
   justify-content: center;
   flex-direction: column;
 }
 
-.ftb-rate {
+.ftb-rate,
+.transition-rate {
   width: 50px;
 }
 
 .dsk-rate-label,
-.ftb-rate-label {
+.ftb-rate-label,
+.transition-rate-label {
   color: rgb(235, 110, 0);
   background-color: black;
   border-radius: 3px;
