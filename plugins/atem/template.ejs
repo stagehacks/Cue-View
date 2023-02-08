@@ -41,7 +41,7 @@
             </div>
         </div>
         <div class="transition-container">
-            <div>
+            <div class="transition-settings">
                 <div class="next-transition">
                     <h3>Next Transition</h3>
                     <div class="source-wrapper" style="flex-direction:column">
@@ -143,6 +143,30 @@
                 <div id="me-<%= meIndex %>-tbar-div" class="tbar-div" ></div>
             </div>
             <div class="fade-to-black-container">
+                <% if (data.video.downstreamKeyers) { %>
+                    <% Object.entries(data.video.downstreamKeyers).forEach(([dskIndex, state])=>{ %>
+                        <div class="dsk">
+                            <h3 class="atem-gray">DSK<%= Number(dskIndex) + 1 %></h3>
+                            <div class="source-wrapper">
+                                <div id="dsk-<%= dskIndex %>-tie" class="atem-input">
+                                    <div class="source-label">TIE</div>
+                                </div>
+                                <div class="dsk-rate atem-input clear">
+                                    <div class="atem-gray" style="text-align: center">Rate</div>
+                                    <div id="dsk-<%= dskIndex %>-rate" class="dsk-rate-label">00</div>
+                                </div>
+                                <div id="dsk-<%= dskIndex %>-onair" class="atem-input">
+                                    <div class="source-label" style="flex-direction: column;">
+                                        <div>ON</div> <div>AIR</div>
+                                    </div>
+                                </div>
+                                <div id="dsk-<%= dskIndex %>-auto" class="atem-input">
+                                    <div class="source-label">AUTO</div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } %>
                 <div class="fade-to-black">
                     <h3 class="atem-gray">Fade to Black</h3>
                     <div class="source-wrapper">
@@ -159,30 +183,4 @@
         </div>
     </div>
 <% }) %>
-<% } %>
-
-
-<% if (data.video.downstreamKeyers) { %>
-    <% Object.entries(data.video.downstreamKeyers).forEach(([dskIndex, state])=>{ %>
-        <div class="dsk">
-            <h3 class="atem-gray">DSK<%= Number(dskIndex) + 1 %></h3>
-            <div class="source-wrapper">
-                <div id="dsk-<%= dskIndex %>-tie" class="atem-input">
-                    <div class="source-label">TIE</div>
-                </div>
-                <div class="dsk-rate atem-input clear">
-                    <div class="atem-gray" style="text-align: center">Rate</div>
-                    <div id="dsk-<%= dskIndex %>-rate" class="dsk-rate-label">00</div>
-                </div>
-                <div id="dsk-<%= dskIndex %>-onair" class="atem-input">
-                    <div class="source-label" style="flex-direction: column;">
-                        <div>ON</div> <div>AIR</div>
-                    </div>
-                </div>
-                <div id="dsk-<%= dskIndex %>-auto" class="atem-input">
-                    <div class="source-label">AUTO</div>
-                </div>
-            </div>
-        </div>
-    <% }) %>
 <% } %>

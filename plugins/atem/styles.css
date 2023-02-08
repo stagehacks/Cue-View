@@ -53,10 +53,10 @@ h3 {
   flex-wrap: wrap;
 }
 
-.tbar-progress {
-  width: 100%;
-  height: 40px;
-  accent-color: limegreen;
+.transition-settings {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .tbar-container {
@@ -76,22 +76,36 @@ h3 {
   overflow: hidden;
 }
 
+.dsk {
+  width: 100%;
+}
+
 .dsk .source-wrapper {
   display: flex;
   flex-direction: column;
-  width: fit-content;
+  align-content: center;
+  width: 100%;
   padding: 5px;
+}
+
+.dsk h3 {
+  text-align: center;
 }
 
 .fade-to-black-container {
   display: flex;
+  flex-direction: column;
   align-items: flex-end;
 }
 
 .fade-to-black .source-wrapper {
   display: flex;
-  width: fit-content;
+  width: 100%;
   padding: 5px;
+}
+
+.fade-to-black h3 {
+  text-align: center;
 }
 
 .dsk-rate,
