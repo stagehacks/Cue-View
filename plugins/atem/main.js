@@ -100,14 +100,18 @@ exports.update = function update(device, _document, updateType, data) {
         .forEach((inputId) => {
           if (mixEffect.programInput === inputId) {
             document.getElementById(`me-${i}-program-input-${inputId}`).classList.add('atem-red');
+            document.getElementById(`me-${i}-input-${inputId}`).classList.add('atem-red');
           } else {
             document.getElementById(`me-${i}-program-input-${inputId}`).classList.remove('atem-red');
+            document.getElementById(`me-${i}-input-${inputId}`).classList.remove('atem-red');
           }
 
           if (mixEffect.previewInput === inputId) {
             document.getElementById(`me-${i}-preview-input-${inputId}`).classList.add('atem-green');
+            document.getElementById(`me-${i}-input-${inputId}`).classList.add('atem-green');
           } else {
             document.getElementById(`me-${i}-preview-input-${inputId}`).classList.remove('atem-green');
+            document.getElementById(`me-${i}-input-${inputId}`).classList.remove('atem-green');
           }
         });
     }

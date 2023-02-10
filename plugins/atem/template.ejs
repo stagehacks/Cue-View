@@ -6,7 +6,23 @@
 <% Object.entries(data.video.mixEffects).forEach(([meIndex, state])=>{ %>
     <div class="mixeffect_wrapper" id="me-<%= meIndex %>">
         <h1 class="atem-gray me-label">ME<%= Number(meIndex) + 1 %></h1>
-        <div class="program">
+        <div class="inputs show-small">
+            <h3 class="atem-gray">Inputs</h3>
+            <div class="source-wrapper">
+                <% Object.values(data.inputs).sort((a,b)=>a.internalPortType<b.internalPortType).forEach((input)=>{ %>
+                    <% if ([0,1,2,3,4].includes(input.internalPortType)) { %>
+                        <div id="me-<%= meIndex %>-input-<%= input.inputId %>" class="atem-input">
+                            <div class="source-label"><%= input.shortName %></div>
+                        </div>
+                    <% } else {%>
+                        <div id="me-<%= meIndex %>-input-<%= input.inputId %>" class="atem-input hide">
+                            <div class="source-label"><%= input.shortName %></div>
+                        </div>
+                    <% }%>
+                <% }) %>
+            </div>
+        </div>
+        <div class="program hide-small">
             <h3 class="atem-gray">Program</h3>
             <div class="source-wrapper">
                 <% Object.values(data.inputs).sort((a,b)=>a.internalPortType<b.internalPortType).forEach((input)=>{ %>
@@ -23,7 +39,7 @@
                 <% }) %>
             </div>
         </div>
-        <div class="preview">
+        <div class="preview hide-small">
             <h3 class="atem-gray">Preview</h3>
             <div class="source-wrapper">
                 <% Object.values(data.inputs).forEach((input)=>{ %>
