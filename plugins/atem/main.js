@@ -49,6 +49,12 @@ exports.update = function update(device, _document, updateType, data) {
       // TODO: format in 0:00 format
       document.getElementById(`me-${i}-transition-rate`).textContent =
         `00${mixEffect.transitionPosition.remainingFrames}`.slice(-2);
+
+      if (mixEffect.transitionPosition.inTransition) {
+        document.getElementById(`me-${i}-auto`).classList.add('atem-red');
+      } else {
+        document.getElementById(`me-${i}-auto`).classList.remove('atem-red');
+      }
     }
   } else if (updateType.includes('downstreamKeyers')) {
     for (let i = 0; i < data.video.downstreamKeyers.length; i++) {
@@ -82,7 +88,13 @@ exports.update = function update(device, _document, updateType, data) {
       // TODO: format in 0:00 format
       document.getElementById(ftbRateId).textContent = `00${fadeToBlack.remainingFrames}`.slice(-2);
 
-      if (fadeToBlack.inTransition || fadeToBlack.isFullyBlack) {
+      if (fadeToBlack.isFullyBlack) {
+        if (document.getElementById(ftbId).classList.contains('atem-red')) {
+          document.getElementById(ftbId).classList.remove('atem-red');
+        } else {
+          document.getElementById(ftbId).classList.add('atem-red');
+        }
+      } else if (fadeToBlack.inTransition) {
         document.getElementById(ftbId).classList.add('atem-red');
       } else {
         document.getElementById(ftbId).classList.remove('atem-red');
@@ -163,6 +175,15 @@ exports.update = function update(device, _document, updateType, data) {
             .classList.remove('atem-red');
         }
       });
+    }
+  } else if (updateType.includes('transitionPreview')) {
+    for (let i = 0; i < data.video.mixEffects.length; i++) {
+      const mixEffect = data.video.mixEffects[i];
+      if (mixEffect.transitionPreview) {
+        document.getElementById(`me-${i}-transition-preview`).classList.add('atem-red');
+      } else {
+        document.getElementById(`me-${i}-transition-preview`).classList.remove('atem-red');
+      }
     }
   } else {
     console.log('unhandled update');
