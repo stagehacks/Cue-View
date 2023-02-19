@@ -44,6 +44,23 @@ const versionMap = {
   50: 'PLAT',
 };
 
+const activationMap = {
+  man: 'Manual',
+  'm+c': 'Manual w/ Confirmation',
+  auto: 'Auto-start',
+  'a+c': 'Auto-start w/ Confirmation',
+  callq: 'Call Cue',
+  hot: 'Hotkey (Trigger)',
+  hktg: 'Hotkey (Toggle)',
+  hknt: 'Hotkey (Note)',
+  time: 'Time-Based',
+  ext: 'External (Trigger)',
+  extg: 'External (Toggle)',
+  exnt: 'External (Note)',
+  mtc: 'MIDI Time Code',
+  ocm: 'On Cue Marker',
+};
+
 exports.ready = function ready(_device) {
   const device = _device;
   console.log('Show Cue Systems ready');
@@ -82,7 +99,7 @@ exports.data = function data(_device, message) {
       description: '',
       type: { code: '', display: '' },
       state: '',
-      activation: '',
+      activation: { code: '', display: '' },
       file_info: '',
       length: '',
       colors: ['', ''],
@@ -141,7 +158,10 @@ exports.data = function data(_device, message) {
       device.data.cues[cueIndex].length = millisToString(itemParts[6]);
       device.data.cues[cueIndex].state = itemParts[7];
       device.data.cues[cueIndex].position = itemParts[8];
-      device.data.cues[cueIndex].activation = sanitizeSCSString(itemParts[9]);
+      device.data.cues[cueIndex].activation = {
+        code: sanitizeSCSString(itemParts[9]),
+        display: activationMap[sanitizeSCSString(itemParts[9])],
+      };
       device.data.cues[cueIndex].repeat = itemParts[10];
       device.data.cues[cueIndex].loop = itemParts[11];
       device.draw();
