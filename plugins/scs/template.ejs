@@ -1,0 +1,25 @@
+<header>
+	<h1><%= listName  %></h1>
+</header>
+<table>
+	<tr class="header-row">
+	  <th>Label</th>
+	  <th>Page</th>
+	  <th>Description</th>
+	  <th>Cue Type</th>
+	  <th>State</th>
+	  <th>Activation</th>
+	  <th>Length</th>
+	</tr>
+	<% data.cues.forEach((cue)=>{ %>
+	<tr style="background-color: <%=cue.colors[0]%>; color: <%=cue.colors[1]%>;">
+		<td><%=cue.label%></td>
+		<td><%=cue.page%></td>
+		<td><%=cue.description%></td>
+		<td><%=cue.type.display%></td>
+		<td><%=cue.state%></td>
+		<td><%=cue.activation%></td>
+		<td><%=cue.length%></td>
+	</tr>
+	<% }) %>
+  </table>

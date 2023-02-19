@@ -1,0 +1,12 @@
+table {
+  background: white;
+}
+
+th {
+  text-align: left;
+  font-weight: normal;
+}
+
+.header-row {
+  background: white;
+}
