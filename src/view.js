@@ -37,7 +37,7 @@ function drawDeviceFrame(id) {
         <link href='src/assets/css/plugin_default.css' rel='stylesheet' type='text/css'>
       </head>
       <body>
-        ${generateBodyHTML(d)};
+        ${generateBodyHTML(d)}
       </body>
     </html>
   `;
@@ -85,7 +85,7 @@ function generateBodyHTML(d) {
       </div>
       <div class="device-info">
         ${PLUGINS.all[d.type].info()}
-      <div>
+      </div>
     `;
   }
 }
