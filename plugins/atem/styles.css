@@ -1,7 +1,15 @@
+body {
+  background-color: #282828;
+}
+h1 {
+  font-family: 'Open Sans', sans-serif;
+}
 h3 {
   color: #6d6d6d !important;
-  margin: 0;
-  font-size: medium;
+  margin: 30px 0px 10px 9px;
+  font-size: 0.9em;
+  font-weight: 400;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .me-label {
@@ -10,14 +18,14 @@ h3 {
 }
 
 .atem-input {
-  width: 35px;
-  height: 35px;
-  border: 2px solid;
+  width: 52px;
+  height: 52px;
+  /* border: 2px solid;
   border-color: #bcbcbc;
-  border-radius: 3px;
-  margin: 6px;
+  border-radius: 3px; */
+  /* margin: 2px; */
 
-  background: rgb(250, 250, 249);
+  /* background: rgb(250, 250, 249);
   background: radial-gradient(
     circle,
     rgba(250, 250, 249, 1) 0%,
@@ -27,21 +35,26 @@ h3 {
     rgba(209, 212, 212, 1) 86%,
     rgba(224, 224, 224, 1) 90%,
     rgba(255, 255, 255, 1) 100%
-  );
+  ); */
+  background-image: url('img/button_white.png');
 }
 
 .source-wrapper {
   display: flex;
   flex-wrap: wrap;
   background-color: #1f1f1f;
-  border: 1px solid;
-  border-color: #1a1a1a;
-  border-radius: 5px;
-  width: fit-content;
+  border: #1a1a1a 2px solid;
+  /* border-color: #1a1a1a; */
+  border-radius: 8px;
+  /* width: fit-content; */
+  max-width: 416px;
+  padding: 12px;
+  /* justify-content: space-between;
+  flex-direction: row; */
 }
 
 .atem-red {
-  background: rgb(255, 104, 108);
+  /* background: rgb(255, 104, 108);
   background: radial-gradient(
     circle,
     rgba(255, 104, 108, 1) 0%,
@@ -50,12 +63,14 @@ h3 {
     rgba(249, 24, 50, 1) 75%,
     rgba(232, 0, 26, 1) 79%,
     rgba(255, 43, 58, 1) 100%
-  );
-  box-shadow: 0px 0px 10px 1px rgb(255, 128, 132);
+  ); */
+  background-image: url('img/button_red.png');
+  box-shadow: 0px 0px 10px 1px #ff0000;
+  z-index: 10000;
 }
 
 .atem-green {
-  background: rgb(78, 255, 73);
+  /* background: rgb(78, 255, 73);
   background: radial-gradient(
     circle,
     rgba(78, 255, 73, 1) 0%,
@@ -64,12 +79,14 @@ h3 {
     rgba(22, 199, 17, 1) 75%,
     rgba(13, 208, 0, 1) 79%,
     rgba(29, 204, 14, 1) 100%
-  );
-  box-shadow: 0px 0px 10px 1px rgb(14, 238, 7);
+  ); */
+  background-image: url('img/button_green.png');
+  box-shadow: 0px 0px 10px 1px #06c300;
+  z-index: 10000;
 }
 
 .atem-yellow {
-  background: rgb(249, 255, 3);
+  /* background: rgb(249, 255, 3);
   background: radial-gradient(
     circle,
     rgba(249, 255, 3, 1) 0%,
@@ -78,12 +95,29 @@ h3 {
     rgba(253, 181, 0, 1) 75%,
     rgba(249, 197, 7, 1) 79%,
     rgba(250, 169, 9, 1) 100%
-  );
-  box-shadow: 0px 0px 10px 1px rgb(249, 255, 3);
+  ); */
+  background-image: url('img/button_yellow.png');
+  box-shadow: 0px 0px 10px 1px #c7ca00;
+  z-index: 10000;
+}
+
+.atem-disabled {
+  /* background: rgb(249, 255, 3);
+  background: radial-gradient(
+    circle,
+    rgba(249, 255, 3, 1) 0%,
+    rgba(253, 214, 14, 1) 55%,
+    rgba(255, 174, 0, 1) 69%,
+    rgba(253, 181, 0, 1) 75%,
+    rgba(249, 197, 7, 1) 79%,
+    rgba(250, 169, 9, 1) 100%
+  ); */
+  background-image: url('img/button_off.png');
+  color: #3a3a3a;
 }
 
 .atem-gray {
-  color: rgb(150, 150, 150);
+  color: #575757;
 }
 
 .source-label {
@@ -105,22 +139,39 @@ h3 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  margin-right: 30px;
 }
 
 .tbar-container {
   display: flex;
   flex-direction: column-reverse;
   background-color: #1f1f1f;
-  border: 4px solid;
+  border: 2px solid;
   border-color: #1a1a1a;
   border-radius: 6px;
-  width: 20px;
-  height: auto;
+  width: 88px;
+  height: 429px;
+  position: relative;
+  margin-top: 58px;
+  margin-right: 60px;
 }
 
+.tbar-bg {
+  position: absolute;
+  background-image: url('img/tbar_bg.png');
+  width: 88px;
+  height: 429px;
+}
+.tbar-handle {
+  position: absolute;
+  background-image: url('img/tbar_handle.png');
+  width: 126px;
+  height: 50px;
+  left: -3px;
+}
 .tbar-div {
   width: 100%;
-  background-color: limegreen;
+  background-color: #7aff58;
   overflow: hidden;
 }
 
@@ -144,6 +195,7 @@ h3 {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  margin-right: 30px;
 }
 
 .fade-to-black .source-wrapper {
@@ -175,7 +227,7 @@ h3 {
   color: rgb(235, 110, 0);
   background-color: black;
   border-radius: 3px;
-  padding: 2px;
+  padding: 6px 2px;
   text-align: center;
 }
 
@@ -204,4 +256,8 @@ h3 {
   .show-small {
     display: block;
   }
+}
+
+.float-left {
+  float: left;
 }
