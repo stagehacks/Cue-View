@@ -1,5 +1,7 @@
 const { TransitionStyle, TransitionSelection } = require('atem-connection/dist/enums');
 
+let timerFrameRate;
+
 exports.config = {
   defaultName: 'ATEM',
   connectionType: 'atem',
@@ -34,21 +36,28 @@ exports.ready = function ready(_device) {
     device.update('downstreamKeyers', device.data);
     device.update('upstreamKeyers', device.data);
     device.update('transitionProperties', device.data);
+    device.update('deviceInfo', device.data);
   }, 1000);
 };
 
 exports.update = function update(device, _document, updateType, data) {
   const document = _document;
+
   if (updateType.includes('transitionPosition')) {
     for (let i = 0; i < data.video.mixEffects.length; i++) {
       const mixEffect = data.video.mixEffects[i];
       const tbarId = `me-${i}-tbar-div`;
+      const tbarHandleId = `me-${i}-tbar-handle-div`;
       if (document.getElementById(tbarId)) {
         document.getElementById(tbarId).style.height = `${mixEffect.transitionPosition.handlePosition / 100}%`;
       }
+      if (document.getElementById(tbarHandleId)) {
+        document.getElementById(tbarHandleId).style.bottom = `${mixEffect.transitionPosition.handlePosition / 100}%`;
+      }
       // TODO: format in 0:00 format
-      document.getElementById(`me-${i}-transition-rate`).textContent =
-        `00${mixEffect.transitionPosition.remainingFrames}`.slice(-2);
+      document.getElementById(`me-${i}-transition-rate`).textContent = framesToTime(
+        mixEffect.transitionPosition.remainingFrames
+      );
 
       if (mixEffect.transitionPosition.inTransition) {
         document.getElementById(`me-${i}-auto`).classList.add('atem-red');
@@ -77,7 +86,7 @@ exports.update = function update(device, _document, updateType, data) {
         document.getElementById(`dsk-${i}-tie`).classList.remove('atem-yellow');
       }
 
-      document.getElementById(`dsk-${i}-rate`).textContent = `00${dsk.remainingFrames}`.slice(-2);
+      document.getElementById(`dsk-${i}-rate`).textContent = framesToTime(dsk.remainingFrames);
     }
   } else if (updateType.includes('fadeToBlack')) {
     for (let i = 0; i < data.video.mixEffects.length; i++) {
@@ -86,7 +95,7 @@ exports.update = function update(device, _document, updateType, data) {
       const ftbId = `me-${i}-ftb`;
 
       // TODO: format in 0:00 format
-      document.getElementById(ftbRateId).textContent = `00${fadeToBlack.remainingFrames}`.slice(-2);
+      document.getElementById(ftbRateId).textContent = framesToTime(fadeToBlack.remainingFrames);
 
       if (fadeToBlack.isFullyBlack) {
         if (document.getElementById(ftbId).classList.contains('atem-red')) {
@@ -185,6 +194,23 @@ exports.update = function update(device, _document, updateType, data) {
         document.getElementById(`me-${i}-transition-preview`).classList.remove('atem-red');
       }
     }
+  } else if (updateType.includes('deviceInfo')) {
+    // videoModes pulled from https://github.com/nrkno/sofie-atem-connection/blob/master/src/enums/index.ts#L238
+    if ([27, 26, 23, 25, 19, 13, 11, 7, 5].includes(data.settings.videoMode)) {
+      timerFrameRate = 30;
+    }
+    if ([24, 22, 18, 16, 12, 10, 6, 4].includes(data.settings.videoMode)) {
+      // 25 FPS Timers
+      timerFrameRate = 25;
+      // 25fps timers
+    }
+    if ([21, 20, 15, 14, 9, 8].includes(data.settings.videoMode)) {
+      timerFrameRate = 24;
+    }
+
+    if (!device.displayName) {
+      this.deviceInfoUpdate(device, 'displayName', data.info.productIdentifier);
+    }
   } else {
     console.log('unhandled update');
     console.log(updateType);
@@ -201,3 +227,18 @@ exports.data = function data(_device, msg) {
     device.update(path, device.data);
   });
 };
+
+function framesToTime(total) {
+  if (timerFrameRate) {
+    const seconds = Math.floor(total / timerFrameRate);
+    const frames = total - seconds * timerFrameRate;
+    let framesString = String(frames);
+    if (frames < 10) {
+      framesString = `0${framesString}`;
+    } else if (framesString === '0') {
+      framesString = '00';
+    }
+    return `${seconds}:${framesString}`;
+  }
+  return '0:00';
+}
