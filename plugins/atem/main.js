@@ -54,7 +54,6 @@ exports.update = function update(device, _document, updateType, data) {
       if (document.getElementById(tbarHandleId)) {
         document.getElementById(tbarHandleId).style.bottom = `${mixEffect.transitionPosition.handlePosition / 100}%`;
       }
-      // TODO: format in 0:00 format
       document.getElementById(`me-${i}-transition-rate`).textContent = framesToTime(
         mixEffect.transitionPosition.remainingFrames
       );
@@ -94,7 +93,6 @@ exports.update = function update(device, _document, updateType, data) {
       const ftbRateId = `me-${i}-ftb-rate`;
       const ftbId = `me-${i}-ftb`;
 
-      // TODO: format in 0:00 format
       document.getElementById(ftbRateId).textContent = framesToTime(fadeToBlack.remainingFrames);
 
       if (fadeToBlack.isFullyBlack) {
@@ -198,14 +196,12 @@ exports.update = function update(device, _document, updateType, data) {
     // videoModes pulled from https://github.com/nrkno/sofie-atem-connection/blob/master/src/enums/index.ts#L238
     if ([27, 26, 23, 25, 19, 13, 11, 7, 5].includes(data.settings.videoMode)) {
       timerFrameRate = 30;
-    }
-    if ([24, 22, 18, 16, 12, 10, 6, 4].includes(data.settings.videoMode)) {
-      // 25 FPS Timers
+    } else if ([24, 22, 18, 16, 12, 10, 6, 4].includes(data.settings.videoMode)) {
       timerFrameRate = 25;
-      // 25fps timers
-    }
-    if ([21, 20, 15, 14, 9, 8].includes(data.settings.videoMode)) {
+    } else if ([21, 20, 15, 14, 9, 8].includes(data.settings.videoMode)) {
       timerFrameRate = 24;
+    } else {
+      timerFrameRate = 30;
     }
 
     if (!device.displayName) {
