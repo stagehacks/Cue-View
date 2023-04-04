@@ -2,7 +2,7 @@ const { v4: uuid } = require('uuid');
 const osc = require('osc');
 const net = require('net');
 const udp = require('dgram');
-
+const { Atem } = require('atem-connection');
 const PLUGINS = require('./plugins.js');
 const VIEW = require('./view.js');
 const SAVESLOTS = require('./saveSlots.js');
@@ -193,6 +193,26 @@ function initDeviceConnection(id) {
     });
 
     device.send = (data) => {};
+  } else if (plugins[type].config.connectionType === 'atem') {
+    device.connection = new Atem({
+      // this gets around the no workers nodejs error
+      disableMultithreaded: true,
+    });
+    device.connection.connect(device.addresses[0]);
+
+    device.connection.on('connected', () => {
+      infoUpdate(device, 'status', 'ok');
+      plugins[type].ready(device);
+    });
+
+    device.connection.on('stateChanged', (state, pathToChange) => {
+      device.lastMessage = Date.now();
+      plugins[type].data(device, {
+        pathToChange,
+        state,
+      });
+      infoUpdate(device, 'status', 'ok');
+    });
   }
 
   return true;
