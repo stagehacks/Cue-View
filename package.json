@@ -23,7 +23,7 @@
     "@electron/notarize": "^1.2.3",
     "electron": "^22.2.0",
     "electron-builder": "^23.6.0",
-    "eslint": "^8.37.0",
+    "eslint": "^8.38.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-import": "^2.27.5",
