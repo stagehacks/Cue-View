@@ -43,7 +43,6 @@
     "appId": "com.stagehacks.cueview",
     "icon": "src/assets/img/",
     "artifactName": "${name}.${os}.v${version}.${ext}",
-    "afterSign": "notarize.js",
     "mac": {
       "category": "Utilities",
       "icon": "src/assets/img/icon.icns",
