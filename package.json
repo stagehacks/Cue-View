@@ -1,7 +1,7 @@
 {
   "name": "cue-view",
   "productName": "Cue View",
-  "version": "0.9.8-pre",
+  "version": "0.9.9-pre",
   "description": "A dashboard for everything in your show",
   "main": "main.js",
   "scripts": {
@@ -21,31 +21,31 @@
   "repository": "https://github.com/stagehacks/Cue-View",
   "devDependencies": {
     "@electron/notarize": "^1.2.3",
-    "electron": "^21.3.0",
-    "electron-builder": "^23.6.0",
-    "eslint": "^8.27.0",
+    "electron": "^22.2.0",
+    "electron-builder": "^24.4.0",
+    "eslint": "^8.40.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-import": "^2.26.0",
-    "prettier": "^2.7.1"
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.27.5",
+    "prettier": "^2.8.8"
   },
   "dependencies": {
+    "atem-connection": "^3.1.3",
     "bonjour": "^3.5.0",
     "electron-updater": "^5.3.0",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "netmask": "^2.0.2",
-    "osc": "^2.4.3",
+    "osc": "^2.4.4",
     "uuid": "^9.0.0"
   },
   "build": {
     "appId": "com.stagehacks.cueview",
-    "icon": "./src/img/",
+    "icon": "src/assets/img/",
     "artifactName": "${name}.${os}.v${version}.${ext}",
-    "afterSign": "notarize.js",
     "mac": {
       "category": "Utilities",
-      "icon": "./src/img/icon.icns",
+      "icon": "src/assets/img/icon.icns",
       "hardenedRuntime": true,
       "electronLanguages": [
         "en"
@@ -56,7 +56,7 @@
     },
     "win": {
       "target": "NSIS",
-      "icon": "./src/img/icon.ico",
+      "icon": "src/assets/img/icon.ico",
       "publish": [
         "github"
       ]

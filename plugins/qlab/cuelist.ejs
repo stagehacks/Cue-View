@@ -40,13 +40,11 @@
 
 
 function displayCueRow(q){
-  let html = "";
-
-  html+= rowTemplate({cue: allCues[q.uniqueID], allCues: allCues, workspace: workspace});
+  let html = rowTemplate({cue: allCues[q.uniqueID], allCues: allCues, workspace: workspace});
 
   if(q.cues){
     q.cues.forEach(q =>{
-      html+=displayCueRow(q);
+      html += displayCueRow(q);
     })
   }
   return html;

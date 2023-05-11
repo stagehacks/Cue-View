@@ -57,15 +57,18 @@ module.exports.loadDevices = function loadDevices() {
   console.log(`Loading ${savedDevices.length} saved devices...`);
 
   for (let i = 0; i < savedDevices.length; i++) {
-    DEVICE.registerDevice({
-      type: savedDevices[i].type,
-      displayName: savedDevices[i].displayName,
-      defaultName: savedDevices[i].defaultName,
-      port: savedDevices[i].port,
-      addresses: savedDevices[i].addresses,
-      id: savedDevices[i].id,
-      fields: savedDevices[i].fields,
-    });
+    DEVICE.registerDevice(
+      {
+        type: savedDevices[i].type,
+        displayName: savedDevices[i].displayName,
+        defaultName: savedDevices[i].defaultName,
+        port: savedDevices[i].port,
+        addresses: savedDevices[i].addresses,
+        id: savedDevices[i].id,
+        fields: savedDevices[i].fields,
+      },
+      'fromSave'
+    );
   }
 };
 
@@ -96,9 +99,7 @@ module.exports.saveAll = function saveAll() {
   });
 
   localStorage.setItem('savedSlots', JSON.stringify(savedSlots));
-  console.log(
-    `Saved ${currentPins.length} pinned devices to slot ${activeSlot}!`
-  );
+  console.log(`Saved ${currentPins.length} pinned devices to slot ${activeSlot}!`);
 
   savedDevices = [];
   let i = 0;

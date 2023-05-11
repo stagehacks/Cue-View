@@ -1,9 +1,10 @@
 exports.config = {
   defaultName: 'X Air Mixer',
   connectionType: 'UDPsocket',
-  heartbeatInterval: 10000,
   defaultPort: 10024,
   mayChangePort: false,
+  heartbeatInterval: 9000,
+  heartbeatTimeout: 15000,
   searchOptions: {
     type: 'UDPsocket',
     searchBuffer: Buffer.from([0x2f, 0x78, 0x69, 0x6e, 0x66, 0x6f]),
@@ -28,10 +29,6 @@ exports.ready = function ready(device) {
   d.data.stereoMute = 0;
 
   d.send('/xinfo');
-
-  // device.send(Buffer.from("\x2f\x62\x61\x74\x63\x68\x73\x75\x62\x73\x63\x72\x69\x62\x65\x00\x2c\x73\x73\x69\x69\x69\x00\x00\x6d\x65\x74\x65\x72\x73\x2f\x30\x00\x00\x00\x00\x2f\x6d\x65\x74\x65\x72\x73\x2f\x30\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01"));
-  // device.send(Buffer.from("/batchsubscribe\x00,ssiii\x00\x00meters/0\x00\x00\x00\x00/meters/0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01"));
-  // device.send(Buffer.from("/subscribe\x00,si\x00/-stat/solosw/01\x001"));
 };
 
 function parseAddress(msg) {

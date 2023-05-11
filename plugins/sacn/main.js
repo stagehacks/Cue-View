@@ -3,9 +3,10 @@ const _ = require('lodash');
 exports.config = {
   defaultName: 'sACN',
   connectionType: 'multicast',
-  heartbeatInterval: 5000,
   defaultPort: 5568,
   mayChangePort: false,
+  heartbeatInterval: 5000,
+  heartbeatTimeout: 15000,
   searchOptions: {
     type: 'multicast',
     address: getMulticastGroup(1),
@@ -19,12 +20,12 @@ exports.config = {
 exports.ready = function ready(device) {
   const d = device;
   d.data.universes = {};
+  d.data.priorities = {};
   d.data.source = 'Unknown Source';
   d.data.orderedUniverses = [];
 
   const networkInterfaces = d.getNetworkInterfaces();
 
-  // device.draw();
   for (let i = 1; i <= 16; i++) {
     for (let j = 0; j < Object.keys(networkInterfaces).length; j++) {
       const networkInterfaceID = Object.keys(networkInterfaces)[j];
@@ -39,10 +40,15 @@ exports.data = function data(_device, buf) {
   const device = _device;
 
   let universe = device.data.universes[universeIndex];
+  let priorities = device.data.priorities[universeIndex];
 
   if (!universe) {
     device.data.universes[universeIndex] = {};
     universe = device.data.universes[universeIndex];
+  }
+  if (!priorities) {
+    device.data.priorities[universeIndex] = new Array(512).fill(0);
+    priorities = device.data.priorities[universeIndex];
   }
 
   universe.sequence = buf.readUInt8(111);
@@ -64,15 +70,20 @@ exports.data = function data(_device, buf) {
     universe.slotElems = [];
     universe.slotElemsSet = false;
 
-    device.draw();
-    device.update('elementCache');
+    if (universe.priority > 0) {
+      device.draw();
+      device.update('elementCache');
+    }
   }
-
-  device.update('universeData', {
-    universeIndex,
-    universe,
-    startCode: universe.startCode,
-  });
+  if (universe.priority > 0) {
+    device.update('universeData', {
+      universeIndex,
+      universe,
+      startCode: universe.startCode,
+    });
+  } else {
+    device.data.priorities[universeIndex] = buf.slice(126);
+  }
 };
 
 exports.heartbeat = function heartbeat(device) {};
@@ -91,21 +102,18 @@ exports.update = function update(_device, doc, updateType, updateData) {
     const $elem = doc.getElementById(`universe-${data.universeIndex}`);
 
     if ($elem && data.universe.slotElemsSet) {
-      if (data.universe.priority > 0) {
-        for (let i = 0; i < 512; i++) {
-          data.universe.slotElems[i].innerText = data.universe.slots[i];
-        }
-
-        const $code = doc.getElementById(`universe-${data.universeIndex}-code`);
-        if (data.startCode === 0xdd) {
-          $code.innerText = 'Net3';
-        } else if (data.startCode === 0x17) {
-          $code.innerText = 'Text';
-        } else if (data.startCode === 0xcf) {
-          $code.innerText = 'SIP';
-        } else if (data.startCode === 0xcc) {
-          $code.innerText = 'RDM';
-        }
+      for (let i = 0; i < 512; i++) {
+        data.universe.slotElems[i].textContent = data.universe.slots[i];
+      }
+      const $code = doc.getElementById(`universe-${data.universeIndex}-code`);
+      if (data.startCode === 0xdd) {
+        $code.textContent = 'Net3';
+      } else if (data.startCode === 0x17) {
+        $code.textContent = 'Text';
+      } else if (data.startCode === 0xcf) {
+        $code.textContent = 'SIP';
+      } else if (data.startCode === 0xcc) {
+        $code.textContent = 'RDM';
       }
     } else {
       device.draw();
@@ -113,10 +121,15 @@ exports.update = function update(_device, doc, updateType, updateData) {
     }
   } else if (updateType === 'elementCache') {
     device.data.orderedUniverses.forEach((universeIndex) => {
-      for (let i = 0; i < 512; i++) {
-        device.data.universes[universeIndex].slotElems[i] = doc.getElementById(`${universeIndex}-${i}`);
+      const universe = device.data.universes[universeIndex];
+
+      if (doc.getElementById(`${universeIndex}-0`)) {
+        for (let i = 0; i < 512; i++) {
+          universe.slotElems[i] = doc.getElementById(`${universeIndex}-${i}`);
+          universe.slotElems[i].title = `${universeIndex}/${i}   ${device.data.priorities[universeIndex][i]}`;
+        }
+        universe.slotElemsSet = true;
       }
-      device.data.universes[universeIndex].slotElemsSet = true;
     });
   }
 };

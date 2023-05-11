@@ -1,9 +1,11 @@
-const { app, BrowserWindow, Menu, ipcMain, nativeTheme, dialog } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, nativeTheme, dialog, shell } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const path = require('path');
+const packageInfo = require('./package.json');
 
 const isMac = process.platform === 'darwin';
 const isWin = process.platform === 'win32';
+const isLinux = process.platform === 'linux';
 
 let autoUpdate = false;
 let manualUpdateCheck = false;
@@ -146,7 +148,6 @@ const windowMac = {
   transparent: true,
   frame: false,
   show: false,
-  // backgroundColor: "#333333",
   vibrancy: 'window',
   visualEffectState: 'followWindow',
   webPreferences: {
@@ -164,6 +165,21 @@ const windowWin = {
     contextIsolation: false,
     nodeIntegration: true,
     preload: path.join(__dirname, 'preload.js'),
+  },
+};
+
+const networkInfoMac = {
+  width: 700,
+  height: 350,
+  // transparent: true,
+  frame: true,
+  show: false,
+  vibrancy: 'window',
+  visualEffectState: 'followWindow',
+  webPreferences: {
+    contextIsolation: false,
+    nodeIntegration: true,
+    preload: path.join(__dirname, 'networkInterfaces.js'),
   },
 };
 
@@ -190,6 +206,10 @@ const createWindow = () => {
     mainWindow = new BrowserWindow(windowMac);
   } else {
     mainWindow = new BrowserWindow(windowWin);
+  }
+
+  if (isLinux) {
+    mainWindow.setIcon(path.join(__dirname, 'src', 'assets', 'img', 'icon.png'));
   }
 
   mainWindow.loadFile('index.html');
@@ -240,7 +260,24 @@ ipcMain.on('setDevicePin', (event, arg) => {
   menuObj.getMenuItemById('devicePin').checked = arg;
 });
 
-// Autoupdate logic
+ipcMain.on('openNetworkInfoWindow', (event, arg) => {
+  openNetworkInfoWindow();
+});
+
+function openNetworkInfoWindow() {
+  if (!networkInfoWindow || (networkInfoWindow && networkInfoWindow.isDestroyed())) {
+    if (isMac) {
+      networkInfoWindow = new BrowserWindow(networkInfoMac);
+    } else {
+      networkInfoWindow = new BrowserWindow(networkInfoWin);
+      networkInfoWindow.removeMenu();
+    }
+    networkInfoWindow.loadFile('networkInterfaces.html');
+  }
+  networkInfoWindow.show();
+}
+
+// ONLY Autoupdate logic below
 ipcMain.on('checkForUpdates', (event, arg) => {
   autoUpdater.checkForUpdates();
 });
@@ -253,18 +290,6 @@ ipcMain.on('setAutoUpdate', (event, _autoUpdate) => {
   menuObj = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menuObj);
 });
-
-ipcMain.on('openNetworkInfoWindow', (event, arg) => {
-  openNetworkInfoWindow();
-});
-
-function openNetworkInfoWindow() {
-  if (!networkInfoWindow || (networkInfoWindow && networkInfoWindow.isDestroyed())) {
-    networkInfoWindow = new BrowserWindow(networkInfoWin);
-    networkInfoWindow.loadFile('networkInterfaces.html');
-  }
-  networkInfoWindow.show();
-}
 
 // this can be set to true to bypass the download update dialog and skip straight to install prompt
 autoUpdater.autoDownload = false;
@@ -283,7 +308,7 @@ autoUpdater.on('update-available', (updateInfo) => {
   if (isMac) {
     dialogOpts = {
       type: 'info',
-      buttons: ['Download', 'Cancel'],
+      buttons: ['Download', 'Cancel', 'View Release Notes'],
       title: 'Update Available',
       message: title,
       detail: msg,
@@ -291,16 +316,19 @@ autoUpdater.on('update-available', (updateInfo) => {
   } else {
     dialogOpts = {
       type: 'info',
-      buttons: ['Download', 'Cancel'],
+      buttons: ['Download', 'Cancel', 'View Release Notes'],
       title: 'Update Available',
       message: msg,
     };
   }
 
   dialog.showMessageBox(mainWindow, dialogOpts).then((returnValue) => {
-    // download was clicked
     if (returnValue.response === 0) {
+      // download was clicked
       autoUpdater.downloadUpdate();
+    } else if (returnValue.response === 2) {
+      // view release notes clicked
+      shell.openExternal(`${packageInfo.repository}/releases/tag/v${updateInfo.version}`);
     }
   });
 });
@@ -315,7 +343,7 @@ autoUpdater.on('update-downloaded', (event) => {
     dialogOpts = {
       type: 'info',
       buttons: ['Install', 'Later'],
-      title: 'Update Available',
+      title: 'Update Downloaded',
       message: title,
       detail: msg,
     };
@@ -323,7 +351,7 @@ autoUpdater.on('update-downloaded', (event) => {
     dialogOpts = {
       type: 'info',
       buttons: ['Install', 'Later'],
-      title: 'Update Available',
+      title: 'Update Downloaded',
       message: msg,
     };
   }

@@ -2,8 +2,7 @@ const { v4: uuid } = require('uuid');
 const osc = require('osc');
 const net = require('net');
 const udp = require('dgram');
-const _ = require('lodash');
-
+const { Atem } = require('atem-connection');
 const PLUGINS = require('./plugins.js');
 const VIEW = require('./view.js');
 const SAVESLOTS = require('./saveSlots.js');
@@ -12,7 +11,7 @@ const SEARCH = require('./search.js');
 const devices = {};
 module.exports.all = devices;
 
-function registerDevice(newDevice) {
+function registerDevice(newDevice, discoveryMethod) {
   if (PLUGINS.all[newDevice.type] === undefined) {
     console.error(`Plugin for device ${newDevice.type} does not exist.`);
     return true;
@@ -23,20 +22,10 @@ function registerDevice(newDevice) {
     initElements[i].style.display = 'none';
   }
 
-  // only register device if it hasn't already been added
-  if (newDevice.addresses.length > 0) {
-    const existing = _.find(devices, (e) => {
-      const typeMatch = e.type === newDevice.type;
-      const addressMatch = JSON.stringify(e.addresses) === JSON.stringify(newDevice.addresses);
-      return typeMatch && addressMatch;
-    });
-
-    if (existing) {
-      return false;
-    }
+  // prevent duplicate devices from being added via search
+  if (isDeviceAlreadyAdded(newDevice) && discoveryMethod === 'fromSearch') {
+    return false;
   }
-
-  // console.log("Registered new "+newDevice.type)
 
   const id = newDevice.id || uuid();
   devices[id] = {
@@ -49,11 +38,14 @@ function registerDevice(newDevice) {
     port: newDevice.port,
     addresses: newDevice.addresses,
     data: {},
+    templates: {},
     fields: newDevice.fields || {},
     pinIndex: false,
     lastDrawn: 0,
     lastHeartbeat: 0,
+    lastMessage: 0,
     heartbeatInterval: PLUGINS.all[newDevice.type].heartbeatInterval,
+    heartbeatTimeout: PLUGINS.all[newDevice.type].heartbeatTimeout,
     draw() {
       VIEW.draw(this);
     },
@@ -79,7 +71,7 @@ function registerDevice(newDevice) {
 
   VIEW.addDeviceToList(devices[id]);
   initDeviceConnection(id);
-  return true;
+  return devices[id];
 }
 module.exports.registerDevice = registerDevice;
 
@@ -177,6 +169,7 @@ function initDeviceConnection(id) {
 
       device.connection.on('message', (msg, info) => {
         plugins[type].data(device, msg);
+        device.lastMessage = Date.now();
         infoUpdate(device, 'status', 'ok');
       });
     });
@@ -194,13 +187,33 @@ function initDeviceConnection(id) {
 
       device.connection.on('message', (msg, info) => {
         plugins[type].data(device, msg);
+        device.lastMessage = Date.now();
         infoUpdate(device, 'status', 'ok');
       });
     });
 
     device.send = (data) => {};
+  } else if (plugins[type].config.connectionType === 'atem') {
+    device.connection = new Atem({
+      // this gets around the no workers nodejs error
+      disableMultithreaded: true,
+    });
+    device.connection.connect(device.addresses[0]);
+
+    device.connection.on('connected', () => {
+      infoUpdate(device, 'status', 'ok');
+      plugins[type].ready(device);
+    });
+
+    device.connection.on('stateChanged', (state, pathToChange) => {
+      device.lastMessage = Date.now();
+      plugins[type].data(device, {
+        pathToChange,
+        state,
+      });
+      infoUpdate(device, 'status', 'ok');
+    });
   }
-  // device.plugin = plugins[type];
 
   return true;
 }
@@ -213,6 +226,9 @@ module.exports.deleteActive = function deleteActive() {
   );
 
   if (choice) {
+    if (device.plugin.connectionType === 'TCPsocket') {
+      device.connection.destroy();
+    }
     VIEW.removeDeviceFromList(device);
     delete devices[device.id];
     SAVESLOTS.removeDevice(device);
@@ -235,7 +251,6 @@ module.exports.changeActiveType = function changeActiveType(newType) {
   initDeviceConnection(device.id);
   VIEW.draw(device);
   VIEW.updateFields();
-  // SAVESLOTS.saveAll();
 };
 
 module.exports.changeActiveIP = function changeActiveIP(newIP) {
@@ -271,7 +286,6 @@ module.exports.changeActivePinIndex = function changeActivePinIndex(newPin) {
 module.exports.changePinIndex = function changePinIndex(device, newPin) {
   const d = device;
   d.pinIndex = newPin;
-  // SAVESLOTS.saveAll();
 };
 module.exports.refreshActive = function refreshActive() {
   const device = VIEW.getActiveDevice();
@@ -311,23 +325,26 @@ function heartbeat() {
       d.lastHeartbeat = Date.now();
     }
   });
-
-  // for (let i in devices) {
-  //   const device = devices[i];
-  //   if (Date.now() >= device.lastHeartbeat + device.heartbeatInterval) {
-  //     if (device.status == 'broken') {
-  //       initDeviceConnection(i);
-  //     } else if (Date.now() - device.lastMessage > device.heartbeatTimeout) {
-  //       infoUpdate(device, 'status', 'broken');
-  //     } else {
-  //       if (device.port != undefined && device.addresses.length > 0) {
-  //         PLUGINS.all[device.type].heartbeat(device);
-  //       } else {
-  //         // console.error("Invalid IP/Port on device "+device.name)
-  //       }
-  //     }
-  //     device.lastHeartbeat = Date.now();
-  //   }
-  // }
 }
 setInterval(heartbeat, 100);
+
+function isDeviceAlreadyAdded(newDevice) {
+  let deviceAlreadyAdded = false;
+
+  if (newDevice.addresses.length === 0) {
+    return false;
+  }
+
+  for (let i = 0; i < Object.keys(devices).length; i++) {
+    const device = devices[Object.keys(devices)[i]];
+    const typeMatch = device.type === newDevice.type;
+    const addressMatch = JSON.stringify(device.addresses) === JSON.stringify(newDevice.addresses);
+    const idMatch = device.id === newDevice.id;
+    if (typeMatch && addressMatch && !idMatch) {
+      deviceAlreadyAdded = true;
+      break;
+    }
+  }
+  return deviceAlreadyAdded;
+}
+module.exports.isDeviceAlreadyAdded = isDeviceAlreadyAdded;

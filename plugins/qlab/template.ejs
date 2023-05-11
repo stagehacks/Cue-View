@@ -3,16 +3,6 @@
   <h2>QLab <%= data.version || "" %></h2>
 </header>
 
-<% 
-  const fs = require('fs');
-  let _ = require('lodash');
-  const path = require('path');
-
-  let cueTemplate = _.template(fs.readFileSync(path.join(__dirname, `/plugins/qlab/cue.ejs`)));
-  let tileTemplate = _.template(fs.readFileSync(path.join(__dirname, `/plugins/qlab/tile.ejs`)));
-  let cartTemplate = _.template(fs.readFileSync(path.join(__dirname, `/plugins/qlab/cart.ejs`)));
-  let listTemplate = _.template(fs.readFileSync(path.join(__dirname, `/plugins/qlab/cuelist.ejs`)));
-%>
   
   <% if(data.permission=="ok"){
     for(const workspace_id in data.workspaces){
@@ -21,9 +11,9 @@
         const ql = workspace.cueLists[cueList_id]; %>
         
         <% if(ql.type=="Cue List"){ %>
-          <%= listTemplate({cueList: ql, allCues: workspace.cues, rowTemplate: cueTemplate, workspace: workspace}) %>
+          <%= templates.cuelist({cueList: ql, allCues: workspace.cues, rowTemplate: templates.cue, workspace: workspace}) %>
         <% }else if(ql.type=="Cart"){ %>
-          <%= cartTemplate({cueList: ql, allCues: workspace.cues, tileTemplate: tileTemplate}) %>
+          <%= templates.cart({cueList: ql, allCues: workspace.cues, tileTemplate: templates.tile}) %>
         <% } %>
 
 <% }}}else if(data.permission=="no workspaces"){ %>
