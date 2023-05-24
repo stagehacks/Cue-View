@@ -320,7 +320,10 @@ function infoUpdate(device, param, value) {
 }
 module.exports.infoUpdate = infoUpdate;
 
+let $networkIndicatorDot;
+
 function heartbeat() {
+  $networkIndicatorDot = document.getElementById('network-indicator-dot');
   Object.keys(devices).forEach((deviceID) => {
     const d = devices[deviceID];
 
@@ -342,8 +345,22 @@ function heartbeat() {
       d.sendQueue.shift();
     }
   });
+  document.getElementById('network-indicator-dot').style.background = '#111';
 }
 setInterval(heartbeat, 50);
+
+function networkTick() {
+  Object.keys(devices).forEach((deviceID) => {
+    const d = devices[deviceID];
+
+    if (d.sendQueue.length > 0 && d.sendNow) {
+      d.sendNow(d.sendQueue[0]);
+      d.sendQueue.shift();
+      $networkIndicatorDot.style.background = 'green';
+    }
+  });
+}
+setInterval(networkTick, 5);
 
 function isDeviceAlreadyAdded(newDevice) {
   let deviceAlreadyAdded = false;
