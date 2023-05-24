@@ -126,15 +126,29 @@ function searchBonjour(pluginType, pluginConfig) {
       }
     });
 
-    DEVICE.registerDevice(
-      {
-        type: pluginType,
-        defaultName: e.name,
-        port: e.port,
-        addresses: validAddresses,
-      },
-      'fromSearch'
-    );
+    if (pluginConfig.searchOptions.validateResponse) {
+      if (pluginConfig.searchOptions.validateResponse(e.fqdn)) {
+        DEVICE.registerDevice(
+          {
+            type: pluginType,
+            defaultName: e.name,
+            port: e.port,
+            addresses: validAddresses,
+          },
+          'fromSearch'
+        );
+      }
+    } else {
+      DEVICE.registerDevice(
+        {
+          type: pluginType,
+          defaultName: e.name,
+          port: e.port,
+          addresses: validAddresses,
+        },
+        'fromSearch'
+      );
+    }
   });
 }
 
