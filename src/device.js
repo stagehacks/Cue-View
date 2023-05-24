@@ -360,7 +360,7 @@ function networkTick() {
     }
   });
 }
-setInterval(networkTick, 5);
+setInterval(networkTick, 10);
 
 function isDeviceAlreadyAdded(newDevice) {
   let deviceAlreadyAdded = false;
