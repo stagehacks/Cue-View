@@ -19,6 +19,7 @@ table {
   outline: black 2px outset;
   border-top: #8b8b8b 2px solid;
   border-left: #8b8b8b 2px solid;
+  min-width: 100px;
 }
 .dark-button {
   background: linear-gradient(0deg, #0e0e0e, #282828);
@@ -93,4 +94,15 @@ h4 {
   border-top: #772b26 2px solid;
   border-left: #772b26 2px solid;
   background-image: url('muteicon-mute.png'), linear-gradient(0deg, #b52714, #c4473e);
+}
+
+@media screen and (min-width: 0px) and (max-width: 450px) {
+  .hide-medium {
+    display: none;
+  }
+}
+@media screen and (min-width: 0px) and (max-width: 300px) {
+  .hide-small {
+    display: none;
+  }
 }

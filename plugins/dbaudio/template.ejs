@@ -8,13 +8,13 @@
 		<td>
 			<div class="button dark-button indicate-<%=data.oca.PwrOn.parameters[0]%>"></div>
 		</td>
-		<td width="250px">
+		<td width="250px" class="hide-small">
 			<div class="button dark-button">
 				<h4><%= data.oca.ModelDescription.parameters[0] %></h4><br>
-				<%= data.oca.OutputModeList.parameters[data.oca.OutputMode.parameters[0]+1] %>
+				<span class="hide-medium"><%= data.oca.OutputModeList.parameters[data.oca.OutputMode.parameters[0]+1] %></span>
 			</div>
 		</td>
-		<td>
+		<td class="hide-medium">
 			<div class="button dark-button">
 				<h4>ID</h4><br>
 				<%= data.oca.SubNet.parameters[0] %>.<%= data.oca.DeviceId.parameters[0].toString().padStart(2, '0') %>
@@ -24,7 +24,7 @@
 	</tr>
 	<tr>
 		<td></td>
-		<td>
+		<td class="hide-small">
 			<div class="button light-button">
 				<h4><%= data.oca.ChannelNameA.parameters[0] %></h4>
 				<div class="channel-input">
@@ -43,7 +43,8 @@
 				</div>
 			</div>
 		</td>
-		<td><div class="gain-box">
+		<td class="hide-medium">
+			<div class="gain-box">
 				<div class="gain-head"></div>
 				<span><%= data.oca.InputGainA.parameters[0].toFixed(1) %>db</span>
 			</div>
@@ -52,7 +53,7 @@
 	</tr>
 	<tr>
 		<td></td>
-		<td>
+		<td class="hide-small">
 			<div class="button light-button">
 				<h4><%= data.oca.ChannelNameB.parameters[0] %></h4>
 				<div class="channel-input">
@@ -71,7 +72,8 @@
 				</div>
 			</div>
 		</td>
-		<td><div class="gain-box">
+		<td class="hide-medium">
+			<div class="gain-box">
 			<div class="gain-head"></div>
 			<span><%= data.oca.InputGainB.parameters[0].toFixed(1) %>db</span>
 		</div>
@@ -80,7 +82,7 @@
 	</tr>
 	<tr>
 		<td></td>
-		<td>
+		<td class="hide-small">
 			<div class="button light-button">
 				<h4><%= data.oca.ChannelNameC.parameters[0] %></h4>
 				<div class="channel-input">
@@ -99,7 +101,8 @@
 				</div>
 			</div>
 		</td>
-		<td><div class="gain-box">
+		<td class="hide-medium">
+			<div class="gain-box">
 			<div class="gain-head"></div>
 			<span><%= data.oca.InputGainC.parameters[0].toFixed(1) %>db</span>
 		</div>
@@ -108,7 +111,7 @@
 	</tr>
 	<tr>
 		<td></td>
-		<td>
+		<td class="hide-small">
 			<div class="button light-button">
 				<h4><%= data.oca.ChannelNameD.parameters[0] %></h4>
 				<div class="channel-input">
@@ -127,7 +130,8 @@
 				</div>
 			</div>
 		</td>
-		<td><div class="gain-box">
+		<td class="hide-medium">
+			<div class="gain-box">
 			<div class="gain-head"></div>
 			<span><%= data.oca.InputGainD.parameters[0].toFixed(1) %>db</span>
 		</div>
