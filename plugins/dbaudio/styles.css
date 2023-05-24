@@ -1,0 +1,96 @@
+table {
+  color: white;
+  background-color: #323232;
+  font-size: 14px;
+}
+.button {
+  padding: 4px;
+  height: 65px;
+  border-radius: 4px;
+  position: relative;
+  text-align: right;
+  margin: 2px;
+  box-sizing: border-box;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.light-button {
+  background: linear-gradient(0deg, #484848, #737373);
+  outline: black 2px outset;
+  border-top: #8b8b8b 2px solid;
+  border-left: #8b8b8b 2px solid;
+}
+.dark-button {
+  background: linear-gradient(0deg, #0e0e0e, #282828);
+  outline: #737373 2px solid;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mute {
+  text-align: center;
+  background-image: url('muteicon-on.png'), linear-gradient(0deg, #484848, #737373);
+  background-position: 52px 13px, 0px 0px;
+  background-repeat: no-repeat;
+}
+.gain-box {
+  background-color: #272727;
+  height: 60px;
+  width: 65px;
+  margin: 2px;
+  border: #656565 2px solid;
+  outline: #111111 2px solid;
+  text-align: right;
+}
+.gain-head {
+  box-sizing: border-box;
+  height: 12px;
+  width: 100%;
+  background: #686868;
+  border: #1a1a1a 2px solid;
+  outline: #656565 2px solid;
+  margin-bottom: 27px;
+}
+.gain-box span {
+  padding: 4px;
+}
+h3 {
+  margin: 7px 0px 3px;
+  margin-left: 12px;
+  text-align: left;
+  font-weight: normal;
+  font-size: 22px;
+}
+h4 {
+  text-align: left;
+  font-size: 16px;
+  margin: 0px;
+}
+
+.channel-input {
+  position: absolute;
+  left: 9px;
+  top: 27px;
+  border-right: white 1px solid;
+  padding-right: 40px;
+  text-align: left;
+  line-height: 14px;
+}
+.channel-delay {
+  position: absolute;
+  left: 170px;
+  top: 40px;
+}
+.power-1 {
+  background: linear-gradient(0deg, #5a8127, #789b50);
+  border: #506937 1px solid;
+}
+.indicate-1 {
+  background: #00ff00;
+  border: black 2px inset;
+}
+
+.mute-1 {
+  border-top: #772b26 2px solid;
+  border-left: #772b26 2px solid;
+  background-image: url('muteicon-mute.png'), linear-gradient(0deg, #b52714, #c4473e);
+}

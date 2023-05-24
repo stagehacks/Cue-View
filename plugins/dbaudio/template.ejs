@@ -1,0 +1,137 @@
+<header>
+	<h1><%= listName %></h1>
+	<h2><%= data.oca.FirmwareRevision.parameters[0] %></h2>
+</header>
+
+<table>
+	<tr>
+		<td>
+			<div class="button dark-button indicate-<%=data.oca.PwrOn.parameters[0]%>"></div>
+		</td>
+		<td width="250px">
+			<div class="button dark-button">
+				<h4><%= data.oca.ModelDescription.parameters[0] %></h4><br>
+				<%= data.oca.OutputModeList.parameters[data.oca.OutputMode.parameters[0]+1] %>
+			</div>
+		</td>
+		<td>
+			<div class="button dark-button">
+				<h4>ID</h4><br>
+				<%= data.oca.SubNet.parameters[0] %>.<%= data.oca.DeviceId.parameters[0].toString().padStart(2, '0') %>
+			</div>
+		</td>
+		<td width="95px"><div class="button dark-button power-<%=data.oca.PwrOn.parameters[0]%>"><h4>Power</h4><br>On</div></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td>
+			<div class="button light-button">
+				<h4><%= data.oca.ChannelNameA.parameters[0] %></h4>
+				<div class="channel-input">
+					Input<br>
+					<% if(data.oca.InputEnable1A.parameters[0]){ %> A1 <% } %>
+					<% if(data.oca.InputEnable2A.parameters[0]){ %> A2 <% } %>
+					<% if(data.oca.InputEnable3A.parameters[0]){ %> A3 <% } %>
+					<% if(data.oca.InputEnable4A.parameters[0]){ %> A4 <% } %>
+					<% if(data.oca.InputEnable5A.parameters[0]){ %> D1 <% } %>
+					<% if(data.oca.InputEnable6A.parameters[0]){ %> D2 <% } %>
+					<% if(data.oca.InputEnable7A.parameters[0]){ %> D3 <% } %>
+					<% if(data.oca.InputEnable8A.parameters[0]){ %> D4 <% } %>
+				</div>
+				<div class="channel-delay">
+					<%= data.oca.DelayA.parameters[0].toFixed(1) %>ms
+				</div>
+			</div>
+		</td>
+		<td><div class="gain-box">
+				<div class="gain-head"></div>
+				<span><%= data.oca.InputGainA.parameters[0].toFixed(1) %>db</span>
+			</div>
+		</td>
+		<td><div class="button light-button mute mute-<%=data.oca.MuteA.parameters[0]%>"><h3>A</h3><%= data.oca.SpeakerIDList.parameters[data.oca.SpeakerIDA.parameters[0]] %></div></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td>
+			<div class="button light-button">
+				<h4><%= data.oca.ChannelNameB.parameters[0] %></h4>
+				<div class="channel-input">
+					Input<br>
+					<% if(data.oca.InputEnable1B.parameters[0]){ %> A1 <% } %>
+					<% if(data.oca.InputEnable2B.parameters[0]){ %> A2 <% } %>
+					<% if(data.oca.InputEnable3B.parameters[0]){ %> A3 <% } %>
+					<% if(data.oca.InputEnable4B.parameters[0]){ %> A4 <% } %>
+					<% if(data.oca.InputEnable5B.parameters[0]){ %> D1 <% } %>
+					<% if(data.oca.InputEnable6B.parameters[0]){ %> D2 <% } %>
+					<% if(data.oca.InputEnable7B.parameters[0]){ %> D3 <% } %>
+					<% if(data.oca.InputEnable8B.parameters[0]){ %> D4 <% } %>
+				</div>
+				<div class="channel-delay">
+					<%= data.oca.DelayB.parameters[0].toFixed(1) %>ms
+				</div>
+			</div>
+		</td>
+		<td><div class="gain-box">
+			<div class="gain-head"></div>
+			<span><%= data.oca.InputGainB.parameters[0].toFixed(1) %>db</span>
+		</div>
+	</td>
+		<td><div class="button light-button mute mute-<%=data.oca.MuteB.parameters[0]%>"><h3>B</h3><%= data.oca.SpeakerIDList.parameters[data.oca.SpeakerIDB.parameters[0]] %></div></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td>
+			<div class="button light-button">
+				<h4><%= data.oca.ChannelNameC.parameters[0] %></h4>
+				<div class="channel-input">
+					Input<br>
+					<% if(data.oca.InputEnable1C.parameters[0]){ %> A1 <% } %>
+					<% if(data.oca.InputEnable2C.parameters[0]){ %> A2 <% } %>
+					<% if(data.oca.InputEnable3C.parameters[0]){ %> A3 <% } %>
+					<% if(data.oca.InputEnable4C.parameters[0]){ %> A4 <% } %>
+					<% if(data.oca.InputEnable5C.parameters[0]){ %> D1 <% } %>
+					<% if(data.oca.InputEnable6C.parameters[0]){ %> D2 <% } %>
+					<% if(data.oca.InputEnable7C.parameters[0]){ %> D3 <% } %>
+					<% if(data.oca.InputEnable8C.parameters[0]){ %> D4 <% } %>
+				</div>
+				<div class="channel-delay">
+					<%= data.oca.DelayC.parameters[0].toFixed(1) %>ms
+				</div>
+			</div>
+		</td>
+		<td><div class="gain-box">
+			<div class="gain-head"></div>
+			<span><%= data.oca.InputGainC.parameters[0].toFixed(1) %>db</span>
+		</div>
+	</td>
+		<td><div class="button light-button mute mute-<%=data.oca.MuteC.parameters[0]%>"><h3>C</h3><%= data.oca.SpeakerIDList.parameters[data.oca.SpeakerIDC.parameters[0]] %></div></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td>
+			<div class="button light-button">
+				<h4><%= data.oca.ChannelNameD.parameters[0] %></h4>
+				<div class="channel-input">
+					Input<br>
+					<% if(data.oca.InputEnable1D.parameters[0]){ %> A1 <% } %>
+					<% if(data.oca.InputEnable2D.parameters[0]){ %> A2 <% } %>
+					<% if(data.oca.InputEnable3D.parameters[0]){ %> A3 <% } %>
+					<% if(data.oca.InputEnable4D.parameters[0]){ %> A4 <% } %>
+					<% if(data.oca.InputEnable5D.parameters[0]){ %> D1 <% } %>
+					<% if(data.oca.InputEnable6D.parameters[0]){ %> D2 <% } %>
+					<% if(data.oca.InputEnable7D.parameters[0]){ %> D3 <% } %>
+					<% if(data.oca.InputEnable8D.parameters[0]){ %> D4 <% } %>
+				</div>
+				<div class="channel-delay">
+					<%= data.oca.DelayD.parameters[0].toFixed(1) %>ms
+				</div>
+			</div>
+		</td>
+		<td><div class="gain-box">
+			<div class="gain-head"></div>
+			<span><%= data.oca.InputGainD.parameters[0].toFixed(1) %>db</span>
+		</div>
+	</td>
+		<td><div class="button light-button mute mute-<%=data.oca.MuteD.parameters[0]%>"><h3>D</h3><%= data.oca.SpeakerIDList.parameters[data.oca.SpeakerIDD.parameters[0]] %></div></td>
+	</tr>
+</table>
