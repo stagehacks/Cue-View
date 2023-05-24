@@ -8,6 +8,9 @@ exports.config = {
   searchOptions: {
     type: 'Bonjour',
     bonjourName: 'oca',
+    validateResponse(msg, info) {
+      return msg.includes('d&b audiotechnik');
+    },
   },
 };
 
