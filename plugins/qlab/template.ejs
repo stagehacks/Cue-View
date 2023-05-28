@@ -3,26 +3,22 @@
   <h2>QLab <%= data.version || "" %></h2>
 </header>
 
+<% const workspaceKeys = Object.keys(data.workspaces); %>
   
-  <% if(data.permission=="ok"){
-    for(const workspace_id in data.workspaces){
-      const workspace = data.workspaces[workspace_id];
-      for(const cueList_id in workspace.cueLists){
-        const ql = workspace.cueLists[cueList_id]; %>
-        
-        <% if(ql.type=="Cue List"){ %>
-          <%= templates.cuelist({cueList: ql, allCues: workspace.cues, rowTemplate: templates.cue, workspace: workspace}) %>
-        <% }else if(ql.type=="Cart"){ %>
-          <%= templates.cart({cueList: ql, allCues: workspace.cues, tileTemplate: templates.tile}) %>
-        <% } %>
+<% for(let i=0; i<workspaceKeys.length; i++){ %>
+  <% const workspace = data.workspaces[workspaceKeys[i]]; %>
 
-<% }}}else if(data.permission=="no workspaces"){ %>
+  <h1><%= workspace.displayName %></h1>
 
-  <h3>QLab is launched but there are no open Workspaces</h3>
+  <% for(let j=0; j<workspace.cueLists.length; j++){ %>
+    <% const cueList = workspace.cueLists[j]; %>
 
-<% }else if(data.permission=="denied"){ %>
+    <% if(cueList.type=="Cue List"){ %>
+      <%= templates.cuelist({cueList: cueList, allCues: data.cueKeys, rowTemplate: templates.cue, workspace: workspace}) %>
+    <% }else if(cueList.type=="Cart"){ %>
+      <%= templates.cart({cueList: cueList, allCues: data.cueKeys, tileTemplate: templates.tile}) %>
+    <% } %>
 
-  <h3>Incorrect Passcode or OSC Access Permissions</h3>
-  <button href="https://qlab.app/docs/v5/fundamentals/workspace-settings#the-osc-access-tab">QLab Documentation: OSC Access Tab</button>
+  <% } %>
 
 <% } %>

@@ -1,145 +1,190 @@
+<% let cueKeys = allCues[cue.uniqueID]; %>
 <% let playbackPosition = workspace.playbackPosition==cue.uniqueID ? "playback-position" : "" %>
-<tr class="q-<%= cue.colorName %> q-armed-<%= cue.armed %> <%= playbackPosition %>" id="<%= cue.uniqueID %>">
+<% let selected = workspace.selected.includes(cue.uniqueID) ? "selected": "" %>
 
-  <td></td> <!-- playhead/color indicator -->
+<% if(cueKeys && cueKeys.parent){ %>
 
-  <td><center>
-  <% if(cue.broken){ %>
-    <img src="./plugins/qlab/img/status_broken.png" height="18px">
+<tr class="q-<%= cueKeys.colorName %> q-armed-<%= cueKeys.armed %> <%= playbackPosition %> <%= selected %>" id="<%= cueKeys.uniqueID %>">
 
-  <% }else if(cue.running){ %>
-    <img src="./plugins/qlab/img/status_running.png" height="18px">
-
-  <% }else if(cue.paused){ %>
-    <img src="./plugins/qlab/img/status_paused.png" height="18px">
-
-  <% }else if(cue.loaded){ %>
-    <img src="./plugins/qlab/img/status_loaded.png" height="18px">
-
-  <% }else if(cue.flagged){ %>
-    <img src="./plugins/qlab/img/status_flagged.png" height="20px">
-
-  <% }else{ %>
+    <!-- playhead/color indicator -->
+    <td class="playhead"></td> 
     
-  <% } %>
-  </center></td>
 
-  <% if(cue.type == "Group" && cue.groupMode){ %>
-    <td><img src="./plugins/qlab/img/v5/group-<%= cue.groupMode %>.png" height="20px"></td>
-
-  <% }else{ %>
-    <td><img src="./plugins/qlab/img/<%= cue.type.toLowerCase().replace(' ','-') %>.png" height="20px"></td>
-
-  <% } %>
-
-
-  
-
-  <td><center><%= cue.number || "&nbsp;" %></center></td>
-
-
-  <% for(let i=0; i<cue.nestedGroupModes.length; i++){ %>
-
-      <% if(cue.cues && cue.cues.length==0 && i==cue.nestedGroupModes.length-1){ %>
-        <td class="gMode-<%= cue.nestedGroupModes[i] %> gLeft gBot gTop group-arrow"></td>
-      
-      <% }else if(cue.cues && i==cue.nestedGroupModes.length-1){ %>
-        <td class="gMode-<%= cue.nestedGroupModes[i] %> gLeft gTop group-arrow"></td>
-
-      <% }else if(cue.nestedGroupPosition[i]<=0){ %>
-        <% if(i<cue.nestedGroupModes.length-1){ %>
-          <td class="gMode-<%= cue.nestedGroupModes[i] %> gLeft gBot"></td>
-
-        <% }else{ %>
-          <td class="gMode-<%= cue.nestedGroupModes[i] %> gBot"></td>
-
-        <% } %>
-
-      <% }else if(i<cue.nestedGroupModes.length-1){ %>
-        <td class="gMode-<%= cue.nestedGroupModes[i] %> gLeft"></td>
-
-      <% }else{ %>
-        <td class="gMode-<%= cue.nestedGroupModes[i] %>"></td>
-
-      <% } %>
-      
-
-  <% } %>
-
-  
-
-  <!-- end spacer cells -->
+    <!-- status indicator -->
+    <td><center> 
+    <% if(cueKeys.isBroken){ %>
+        <img src="./plugins/qlab/img/status_broken.png" height="18px">
+    
+    <% }else if(cueKeys.isRunning){ %>
+        <img src="./plugins/qlab/img/status_running.png" height="18px">
+    
+    <% }else if(cueKeys.isPaused){ %>
+        <img src="./plugins/qlab/img/status_paused.png" height="18px">
+    
+    <% }else if(cueKeys.isLoaded){ %>
+        <img src="./plugins/qlab/img/status_loaded.png" height="18px">
+    
+    <% }else if(cueKeys.isFlagged){ %>
+        <img src="./plugins/qlab/img/status_flagged.png" height="20px">
+    
+    <% }else{ %>
+        
+    <% } %>
+    </center></td>
 
 
-	<% if(cue.type=="Group"){ %>
-    <% if(cue.cues.length==0){ %>
-      <td id="cue-name" colspan="<%= 11-cue.nestedGroupModes.length %>" class="gMode-<%= cue.groupMode %> gTop gBot gRight"><%= cue.listName %></td>
+    <!-- cue type icon -->
+    <% if(cueKeys.type == "Group" && cueKeys.mode){ %> 
+        <td><img src="./plugins/qlab/img/v5/group-<%= cueKeys.mode %>.png" height="20px"></td>
 
     <% }else{ %>
-      <td id="cue-name" colspan="<%= 11-cue.nestedGroupModes.length %>" class="gMode-<%= cue.groupMode %> gTop gRight"><%= cue.listName %></td>
+        <td><img src="./plugins/qlab/img/<%= cueKeys.type.toLowerCase().replace(' ','-') %>.png" height="20px"></td>
 
     <% } %>
 
-  <% }else if(cue.nestedGroupPosition[1]==0){ %>
-    <td colspan="<%= 11-cue.nestedGroupModes.length %>" class="cue-name gMode-<%= cue.nestedGroupModes[cue.nestedGroupModes.length-1] %> gBot gRight"><%= cue.listName %></td>
-
-  <% }else{ %>
-    <td colspan="<%= 11-cue.nestedGroupModes.length %>" class="cue-name gMode-<%= cue.nestedGroupModes[cue.nestedGroupModes.length-1] %> gRight"><%= cue.listName %></td>
-
-  <% } %>
 
 
-  <td class="q-time hide-medium"><%= cue.target %></td>
+    <!-- cue number -->
+    <td><center><%= cueKeys.number || "&nbsp;" %></center></td>
+
+
+    
+    <!-- spaces before name -->
+    <% for(let i=0; i<cueKeys.nestedGroupModes.length; i++){ %>
+
+        <% if(cue.type=="Group" && cue.cues.length==0 && i==cueKeys.nestedGroupModes.length-1){ %>
+            <td class="gMode-<%= cueKeys.nestedGroupModes[i] %> gLeft gBot gTop group-arrow"></td>
+          
+        <% }else if(cue.type=="Group" && i==cueKeys.nestedGroupModes.length-1){ %>
+        <td class="gMode-<%= cueKeys.mode %> gLeft gTop group-arrow"></td>
+
+        <% }else if(cueKeys.nestedGroupPosition[i]<=0){ %>
+            <% if(cueKeys.nestedGroupPosition.slice(i+1).every(v => v === 0)){ %>
+                <td class="gMode-<%= cueKeys.nestedGroupModes[i] %> gLeft gBot"></td>
+
+            <% }else{ %>
+                <td class="gMode-<%= cueKeys.nestedGroupModes[i] %> gLeft"></td>
+
+            <% } %>
+
+        <% }else if(i<cueKeys.nestedGroupModes.length-1){ %>
+        <td class="gMode-<%= cueKeys.nestedGroupModes[i] %> gLeft"></td>
+
+        <% }else if(cueKeys.nestedGroupPosition[i]==undefined && cueKeys.nestedGroupPosition[i-1]==0){ %>
+            <td class="gMode-<%= cueKeys.nestedGroupModes[i] %> gBot"></td>
+
+        <% }else{ %>
+        <td class="gMode-<%= cueKeys.nestedGroupModes[i] %>"></td>
+
+        <% } %>
+        
+  
+    <% } %>
+
+            
+
+    <!-- cue name -->
+  
+    <% if(cue.type=="Group"){ %>
+        
+        <% if(cue.cues.length==0){ %>
+          <td id="cue-name" colspan="<%= 11-cueKeys.nestedGroupModes.length %>" class="gMode-<%= cueKeys.mode %> gTop gBot gRight"><%= cueKeys.listName %></td>
+    
+        <% }else{ %>
+          <td id="cue-name" colspan="<%= 11-cueKeys.nestedGroupModes.length %>" class="gMode-<%= cueKeys.mode %> gTop gRight"><%= cueKeys.listName %></td>
+    
+        <% } %>
+    
+    <% }else if(cueKeys.nestedGroupPosition[cueKeys.nestedGroupModes.length-2]==0){ %>
+        <td colspan="<%= 11-cueKeys.nestedGroupModes.length %>" class="cue-name gMode-<%= cueKeys.nestedGroupModes[cueKeys.nestedGroupModes.length-2] %> gBot gRight"><%= cueKeys.listName %></td>
+    
+    <% }else{ %>
+        <td colspan="<%= 11-cueKeys.nestedGroupModes.length %>" class="cue-name gMode-<%= cueKeys.nestedGroupModes[cueKeys.nestedGroupModes.length-2] %> gRight"><%= cueKeys.listName %></td>
+    
+    <% } %>
+    
 
 
 
+    <!-- cue target -->
+    <% if(cueKeys.currentCueTarget){ %>
+        <td class="q-target hide-medium"><%= allCues[cueKeys.currentCueTarget].number ||  allCues[cueKeys.currentCueTarget].listName %></td>
 
-  <% if(cue.preWait){ %>
-    <td class="q-time hide-small"><%= elapsedTime(cue.preWait, cue.preWaitElapsed, "preWait", cue) %></td>
+    <% }else{ %>
+        <td class="q-target hide-medium"></td>
 
-  <% }else{ %>
-    <td class="q-time q-gray-text hide-small">00:00.00</td>
-
-  <% } %>
-
-
-  <% let cueTypesWithAction = ["Audio", "Mic", "Video", "Camera", "Text", "Light", "Fade", "Network", "MIDI File", "Timecode", "Wait"]; %>
-  <% if((cue.type=="Group" && cue.groupMode==3) || cueTypesWithAction.indexOf(cue.type)>=0){ %>
-    <td class="q-time hide-medium"><%= elapsedTime(cue.duration, cue.actionElapsed, "action", cue) %></td>
-
-  <% }else{ %>
-    <td class="hide-medium"></td>
-
-  <% } %>
+    <% } %>
+    
 
 
+    <!-- cue preWait -->
+    <% if(cueKeys.preWait){ %>
+        <td class="q-time hide-small"><%= elapsedTime(cueKeys.preWait, cueKeys.preWaitElapsed, "preWait", cueKeys) %></td>
 
-  <% if(cue.postWait){ %>
-    <td class="q-time hide-medium"><%= elapsedTime(cue.postWait, cue.postWaitElapsed, "postWait", cue) %></td>
+    <% }else{ %>
+        <td class="q-time q-gray-text hide-small">00:00.00</td>
 
-  <% }else{ %>
-    <td class="q-time q-gray-text hide-medium">00:00.00</td>
-
-  <% } %>
+    <% } %>
 
 
 
-  <% if(cue.continueMode==2){ %>
-    <td class="hide-small"><center><img src="plugins/qlab/img/auto_follow.png" height="20px"></center></td>
+    <!-- cue duration -->
+    <% let cueTypesWithAction = ["Audio", "Mic", "Video", "Camera", "Text", "Light", "Fade", "Network", "MIDI File", "Timecode", "Wait"]; %>
+    <% if((cueKeys.type=="Group" && cueKeys.mode==3) || (cueKeys.type=="Group" && cueKeys.mode==6) || cueTypesWithAction.includes(cueKeys.type)){ %>
+        <td class="q-time hide-medium"><%= elapsedTime(cueKeys.duration, cueKeys.actionElapsed, "action", cueKeys) %></td>
 
-  <% }else if(cue.continueMode==1){ %>
-    <td class="hide-small"><center><img src="plugins/qlab/img/auto_continue.png" height="20px"></center></td>
+    <% }else{ %>
+        <td class="hide-medium"></td>
 
-  <% }else{ %>
-    <td class="hide-small"></td>
+    <% } %>
 
-  <% } %>
+
+    <!-- cue postWait -->
+    <% if(cueKeys.postWait){ %>
+        <td class="q-time hide-medium"><%= elapsedTime(cueKeys.postWait, cueKeys.postWaitElapsed, "postWait", cueKeys) %></td>
+
+    <% }else{ %>
+        <td class="q-time q-gray-text hide-medium">00:00.00</td>
+
+    <% } %>
+
+
+
+    <!-- cue continueMode -->
+    <% if(cueKeys.continueMode==2){ %>
+        <td class="hide-small"><center><img src="plugins/qlab/img/auto_follow.png" height="20px"></center></td>
+
+    <% }else if(cueKeys.continueMode==1){ %>
+        <td class="hide-small"><center><img src="plugins/qlab/img/auto_continue.png" height="20px"></center></td>
+
+    <% }else{ %>
+        <td class="hide-small"></td>
+
+    <% } %>
 
 
 </tr>
 
-<% 
-  function prettyFormatTime(seconds){
+
+    <% }else{ %>
+
+<tr class="q-<%= cue.colorName %> q-armed-<%= cue.armed %> " id="<%= cue.uniqueID %>">
+    <td></td>
+    <td></td>
+    <td></td>
+    <td><center><%= cue.number || "&nbsp;" %></center></td>
+    <td colspan="11" id="cue-name"><%= cue.listName %></td>
+    <td class="q-time hide-medium"></td>
+    <td class="q-time q-gray-text hide-small">00:00.00</td>
+    <td class="hide-medium"></td>
+    <td class="q-time q-gray-text hide-medium">00:00.00</td>
+    <td class="hide-small"></td>
+</tr>
+
+<% } %>
+
+<%
+function prettyFormatTime(seconds){
     if(!seconds){
       return "00:00.00";
     }
@@ -151,14 +196,14 @@
     return string.substring(startIndex, string.length-2)
   }
 
-  function elapsedTime(def, value, type, cue){
+function elapsedTime(def, value, type, cue){
 
-    if(type=="action" && cue.paused){
+    if(type=="action" && cue.isPaused){
       value-=cue.preWait;
     }
 
     let border, fill;
-    if(cue.paused){
+    if(cue.isPaused){
       border = "#f6e737";
       fill = "rgba(255, 240, 60, 0.7)";
     }else{
@@ -171,7 +216,7 @@
       let percent = value/def*100;
       let bg = `style='background: black; background: linear-gradient(90deg, ${fill} ${percent}%, transparent ${percent}%);`;
 
-      if(cue.paused){
+      if(cue.isPaused){
         bg+= "outline-color: "+border+";";
         bg+= "color: white;";
       }
@@ -179,7 +224,7 @@
       
       return `<div class='q-time-elapsed' ${bg}>${prettyFormatTime(Math.min(def, value))}</span>`;
 
-    }else if(type=="postWait" || type=="action"){
+    }else if(type=="postWait" && cue.continueMode==0){
       return `<span class='q-gray-text'>${prettyFormatTime(def)}</span>`;
 
     }else{
