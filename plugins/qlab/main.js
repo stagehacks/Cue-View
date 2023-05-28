@@ -236,8 +236,10 @@ exports.update = function update(device, doc, updateType, data) {
       const $elem = doc.getElementById(data.workspace.selected[i]);
       $elem.classList.add('selected');
     }
-    const $elem = doc.getElementById(data.workspace.playbackPosition);
-    $elem.classList.add('playback-position');
+    if (data.workspace.playbackPosition) {
+      const $elem = doc.getElementById(data.workspace.playbackPosition);
+      $elem.classList.add('playback-position');
+    }
   }
 };
 
