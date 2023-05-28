@@ -33,61 +33,60 @@ td img {
 }
 
 tr:nth-child(even) {
-  background: #323232;
+  background: #2d2d2d;
 }
 tr:nth-child(odd) {
-  background: #2c2c2c;
+  background: #262626;
 }
 
-tr:nth-child(even).q-red {
-  background: linear-gradient(to top, #2c2c2c, #4c3130 1px);
-}
 tr:nth-child(odd).q-red {
-  background: linear-gradient(to top, #323232, #513635 1px);
+  background: linear-gradient(to top, #262626, #49302f 1px);
 }
-.q-red td:first-of-type {
-  padding-left: 5px;
-  border-left: 5px #ff4242 solid;
+tr:nth-child(even).q-red {
+  background: linear-gradient(to top, #2d2c2d, #513635 1px);
+}
+.q-red td.playhead {
+  background: linear-gradient(to right, #ff4242 55%, transparent 55%);
+}
+
+tr:nth-child(odd).q-orange {
+  background: linear-gradient(to top, #262626, #443526 1px);
 }
 tr:nth-child(even).q-orange {
-  background: linear-gradient(to top, #2c2c2c, #4b3e2a 1px);
+  background: linear-gradient(to top, #2d2c2d, #4a3b2c 1px);
 }
-tr:nth-child(odd).q-orange {
-  background: linear-gradient(to top, #323232, #514330 1px);
+.q-orange td.playhead {
+  background: linear-gradient(to right, #ffa500 55%, transparent 55%);
 }
-.q-orange td:first-of-type {
-  padding-left: 5px;
-  border-left: 5px #ffa500 solid;
+
+tr:nth-child(odd).q-green {
+  background: linear-gradient(to top, #262626, #2d3d27 1px);
 }
 tr:nth-child(even).q-green {
-  background: linear-gradient(to top, #2c2c2c, #2d452d 1px);
+  background: linear-gradient(to top, #2d2c2d, #32422e 1px);
 }
-tr:nth-child(odd).q-green {
-  background: linear-gradient(to top, #323232, #324b33 1px);
+.q-green td.playhead {
+  background: linear-gradient(to right, #01d52f 55%, transparent 55%);
 }
-.q-green td:first-of-type {
-  padding-left: 5px;
-  border-left: 5px #01d52f solid;
+
+tr:nth-child(odd).q-blue {
+  background: linear-gradient(to top, #262626, #292d40 1px);
 }
 tr:nth-child(even).q-blue {
-  background: linear-gradient(to top, #2c2c2c, #323647 1px);
+  background: linear-gradient(to top, #2d2c2d, #2f3346 1px);
 }
-tr:nth-child(odd).q-blue {
-  background: linear-gradient(to top, #323232, #363b4b 1px);
+.q-blue td.playhead {
+  background: linear-gradient(to right, #536de0 55%, transparent 55%);
 }
-.q-blue td:first-of-type {
-  padding-left: 5px;
-  border-left: 5px #536de0 solid;
+
+tr:nth-child(odd).q-purple {
+  background: linear-gradient(to top, #262626, #342639 1px);
 }
 tr:nth-child(even).q-purple {
-  background: linear-gradient(to top, #2c2c2c, #39273d 1px);
+  background: linear-gradient(to top, #2d2c2d, #382c3f 1px);
 }
-tr:nth-child(odd).q-purple {
-  background: linear-gradient(to top, #323232, #433147 1px);
-}
-.q-purple td:first-of-type {
-  padding-left: 5px;
-  border-left: 5px #a601c0 solid;
+.q-purple td.playhead {
+  background: linear-gradient(to right, #a601c0 55%, transparent 55%);
 }
 
 tr.q-armed-false td {
@@ -96,11 +95,20 @@ tr.q-armed-false td {
 }
 
 tr.playback-position {
-  background-image: none !important;
-  background: #1557da !important;
-  color: white !important;
+  background: #444 !important;
+  color: white;
+}
+tr.playback-position td.playhead {
+  padding: 0px;
+}
+tr.playback-position td.playhead::before {
+  content: url(img/playhead.png);
 }
 tr.playback-position .q-gray-text {
+  color: white !important;
+}
+tr.selected {
+  background: #1557da !important;
   color: white !important;
 }
 
@@ -140,22 +148,19 @@ tr.playback-position .q-gray-text {
   border-radius: 6px;
 }
 .gMode-1 {
-  border-color: #5a5a87;
+  border-color: #48477f;
 }
 .gMode-2 {
-  border-color: #5a5a87;
+  border-color: #48477f;
 }
 .gMode-3 {
-  border-color: #429242;
+  border-color: #43a424;
 }
 .gMode-4 {
-  border-color: #925fc0;
-}
-.gMode-4 {
-  border-color: #925fc0;
+  border-color: #7f26a5;
 }
 .gMode-6 {
-  border-color: #d05b15;
+  border-color: #ee6a21;
 }
 .gMode-,
 .gMode-0 {
@@ -171,6 +176,12 @@ tr.playback-position .q-gray-text {
 .q-time {
   font-size: 14px;
   text-align: center;
+}
+.q-target {
+  text-align: center;
+  font-size: 12px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 .q-gray-text {
   color: #424242;
