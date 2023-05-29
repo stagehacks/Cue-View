@@ -39,6 +39,7 @@ exports.ready = function ready(_device) {
   device.data.workspaces = {};
   device.data.cueKeys = {};
   device.data.somethingPlaying = false;
+  device.data.version = '';
 
   device.templates = {
     cue: _.template(fs.readFileSync(path.join(__dirname, `cue.ejs`))),
@@ -84,6 +85,7 @@ exports.data = function data(_device, oscData) {
         cueLists: [],
         selected: [],
       };
+      device.data.version = json.data[i].version;
       device.data.workspaces[json.data[i].uniqueID].permission = 'ok';
       device.send(`/workspace/${json.data[i].uniqueID}/connect`, device.fields.passcode);
     }
