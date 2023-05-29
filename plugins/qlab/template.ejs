@@ -8,15 +8,13 @@
 <% for(let i=0; i<workspaceKeys.length; i++){ %>
   <% const workspace = data.workspaces[workspaceKeys[i]]; %>
 
-  <h1><%= workspace.displayName %></h1>
-
   <% for(let j=0; j<workspace.cueLists.length; j++){ %>
     <% const cueList = workspace.cueLists[j]; %>
 
     <% if(cueList.type=="Cue List"){ %>
       <%= templates.cuelist({cueList: cueList, allCues: data.cueKeys, rowTemplate: templates.cue, workspace: workspace}) %>
     <% }else if(cueList.type=="Cart"){ %>
-      <%= templates.cart({cueList: cueList, allCues: data.cueKeys, tileTemplate: templates.tile}) %>
+      <%= templates.cart({cueList: cueList, allCues: data.cueKeys, tileTemplate: templates.tile, workspace: workspace}) %>
     <% } %>
 
   <% } %>

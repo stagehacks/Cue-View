@@ -88,71 +88,78 @@ exports.data = function data(_device, oscData) {
   } else if (/reply\/cue_id\/.*\/valuesForKeys/.test(oscData.address)) {
     const json = JSON.parse(oscData.args[0]);
     const keyValues = json.data;
-    const cue = device.data.cueKeys[msgAddr[2]];
+    let cue = device.data.cueKeys[msgAddr[2]];
 
     if (cue === undefined) {
       // this cue is new!
-      console.log('HERE');
+
       // device.send(`/workspace/${json.workspace_id}/cueLists`);
-      // device.draw();
-    } else {
-      // console.log(keyValues.number);
-      cue.uniqueID = keyValues.uniqueID;
-      cue.number = keyValues.number;
-      cue.listName = keyValues.listName;
-      cue.isBroken = keyValues.isBroken;
-      cue.isRunning = keyValues.isRunning;
-      cue.isLoaded = keyValues.isLoaded;
-      cue.isFlagged = keyValues.isFlagged;
-      cue.type = keyValues.type;
-      cue.cues = keyValues.children;
-      cue.preWait = keyValues.preWait;
-      cue.postWait = keyValues.postWait;
-      cue.duration = keyValues.duration;
-      cue.colorName = keyValues.colorName;
-      cue.continueMode = keyValues.continueMode;
-      cue.mode = keyValues.mode;
-      cue.parent = keyValues.parent;
-      cue.cartRows = keyValues.cartRows;
-      cue.cartColumns = keyValues.cartColumns;
-      cue.cartPosition = keyValues.cartPosition;
-      cue.displayName = keyValues.displayName;
-      cue.preWaitElapsed = keyValues.preWaitElapsed;
-      cue.actionElapsed = keyValues.actionElapsed;
-      cue.postWaitElapsed = keyValues.postWaitElapsed;
-      cue.isPaused = keyValues.isPaused;
-      cue.currentCueTarget = keyValues.currentCueTarget;
-      cue.armed = keyValues.armed;
+      device.draw();
+      device.data.cueKeys[msgAddr[2]] = {};
+      cue = device.data.cueKeys[msgAddr[2]];
+    }
+    // console.log(keyValues.number);
+    cue.uniqueID = keyValues.uniqueID;
+    cue.number = keyValues.number;
+    cue.listName = keyValues.listName;
+    cue.isBroken = keyValues.isBroken;
+    cue.isRunning = keyValues.isRunning;
+    cue.isLoaded = keyValues.isLoaded;
+    cue.isFlagged = keyValues.isFlagged;
+    cue.type = keyValues.type;
+    cue.cues = keyValues.children;
+    cue.preWait = keyValues.preWait;
+    cue.postWait = keyValues.postWait;
+    cue.duration = keyValues.duration;
+    cue.colorName = keyValues.colorName;
+    cue.continueMode = keyValues.continueMode;
+    cue.mode = keyValues.mode;
+    cue.parent = keyValues.parent;
+    cue.cartRows = keyValues.cartRows;
+    cue.cartColumns = keyValues.cartColumns;
+    cue.cartPosition = keyValues.cartPosition;
+    cue.displayName = keyValues.displayName;
+    cue.preWaitElapsed = keyValues.preWaitElapsed;
+    cue.actionElapsed = keyValues.actionElapsed;
+    cue.postWaitElapsed = keyValues.postWaitElapsed;
+    cue.isPaused = keyValues.isPaused;
+    cue.currentCueTarget = keyValues.currentCueTarget;
+    cue.armed = keyValues.armed;
 
-      if (keyValues.isRunning) {
-        device.data.somethingPlaying = true;
+    if (keyValues.isRunning) {
+      device.data.somethingPlaying = true;
+    }
+
+    let testCue = device.data.cueKeys[msgAddr[2]];
+    let nestedGroupModes;
+
+    if (cue.type === 'Group') {
+      nestedGroupModes = [testCue.mode];
+    } else if (cue.parent !== '[root group of cue lists]') {
+      nestedGroupModes = [device.data.cueKeys[cue.parent].mode];
+    }
+
+    while (testCue.parent !== '[root group of cue lists]') {
+      testCue = device.data.cueKeys[testCue.parent];
+      if (testCue === undefined) {
+        break;
       }
 
-      let testCue = device.data.cueKeys[msgAddr[2]];
-      let nestedGroupModes;
-
-      if (cue.type === 'Group') {
-        nestedGroupModes = [testCue.mode];
-      } else if (cue.parent !== '[root group of cue lists]') {
-        nestedGroupModes = [device.data.cueKeys[cue.parent].mode];
-      }
-
-      while (testCue.parent !== '[root group of cue lists]') {
-        testCue = device.data.cueKeys[testCue.parent];
-        if (testCue === undefined) {
-          break;
-        }
-
-        nestedGroupModes.unshift(testCue.mode);
-        cue.nestedGroupModes = nestedGroupModes;
-      }
-      if (cue.type === 'Cue List' || cue.type === 'Group') {
+      nestedGroupModes.unshift(testCue.mode);
+      cue.nestedGroupModes = nestedGroupModes;
+    }
+    if (cue.type === 'Cue List' || cue.type === 'Group' || cue.type === 'Cart') {
+      if (device.data.cueKeys[msgAddr[2]].cueInWorkspace) {
         device.data.cueKeys[msgAddr[2]].cueInWorkspace.cues = [...keyValues.children];
       }
-      if (cue.type !== 'Cue List') {
-        device.update('updateCueRow', { cue, workspace: device.data.workspaces[json.workspace_id] });
-      }
     }
+    if (cue.type !== 'Cue List' && cue.type !== 'Cart') {
+      device.update('updateCueRow', { cue, workspace: device.data.workspaces[json.workspace_id] });
+    }
+    if (cue.type === 'Cart') {
+      device.draw();
+    }
+
     // console.log(cue);
   } else if (/reply\/cue_id\/active\/.*Elapsed/.test(oscData.address)) {
     const json = JSON.parse(oscData.args[0]);
@@ -172,6 +179,10 @@ exports.data = function data(_device, oscData) {
     device.update('updatePlaybackAndSelected', { workspace: device.data.workspaces[json.workspace_id] });
   } else if (/update\/workspace\/.*\/cue_id\/.*/.test(oscData.address)) {
     if (device.data.cueKeys[msgAddr[4]] && device.data.cueKeys[msgAddr[4]].type === 'Group') {
+      device.send(`/workspace/${msgAddr[2]}/cueLists`);
+    } else if (device.data.cueKeys[msgAddr[4]] && device.data.cueKeys[msgAddr[4]].type === 'Cue List') {
+      device.send(`/workspace/${msgAddr[2]}/cueLists`);
+    } else if (device.data.cueKeys[msgAddr[4]] && device.data.cueKeys[msgAddr[4]].type === 'Cart') {
       device.send(`/workspace/${msgAddr[2]}/cueLists`);
     } else {
       device.send(`/cue_id/${msgAddr[4]}/valuesForKeys`, [{ type: 's', value: valuesForKeysString }]);
@@ -224,7 +235,21 @@ function processCueList(list, knownCueIDs, _device, _nestedIndex) {
 exports.update = function update(device, doc, updateType, data) {
   if (updateType === 'updateCueRow') {
     const $elem = doc.getElementById(data.cue.uniqueID);
-    $elem.outerHTML = device.templates.cue({ allCues: device.data.cueKeys, cue: data.cue, workspace: data.workspace });
+    if ($elem) {
+      if (device.data.cueKeys[data.cue.parent].type === 'Cart') {
+        $elem.outerHTML = device.templates.tile({
+          allCues: device.data.cueKeys,
+          cue: data.cue,
+          workspace: data.workspace,
+        });
+      } else {
+        $elem.outerHTML = device.templates.cue({
+          allCues: device.data.cueKeys,
+          cue: data.cue,
+          workspace: data.workspace,
+        });
+      }
+    }
   } else if (updateType === 'updatePlaybackAndSelected') {
     Array.from(doc.querySelectorAll('.selected')).forEach(($el) => {
       $el.classList.remove('selected');
@@ -234,11 +259,15 @@ exports.update = function update(device, doc, updateType, data) {
     });
     for (let i = 0; i < data.workspace.selected.length; i++) {
       const $elem = doc.getElementById(data.workspace.selected[i]);
-      $elem.classList.add('selected');
+      if ($elem) {
+        $elem.classList.add('selected');
+      }
     }
     if (data.workspace.playbackPosition) {
       const $elem = doc.getElementById(data.workspace.playbackPosition);
-      $elem.classList.add('playback-position');
+      if ($elem) {
+        $elem.classList.add('playback-position');
+      }
     }
   }
 };
