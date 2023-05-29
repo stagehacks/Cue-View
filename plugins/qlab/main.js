@@ -50,10 +50,29 @@ exports.ready = function ready(_device) {
 
 exports.data = function data(_device, oscData) {
   const device = _device;
-  // console.log(oscData);
+  console.log(oscData);
 
   const msgAddr = oscData.address.split('/');
   msgAddr.shift();
+
+  // try {
+  let json = [];
+  try {
+    json = JSON.parse(oscData.args[0]);
+  } catch (err) {}
+
+  if (Object.keys(json).length > 0) {
+    if (json.status === 'denied') {
+      if (device.data.workspaces[json.workspace_id]) {
+        device.data.workspaces[json.workspace_id].permission = 'denied';
+      }
+      return;
+    }
+    if (json.status === 'error') {
+      device.send('/workspaces');
+      return;
+    }
+  }
 
   if (oscData.address === '/reply/workspaces') {
     const json = JSON.parse(oscData.args[0]).data;
@@ -67,15 +86,17 @@ exports.data = function data(_device, oscData) {
         cueLists: [],
         selected: [],
       };
+      device.data.workspaces[json[i].uniqueID].permission = 'ok';
       device.send(`/workspace/${json[i].uniqueID}/connect`, device.fields.passcode);
     }
     this.deviceInfoUpdate(device, 'status', 'ok');
   } else if (/reply\/workspace\/.*\/connect/.test(oscData.address)) {
-    const json = JSON.parse(oscData.args[0]).data;
-    if (json === 'badpass') {
-      device.data.permission = 'denied';
+    const json = JSON.parse(oscData.args[0]);
+
+    if (json.data === 'badpass') {
+      device.data.workspaces[json.workspace_id].permission = 'badpass';
     } else {
-      device.data.permission = 'ok';
+      device.data.workspaces[json.workspace_id].permission = 'ok';
       device.send(`/workspace/${msgAddr[2]}/cueLists`);
       device.send(`/workspace/${msgAddr[2]}/updates`, [{ type: 'i', value: 1 }]);
     }
@@ -98,7 +119,7 @@ exports.data = function data(_device, oscData) {
       device.data.cueKeys[msgAddr[2]] = {};
       cue = device.data.cueKeys[msgAddr[2]];
     }
-    // console.log(keyValues.number);
+    // console.log(json.status);
     cue.uniqueID = keyValues.uniqueID;
     cue.number = keyValues.number;
     cue.listName = keyValues.listName;
@@ -172,6 +193,9 @@ exports.data = function data(_device, oscData) {
   } else if (/reply\/workspace\/.*\/selectedCues/.test(oscData.address)) {
     const json = JSON.parse(oscData.args[0]);
     const workspace = device.data.workspaces[msgAddr[2]];
+    if (!workspace) {
+      return;
+    }
     workspace.selected = [];
     for (let i = 0; i < json.data.length; i++) {
       workspace.selected.push(json.data[i].uniqueID);
@@ -189,10 +213,12 @@ exports.data = function data(_device, oscData) {
     }
   } else if (/update\/workspace\/.*\/cueList\/.*\/playbackPosition/.test(oscData.address)) {
     const workspace = device.data.workspaces[msgAddr[2]];
-    // const cue = workspace.cues[oscData.args[0]];
-    workspace.playbackPosition = oscData.args[0];
-    // device.draw();
-    device.update('updatePlaybackAndSelected', { workspace: device.data.workspaces[msgAddr[2]] });
+    if (workspace) {
+      // const cue = workspace.cues[oscData.args[0]];
+      workspace.playbackPosition = oscData.args[0];
+      // device.draw();
+      device.update('updatePlaybackAndSelected', { workspace: device.data.workspaces[msgAddr[2]] });
+    }
   } else if (/update\/workspace\/.*\/dashboard/.test(oscData.address)) {
     device.send(`/workspace/${msgAddr[2]}/selectedCues`);
     device.send(`/cue_id/active/preWaitElapsed`);
