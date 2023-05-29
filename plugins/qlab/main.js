@@ -169,12 +169,25 @@ exports.data = function data(_device, oscData) {
     if (cue.type === 'Cart') {
       device.draw();
     }
-  } else if (/reply\/cue_id\/active\/.*Elapsed/.test(oscData.address)) {
-    const addrParts = json.address.split('/');
-    const cueID = addrParts[4];
-    const keyName = addrParts[5];
+  } else if (/reply\/cue_id\/(.*)\/(.*)Elapsed/.test(oscData.address)) {
+    const workspace = device.data.workspaces[json.workspace_id];
+
+    let cueID;
+    let keyName;
+
+    if (workspace?.version.startsWith('5.')) {
+      const addrParts = json.address.split('/');
+      cueID = addrParts[4];
+      keyName = addrParts[5];
+    } else {
+      const addrParts = json.address.split('/');
+      cueID = addrParts[2];
+      keyName = addrParts[3];
+    }
+
     device.data.cueKeys[cueID][keyName] = json.data;
     device.data.somethingPlaying = true;
+
     device.draw();
   } else if (/reply\/workspace\/.*\/selectedCues/.test(oscData.address)) {
     const workspace = device.data.workspaces[msgAddr[2]];
@@ -220,7 +233,7 @@ function processCueList(list, knownCueIDs, _device, _nestedIndex) {
     device.send(`/cue_id/${cue.uniqueID}/valuesForKeys`, [{ type: 's', value: valuesForKeysString }]);
     // }
 
-    if (cue.cues.length > 0) {
+    if (cue.cues?.length > 0) {
       const nest2 = [..._nestedIndex];
       nest2.push(cue.cues.length);
       processCueList(cue.cues, knownCueIDs, device, nest2);
