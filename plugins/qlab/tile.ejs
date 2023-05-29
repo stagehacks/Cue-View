@@ -31,7 +31,11 @@
   </div>
 
   <div class="cartCue cartColor-<%= cueKeys.colorName %>">
-    <p><%= cueKeys.number %> &bull;  <%= cueKeys.displayName %></p>
+    <p>
+      <%= cueKeys.number %>
+      <% if(cueKeys.number){ %> &bull; <% } %>
+      <%= cueKeys.displayName %>
+    </p>
   </div>
 
 </div>
