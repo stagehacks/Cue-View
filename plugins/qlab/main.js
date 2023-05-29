@@ -50,16 +50,16 @@ exports.ready = function ready(_device) {
 
 exports.data = function data(_device, oscData) {
   const device = _device;
-  console.log(oscData);
 
   const msgAddr = oscData.address.split('/');
   msgAddr.shift();
 
-  // try {
   let json = [];
   try {
     json = JSON.parse(oscData.args[0]);
-  } catch (err) {}
+  } catch (err) {
+    // a handful of messages don't respond with JSON
+  }
 
   if (Object.keys(json).length > 0) {
     if (json.status === 'denied') {
@@ -75,24 +75,20 @@ exports.data = function data(_device, oscData) {
   }
 
   if (oscData.address === '/reply/workspaces') {
-    const json = JSON.parse(oscData.args[0]).data;
-
-    for (let i = 0; i < json.length; i++) {
-      device.data.workspaces[json[i].uniqueID] = {
-        version: json[i].version,
-        displayName: json[i].displayName,
-        port: json[i].port,
-        udpReplyPort: json[i].udpReplyPort,
+    for (let i = 0; i < json.data.length; i++) {
+      device.data.workspaces[json.data[i].uniqueID] = {
+        version: json.data[i].version,
+        displayName: json.data[i].displayName,
+        port: json.data[i].port,
+        udpReplyPort: json.data[i].udpReplyPort,
         cueLists: [],
         selected: [],
       };
-      device.data.workspaces[json[i].uniqueID].permission = 'ok';
-      device.send(`/workspace/${json[i].uniqueID}/connect`, device.fields.passcode);
+      device.data.workspaces[json.data[i].uniqueID].permission = 'ok';
+      device.send(`/workspace/${json.data[i].uniqueID}/connect`, device.fields.passcode);
     }
     this.deviceInfoUpdate(device, 'status', 'ok');
   } else if (/reply\/workspace\/.*\/connect/.test(oscData.address)) {
-    const json = JSON.parse(oscData.args[0]);
-
     if (json.data === 'badpass') {
       device.data.workspaces[json.workspace_id].permission = 'badpass';
     } else {
@@ -101,25 +97,18 @@ exports.data = function data(_device, oscData) {
       device.send(`/workspace/${msgAddr[2]}/updates`, [{ type: 'i', value: 1 }]);
     }
   } else if (/reply\/workspace\/.*\/cueLists/.test(oscData.address)) {
-    const json = JSON.parse(oscData.args[0]).data;
-    device.data.workspaces[msgAddr[2]].cueLists = json;
+    device.data.workspaces[msgAddr[2]].cueLists = json.data;
     device.data.somethingPlaying = false;
     processCueList(device.data.workspaces[msgAddr[2]].cueLists, Object.keys(device.data.cueKeys), device, []);
     device.draw();
   } else if (/reply\/cue_id\/.*\/valuesForKeys/.test(oscData.address)) {
-    const json = JSON.parse(oscData.args[0]);
     const keyValues = json.data;
     let cue = device.data.cueKeys[msgAddr[2]];
 
     if (cue === undefined) {
-      // this cue is new!
-
-      // device.send(`/workspace/${json.workspace_id}/cueLists`);
-      device.draw();
       device.data.cueKeys[msgAddr[2]] = {};
       cue = device.data.cueKeys[msgAddr[2]];
     }
-    // console.log(json.status);
     cue.uniqueID = keyValues.uniqueID;
     cue.number = keyValues.number;
     cue.listName = keyValues.listName;
@@ -180,10 +169,7 @@ exports.data = function data(_device, oscData) {
     if (cue.type === 'Cart') {
       device.draw();
     }
-
-    // console.log(cue);
   } else if (/reply\/cue_id\/active\/.*Elapsed/.test(oscData.address)) {
-    const json = JSON.parse(oscData.args[0]);
     const addrParts = json.address.split('/');
     const cueID = addrParts[4];
     const keyName = addrParts[5];
@@ -191,7 +177,6 @@ exports.data = function data(_device, oscData) {
     device.data.somethingPlaying = true;
     device.draw();
   } else if (/reply\/workspace\/.*\/selectedCues/.test(oscData.address)) {
-    const json = JSON.parse(oscData.args[0]);
     const workspace = device.data.workspaces[msgAddr[2]];
     if (!workspace) {
       return;
@@ -214,9 +199,7 @@ exports.data = function data(_device, oscData) {
   } else if (/update\/workspace\/.*\/cueList\/.*\/playbackPosition/.test(oscData.address)) {
     const workspace = device.data.workspaces[msgAddr[2]];
     if (workspace) {
-      // const cue = workspace.cues[oscData.args[0]];
       workspace.playbackPosition = oscData.args[0];
-      // device.draw();
       device.update('updatePlaybackAndSelected', { workspace: device.data.workspaces[msgAddr[2]] });
     }
   } else if (/update\/workspace\/.*\/dashboard/.test(oscData.address)) {
@@ -293,6 +276,7 @@ exports.update = function update(device, doc, updateType, data) {
       const $elem = doc.getElementById(data.workspace.playbackPosition);
       if ($elem) {
         $elem.classList.add('playback-position');
+        $elem.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
   }
