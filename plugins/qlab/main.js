@@ -201,9 +201,15 @@ exports.data = function data(_device, oscData) {
       workspace.selected.push(json.data[i].uniqueID);
     }
     device.update('updatePlaybackAndSelected', { workspace: device.data.workspaces[json.workspace_id] });
+  } else if (/reply\/workspace\/.*\/cue_id\/.*\/children/.test(oscData.address)) {
+    // trying to use .cueInWorkspace to reference the related cue in data.workspaces
+    device.data.cueKeys[msgAddr[4]].cueInWorkspace.cues = [...json.data];
+    console.log(device.data.cueKeys[msgAddr[4]].cueInWorkspace.cues);
+
+    device.draw();
   } else if (/update\/workspace\/.*\/cue_id\/.*/.test(oscData.address)) {
     if (device.data.cueKeys[msgAddr[4]] && device.data.cueKeys[msgAddr[4]].type === 'Group') {
-      device.send(`/workspace/${msgAddr[2]}/cueLists`);
+      device.send(`/workspace/${msgAddr[2]}/cue_id/${msgAddr[4]}/children/`);
     } else if (device.data.cueKeys[msgAddr[4]] && device.data.cueKeys[msgAddr[4]].type === 'Cue List') {
       device.send(`/workspace/${msgAddr[2]}/cueLists`);
     } else if (device.data.cueKeys[msgAddr[4]] && device.data.cueKeys[msgAddr[4]].type === 'Cart') {
@@ -231,9 +237,9 @@ function processCueList(list, knownCueIDs, _device, _nestedIndex) {
     const cue = list[i];
     nestedIndex[nestedIndex.length - 1] = list.length - i - 1;
 
-    // if (!knownCueIDs.includes(cue.uniqueID)) {
-    device.send(`/cue_id/${cue.uniqueID}/valuesForKeys`, [{ type: 's', value: valuesForKeysString }]);
-    // }
+    if (!knownCueIDs.includes(cue.uniqueID)) {
+      device.send(`/cue_id/${cue.uniqueID}/valuesForKeys`, [{ type: 's', value: valuesForKeysString }]);
+    }
 
     if (cue.cues?.length > 0) {
       const nest2 = [..._nestedIndex];
@@ -252,6 +258,7 @@ function processCueList(list, knownCueIDs, _device, _nestedIndex) {
       device.data.cueKeys[cue.uniqueID].nestedGroupPosition = [...nestedIndex];
     }
 
+    // working theory is that list[i] is a new object rather pointing to the object within data.workspaces
     device.data.cueKeys[cue.uniqueID].cueInWorkspace = list[i];
   }
 }
