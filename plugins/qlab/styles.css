@@ -204,6 +204,10 @@ tr.selected {
   box-sizing: border-box;
   padding: 3px;
 }
+.cartCueWrapper.selected .cartCue {
+  border-color: #89b4db;
+  box-shadow: #89b4db 0px 0px 2px 3px;
+}
 .cartCue {
   height: 100%;
   box-sizing: border-box;
@@ -221,24 +225,24 @@ tr.selected {
   top: 13px;
 }
 .cartColor-red {
-  border-color: #ff4242;
-  background-color: #9b3726;
+  border-color: #e7443a;
+  background-color: #942f27;
 }
 .cartColor-orange {
-  border-color: #ffa500;
-  background-color: #ad6026;
+  border-color: #f18f28;
+  background-color: #a95023;
 }
 .cartColor-green {
-  border-color: #01d52f;
-  background-color: #397f27;
+  border-color: #4ebf32;
+  background-color: #397824;
 }
 .cartColor-blue {
-  border-color: #536de0;
-  background-color: #304893;
+  border-color: #3a54cf;
+  background-color: #25378a;
 }
 .cartColor-purple {
-  border-color: #a601c0;
-  background-color: #592d74;
+  border-color: #7e25a5;
+  background-color: #4c2269;
 }
 .cartColor-none {
   border-color: #95929f;
