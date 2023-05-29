@@ -38,8 +38,9 @@ exports.ready = function ready(_device) {
   device.send('/workspaces');
   device.data.workspaces = {};
   device.data.cueKeys = {};
-  device.data.somethingPlaying = false;
   device.data.version = '';
+  device.data.lastElapsedMessage = 0;
+  device.data.ticks = 0;
 
   device.templates = {
     cue: _.template(fs.readFileSync(path.join(__dirname, `cue.ejs`))),
@@ -100,7 +101,6 @@ exports.data = function data(_device, oscData) {
     }
   } else if (/reply\/workspace\/.*\/cueLists/.test(oscData.address)) {
     device.data.workspaces[msgAddr[2]].cueLists = json.data;
-    device.data.somethingPlaying = false;
     processCueList(device.data.workspaces[msgAddr[2]].cueLists, Object.keys(device.data.cueKeys), device, []);
     device.draw();
   } else if (/reply\/cue_id\/.*\/valuesForKeys/.test(oscData.address)) {
@@ -140,7 +140,7 @@ exports.data = function data(_device, oscData) {
     cue.notes = keyValues.notes;
 
     if (keyValues.isRunning) {
-      device.data.somethingPlaying = true;
+      device.data.lastElapsedMessage = device.data.ticks;
     }
 
     let testCue = device.data.cueKeys[msgAddr[2]];
@@ -174,9 +174,9 @@ exports.data = function data(_device, oscData) {
     }
   } else if (/reply\/cue_id\/(.*)\/(.*)Elapsed/.test(oscData.address)) {
     const workspace = device.data.workspaces[json.workspace_id];
-
     let cueID;
     let keyName;
+    device.data.lastElapsedMessage = device.data.ticks;
 
     if (workspace?.version.startsWith('5.')) {
       const addrParts = json.address.split('/');
@@ -189,9 +189,8 @@ exports.data = function data(_device, oscData) {
     }
 
     device.data.cueKeys[cueID][keyName] = json.data;
-    device.data.somethingPlaying = true;
 
-    device.draw();
+    device.update('updateCueRow', { cue: device.data.cueKeys[cueID], workspace });
   } else if (/reply\/workspace\/.*\/selectedCues/.test(oscData.address)) {
     const workspace = device.data.workspaces[msgAddr[2]];
     if (!workspace) {
@@ -331,13 +330,12 @@ exports.update = function update(device, _doc, updateType, data) {
   }
 };
 
-let ticks = 0;
 exports.heartbeat = function heartbeat(device) {
-  ticks++;
-  if (ticks % 10 === 0) {
+  device.data.ticks++;
+  if (device.data.ticks % 10 === 0) {
     device.send(`/thump`);
   }
-  if (device.data.somethingPlaying) {
+  if (device.data.ticks - device.data.lastElapsedMessage < 5) {
     device.send(`/cue_id/active/preWaitElapsed`);
     device.send(`/cue_id/active/postWaitElapsed`);
     device.send(`/cue_id/active/actionElapsed`);
