@@ -2,7 +2,7 @@
 <% let playbackPosition = workspace.playbackPosition==cue.uniqueID ? "playback-position" : "" %>
 <% let selected = workspace.selected.includes(cue.uniqueID) ? "selected": "" %>
 
-<% if(cueKeys && cueKeys.parent){ %>
+<% if(cueKeys && cueKeys.parent && cueKeys.nestedGroupPosition){ %>
 
 <tr class="q-<%= cueKeys.colorName %> q-armed-<%= cueKeys.armed %> <%= playbackPosition %> <%= selected %>" id="<%= cueKeys.uniqueID %>">
 
@@ -48,7 +48,7 @@
     <td><center><%= cueKeys.number || "&nbsp;" %></center></td>
 
 
-    
+
     <!-- spaces before name -->
     <% for(let i=0; i<cueKeys.nestedGroupModes.length; i++){ %>
 
