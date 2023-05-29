@@ -224,27 +224,27 @@ tr.selected {
   right: 13px;
   top: 13px;
 }
-.cartColor-red {
+div.cartColor-red {
   border-color: #e7443a;
   background-color: #942f27;
 }
-.cartColor-orange {
+div.cartColor-orange {
   border-color: #f18f28;
   background-color: #a95023;
 }
-.cartColor-green {
+div.cartColor-green {
   border-color: #4ebf32;
   background-color: #397824;
 }
-.cartColor-blue {
+div.cartColor-blue {
   border-color: #3a54cf;
   background-color: #25378a;
 }
-.cartColor-purple {
+div.cartColor-purple {
   border-color: #7e25a5;
   background-color: #4c2269;
 }
-.cartColor-none {
+div.cartColor-none {
   border-color: #95929f;
   background-color: #3b3b3b;
 }
@@ -256,6 +256,53 @@ tr.selected {
   border-color: #88b3db;
   outline: #88b3db 1px solid;
   box-shadow: 0px 0px 3px 3px #88b3db, inset 0px 0px 5px #88b3db;
+}
+
+#playhead-information {
+  width: 80%;
+  height: 140px;
+  position: fixed;
+  bottom: 30px;
+  left: 10%;
+  padding: 16px;
+  box-sizing: border-box;
+
+  background-color: #2e2d2d;
+  border: #424242 3px solid;
+  border-radius: 4px;
+  box-shadow: black 0px 0px 20px 5px;
+}
+#playhead-information.playhead-active {
+  border-color: #4cbe34;
+}
+.playhead-name {
+  width: 100%;
+  padding: 6px 12px;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+
+  background-color: #434343;
+  border: #434343 1px solid;
+  font-size: 18px;
+  color: white;
+  border-radius: 3px;
+}
+.playhead-disarmed {
+  background: url('img/disarmed-pattern-light.png');
+  background-attachment: fixed;
+}
+#playhead-notes {
+  width: 100%;
+  padding: 6px 12px;
+  box-sizing: border-box;
+  height: 50px;
+
+  border: #5c5b5b 1px solid;
+  font-size: 18px;
+  color: #9a9a99;
+  border-radius: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media screen and (min-width: 0px) and (max-width: 750px) {

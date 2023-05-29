@@ -30,7 +30,7 @@ const valuesForKeysString =
   '["uniqueID","number","name","listName","isBroken","isRunning","isLoaded","isFlagged",' +
   '"type","children","preWait","postWait","duration","colorName","continueMode",' +
   '"mode","parent","cartRows","cartColumns","cartPosition","displayName","preWaitElapsed",' +
-  '"actionElapsed","postWaitElapsed","isPaused","currentCueTarget","isRunning","armed"]';
+  '"actionElapsed","postWaitElapsed","isPaused","currentCueTarget","isRunning","armed","notes"]';
 
 exports.ready = function ready(_device) {
   const device = _device;
@@ -135,6 +135,7 @@ exports.data = function data(_device, oscData) {
     cue.isPaused = keyValues.isPaused;
     cue.currentCueTarget = keyValues.currentCueTarget;
     cue.armed = keyValues.armed;
+    cue.notes = keyValues.notes;
 
     if (keyValues.isRunning) {
       device.data.somethingPlaying = true;
@@ -241,7 +242,8 @@ function processCueList(list, knownCueIDs, _device, _nestedIndex) {
   }
 }
 
-exports.update = function update(device, doc, updateType, data) {
+exports.update = function update(device, _doc, updateType, data) {
+  const doc = _doc;
   if (updateType === 'updateCueRow') {
     const $elem = doc.getElementById(data.cue.uniqueID);
     if ($elem) {
@@ -266,18 +268,50 @@ exports.update = function update(device, doc, updateType, data) {
     Array.from(doc.querySelectorAll('.playback-position')).forEach(($el) => {
       $el.classList.remove('playback-position');
     });
+
     for (let i = 0; i < data.workspace.selected.length; i++) {
       const $elem = doc.getElementById(data.workspace.selected[i]);
       if ($elem) {
         $elem.classList.add('selected');
       }
     }
+
+    const $playheadInfo = doc.getElementById('playhead-information');
+    const $playheadName = doc.getElementById('playhead-name');
+    const $playheadNotes = doc.getElementById('playhead-notes');
+
     if (data.workspace.playbackPosition) {
-      const $elem = doc.getElementById(data.workspace.playbackPosition);
-      if ($elem) {
-        $elem.classList.add('playback-position');
-        $elem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const $cueRow = doc.getElementById(data.workspace.playbackPosition);
+      if ($cueRow) {
+        $cueRow.classList.add('playback-position');
+        $cueRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
+
+      const cue = device.data.cueKeys[data.workspace.playbackPosition];
+      if (cue) {
+        $playheadName.setAttribute('class', `playhead-name cartColor-${cue.colorName} playhead-disarmed`);
+        $playheadInfo.classList.add('playhead-active');
+        if (cue.number) {
+          $playheadName.innerHTML = `${cue.number} &bull; ${cue.displayName}`;
+        } else {
+          $playheadName.innerHTML = cue.displayName;
+        }
+        if (cue.notes) {
+          $playheadNotes.innerHTML = cue.notes;
+        } else {
+          $playheadNotes.innerHTML = '<span style="color:#5C5C5C">Notes</span>';
+        }
+        if (!cue.armed) {
+          $playheadName.classList.add('playhead-disarmed');
+        } else {
+          $playheadName.classList.remove('playhead-disarmed');
+        }
+      }
+    } else {
+      $playheadName.setAttribute('class', `playhead-name`);
+      $playheadName.innerHTML = '<span style="color:#747574">[no cue on standby]</span>';
+      $playheadNotes.innerHTML = '';
+      $playheadInfo.classList.remove('playhead-active');
     }
   }
 };
