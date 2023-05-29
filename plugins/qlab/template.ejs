@@ -6,6 +6,11 @@
 
 
 <% const workspaceKeys = Object.keys(data.workspaces); %>
+
+<% if(workspaceKeys.length==0){ %>
+  <h3>QLab is open but there isn't an open Workspace</h3>
+<% } %>
+
   
 <% for(let i=0; i<workspaceKeys.length; i++){ %>
   <% const workspace = data.workspaces[workspaceKeys[i]]; %>
