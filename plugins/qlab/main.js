@@ -201,10 +201,12 @@ exports.data = function data(_device, oscData) {
       workspace.selected.push(json.data[i].uniqueID);
     }
     device.update('updatePlaybackAndSelected', { workspace: device.data.workspaces[json.workspace_id] });
-  } else if (/reply\/workspace\/.*\/cue_id\/.*\/children/.test(oscData.address)) {
+  } else if (/reply\/(workspace\/.*\/)?cue_id\/(.*)\/children/.test(oscData.address)) {
+    // qlab 4 leaves off the workspace/<workspace_id> portion of the address this regex handles that
+    const addressMatch = oscData.address.match(/reply\/(workspace\/.*\/)?cue_id\/(.*)\/children/);
     // trying to use .cueInWorkspace to reference the related cue in data.workspaces
-    device.data.cueKeys[msgAddr[4]].cueInWorkspace.cues = [...json.data];
-    console.log(device.data.cueKeys[msgAddr[4]].cueInWorkspace.cues);
+    device.data.cueKeys[addressMatch[2]].cueInWorkspace.cues = [...json.data];
+    console.log(device.data.cueKeys[addressMatch[2]].cueInWorkspace.cues);
 
     device.draw();
   } else if (/update\/workspace\/.*\/cue_id\/.*/.test(oscData.address)) {
