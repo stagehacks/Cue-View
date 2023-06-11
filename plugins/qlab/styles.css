@@ -1,3 +1,6 @@
+body {
+  margin-bottom: 200px !important;
+}
 table {
   background-color: #323232;
   border: 0px;
@@ -260,7 +263,7 @@ div.cartColor-none {
 
 #playhead-information {
   width: 80%;
-  height: 140px;
+  height: 120px;
   position: fixed;
   bottom: 30px;
   left: 10%;
@@ -293,9 +296,9 @@ div.cartColor-none {
 }
 #playhead-notes {
   width: 100%;
-  padding: 6px 12px;
+  padding: 6px 8px;
   box-sizing: border-box;
-  height: 50px;
+  height: 36px;
 
   border: #5c5b5b 1px solid;
   font-size: 18px;
