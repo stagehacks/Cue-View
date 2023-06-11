@@ -90,7 +90,9 @@ exports.data = function data(_device, oscData) {
       device.data.workspaces[json.data[i].uniqueID].permission = 'ok';
       device.send(`/workspace/${json.data[i].uniqueID}/connect`, device.fields.passcode);
     }
+
     this.deviceInfoUpdate(device, 'status', 'ok');
+    device.draw();
   } else if (/reply\/workspace\/.*\/connect/.test(oscData.address)) {
     if (json.data === 'badpass') {
       device.data.workspaces[json.workspace_id].permission = 'badpass';
@@ -159,9 +161,6 @@ exports.data = function data(_device, oscData) {
 
     if (cue.type !== 'Cue List' && cue.type !== 'Cart') {
       device.update('updateCueRow', { cue, workspace: device.data.workspaces[json.workspace_id] });
-    }
-    if (cue.type === 'Cart') {
-      device.draw();
     }
   } else if (/reply\/cue_id\/(.*)\/(.*)Elapsed/.test(oscData.address)) {
     const workspace = device.data.workspaces[json.workspace_id];
