@@ -100,9 +100,7 @@ exports.data = function data(_device, oscData) {
       device.send(`/workspace/${msgAddr[2]}/updates`, [{ type: 'i', value: 1 }]);
     }
   } else if (/reply\/workspace\/.*\/cueLists/.test(oscData.address)) {
-    device.data.workspaces[msgAddr[2]].cueLists = json.data;
-    processCueList(device.data.workspaces[msgAddr[2]].cueLists, Object.keys(device.data.cueKeys), device, []);
-    device.draw();
+    insertChildCues(device, device.data.workspaces[msgAddr[2]].cueLists, json.data, '[root group of cue lists]');
   } else if (/reply\/cue_id\/.*\/valuesForKeys/.test(oscData.address)) {
     const keyValues = json.data;
     let cue = device.data.cueKeys[msgAddr[2]];
@@ -143,29 +141,22 @@ exports.data = function data(_device, oscData) {
       device.data.lastElapsedMessage = device.data.ticks;
     }
 
-    let testCue = device.data.cueKeys[msgAddr[2]];
-    let nestedGroupModes;
-
-    if (cue.type === 'Group') {
-      nestedGroupModes = [testCue.mode];
-    } else if (cue.parent !== '[root group of cue lists]') {
-      nestedGroupModes = [device.data.cueKeys[cue.parent].mode];
+    if (cue.parent !== '[root group of cue lists]') {
+      cue.parent = device.data.cueKeys[cue.parent];
     }
 
-    while (testCue.parent !== '[root group of cue lists]') {
-      testCue = device.data.cueKeys[testCue.parent];
-      if (testCue === undefined) {
-        break;
-      }
-
-      nestedGroupModes.unshift(testCue.mode);
-      cue.nestedGroupModes = nestedGroupModes;
-    }
     if (cue.type === 'Cue List' || cue.type === 'Group' || cue.type === 'Cart') {
-      if (device.data.cueKeys[msgAddr[2]].cueInWorkspace) {
-        device.data.cueKeys[msgAddr[2]].cueInWorkspace.cues = [...keyValues.children];
+      if (device.data.cueKeys[msgAddr[2]].cueInWorkspace && cue.cues) {
+        insertChildCues(
+          device,
+          device.data.cueKeys[msgAddr[2]].cueInWorkspace.cues,
+          [...keyValues.children],
+          device.data.cueKeys[msgAddr[2]].cueInWorkspace
+        );
       }
+      device.draw();
     }
+
     if (cue.type !== 'Cue List' && cue.type !== 'Cart') {
       device.update('updateCueRow', { cue, workspace: device.data.workspaces[json.workspace_id] });
     }
@@ -201,24 +192,8 @@ exports.data = function data(_device, oscData) {
       workspace.selected.push(json.data[i].uniqueID);
     }
     device.update('updatePlaybackAndSelected', { workspace: device.data.workspaces[json.workspace_id] });
-  } else if (/reply\/(workspace\/.*\/)?cue_id\/(.*)\/children/.test(oscData.address)) {
-    // qlab 4 leaves off the workspace/<workspace_id> portion of the address this regex handles that
-    const addressMatch = oscData.address.match(/reply\/(workspace\/.*\/)?cue_id\/(.*)\/children/);
-    // trying to use .cueInWorkspace to reference the related cue in data.workspaces
-    device.data.cueKeys[addressMatch[2]].cueInWorkspace.cues = [...json.data];
-    console.log(device.data.cueKeys[addressMatch[2]].cueInWorkspace.cues);
-
-    device.draw();
   } else if (/update\/workspace\/.*\/cue_id\/.*/.test(oscData.address)) {
-    if (device.data.cueKeys[msgAddr[4]] && device.data.cueKeys[msgAddr[4]].type === 'Group') {
-      device.send(`/workspace/${msgAddr[2]}/cue_id/${msgAddr[4]}/children/`);
-    } else if (device.data.cueKeys[msgAddr[4]] && device.data.cueKeys[msgAddr[4]].type === 'Cue List') {
-      device.send(`/workspace/${msgAddr[2]}/cueLists`);
-    } else if (device.data.cueKeys[msgAddr[4]] && device.data.cueKeys[msgAddr[4]].type === 'Cart') {
-      device.send(`/workspace/${msgAddr[2]}/cueLists`);
-    } else {
-      device.send(`/cue_id/${msgAddr[4]}/valuesForKeys`, [{ type: 's', value: valuesForKeysString }]);
-    }
+    device.send(`/cue_id/${msgAddr[4]}/valuesForKeys`, [{ type: 's', value: valuesForKeysString }]);
   } else if (/update\/workspace\/.*\/cueList\/.*\/playbackPosition/.test(oscData.address)) {
     const workspace = device.data.workspaces[msgAddr[2]];
     if (workspace) {
@@ -231,46 +206,12 @@ exports.data = function data(_device, oscData) {
   }
 };
 
-function processCueList(list, knownCueIDs, _device, _nestedIndex) {
-  const nestedIndex = _nestedIndex;
-  const device = _device;
-
-  for (let i = 0; i < list.length; i++) {
-    const cue = list[i];
-    nestedIndex[nestedIndex.length - 1] = list.length - i - 1;
-
-    if (!knownCueIDs.includes(cue.uniqueID)) {
-      device.send(`/cue_id/${cue.uniqueID}/valuesForKeys`, [{ type: 's', value: valuesForKeysString }]);
-    }
-
-    if (cue.cues?.length > 0) {
-      const nest2 = [..._nestedIndex];
-      nest2.push(cue.cues.length);
-      processCueList(cue.cues, knownCueIDs, device, nest2);
-      for (let j = 0; j < nestedIndex.length; j++) {
-        nestedIndex[j]++;
-      }
-    }
-
-    if (!knownCueIDs.includes(cue.uniqueID)) {
-      device.data.cueKeys[cue.uniqueID] = {
-        nestedGroupPosition: [...nestedIndex],
-      };
-    } else {
-      device.data.cueKeys[cue.uniqueID].nestedGroupPosition = [...nestedIndex];
-    }
-
-    // working theory is that list[i] is a new object rather pointing to the object within data.workspaces
-    device.data.cueKeys[cue.uniqueID].cueInWorkspace = list[i];
-  }
-}
-
 exports.update = function update(device, _doc, updateType, data) {
   const doc = _doc;
   if (updateType === 'updateCueRow') {
     const $elem = doc.getElementById(data.cue.uniqueID);
     if ($elem) {
-      if (device.data.cueKeys[data.cue.parent].type === 'Cart') {
+      if (data.cue.parent.type === 'Cart') {
         $elem.outerHTML = device.templates.tile({
           allCues: device.data.cueKeys,
           cue: data.cue,
@@ -311,7 +252,7 @@ exports.update = function update(device, _doc, updateType, data) {
       }
 
       const cue = device.data.cueKeys[data.workspace.playbackPosition];
-      if (cue) {
+      if (cue && $playheadName) {
         $playheadName.setAttribute('class', `playhead-name cartColor-${cue.colorName} playhead-disarmed`);
         $playheadInfo.classList.add('playhead-active');
         if (cue.number) {
@@ -339,7 +280,8 @@ exports.update = function update(device, _doc, updateType, data) {
   }
 };
 
-exports.heartbeat = function heartbeat(device) {
+exports.heartbeat = function heartbeat(_device) {
+  const device = _device;
   device.data.ticks++;
   if (device.data.ticks % 10 === 0) {
     device.send(`/thump`);
@@ -350,3 +292,97 @@ exports.heartbeat = function heartbeat(device) {
     device.send(`/cue_id/active/actionElapsed`);
   }
 };
+
+function insertChildCues(_device, _oldCues, newCues, _parent) {
+  const device = _device;
+  const newIDs = _.keyBy(newCues, 'uniqueID');
+  const oldCues = _oldCues;
+  const parent = _parent;
+
+  if (!oldCues) {
+    return;
+  }
+
+  for (let i = 0; i < oldCues.length; i++) {
+    const oldCue = oldCues[i];
+
+    if (!newIDs[oldCue.uniqueID]) {
+      oldCues.splice(i, 1);
+      i--;
+    }
+
+    const indexOfOldCueInNew = _.findIndex(newCues, (o) => o.uniqueID === oldCue.uniqueID);
+
+    if (indexOfOldCueInNew >= 0) {
+      const newCue = newCues[indexOfOldCueInNew];
+      oldCues[i].armed = newCue.armed;
+      oldCues[i].colorName = newCue.colorName;
+      oldCues[i].colorNameLive = newCue['colorName/live'];
+
+      oldCues[i].flagged = newCue.flagged;
+      oldCues[i].listName = newCue.listName;
+      oldCues[i].name = newCue.name;
+      oldCues[i].number = newCue.number;
+      oldCues[i].type = newCue.type;
+      oldCues[i].sortIndex = indexOfOldCueInNew;
+      oldCues[i].parent = parent;
+
+      newCue.used = true;
+
+      let keys = device.data.cueKeys[oldCues[i].uniqueID];
+      if (!keys) {
+        device.data.cueKeys[oldCues[i].uniqueID] = {};
+        keys = device.data.cueKeys[oldCues[i].uniqueID];
+      }
+
+      keys.cueInWorkspace = oldCues[i];
+
+      if (oldCues[i].type === 'Group' || oldCues[i].type === 'Cue List' || oldCues[i].type === 'Cart') {
+        insertChildCues(device, oldCues[i].cues, newCue.cues, oldCues[i]);
+      }
+    }
+  }
+  for (let i = 0; i < newCues.length; i++) {
+    const newCue = newCues[i];
+    if (newCue.used !== true) {
+      const newIndex = oldCues.push({
+        armed: newCue.armed,
+        colorName: newCue.colorName,
+        colorNameLive: newCue['colorName/live'],
+        flagged: newCue.flagged,
+        listName: newCue.listName,
+        name: newCue.name,
+        number: newCue.number,
+        type: newCue.type,
+        uniqueID: newCue.uniqueID,
+        sortIndex: i,
+        parent,
+      });
+
+      const freshCue = oldCues[newIndex - 1];
+
+      let keys = device.data.cueKeys[freshCue.uniqueID];
+      if (!keys) {
+        device.data.cueKeys[freshCue.uniqueID] = {};
+        keys = device.data.cueKeys[freshCue.uniqueID];
+      }
+
+      if (freshCue.parent === '[root group of cue lists]') {
+        keys.parentKeys = [];
+      } else {
+        keys.parentKeys = [...device.data.cueKeys[freshCue.parent.uniqueID].parentKeys];
+        keys.parentKeys.push(device.data.cueKeys[freshCue.parent.uniqueID]);
+      }
+
+      device.send(`/cue_id/${newCue.uniqueID}/valuesForKeys`, [{ type: 's', value: valuesForKeysString }]);
+
+      keys.cueInWorkspace = freshCue;
+
+      if (freshCue.type === 'Group' || freshCue.type === 'Cue List' || oldCues[i].type === 'Cart') {
+        freshCue.cues = [];
+        insertChildCues(device, freshCue.cues, newCue.cues, freshCue);
+      }
+    }
+  }
+  oldCues.sort((a, b) => a.sortIndex - b.sortIndex);
+}

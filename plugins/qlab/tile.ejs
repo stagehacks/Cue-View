@@ -7,8 +7,8 @@
   let parent = allCues[cue.parent];
 
   if(cueKeys.parent){
-    width = 100/allCues[cueKeys.parent].cartColumns;
-    height = 600/allCues[cueKeys.parent].cartRows;
+    width = 100/cueKeys.parent.cartColumns;
+    height = 600/cueKeys.parent.cartRows;
 
     top = (cueKeys.cartPosition[0]-1)*height;
     left = (cueKeys.cartPosition[1]-1)*width;

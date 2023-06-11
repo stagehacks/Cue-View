@@ -2,7 +2,7 @@
 <% let playbackPosition = workspace.playbackPosition==cue.uniqueID ? "playback-position" : "" %>
 <% let selected = workspace.selected.includes(cue.uniqueID) ? "selected": "" %>
 
-<% if(cueKeys && cueKeys.parent && cueKeys.nestedGroupPosition){ %>
+<% if(cueKeys && cueKeys.parent){ %>
 
 <tr class="q-<%= cueKeys.colorName %> q-armed-<%= cueKeys.armed %> <%= playbackPosition %> <%= selected %>" id="<%= cueKeys.uniqueID %>">
 
@@ -48,38 +48,54 @@
     <td><center><%= cueKeys.number || "&nbsp;" %></center></td>
 
 
+    <% let nextCue = cueKeys.cueInWorkspace.parent.cues[cueKeys.cueInWorkspace.sortIndex+1]; %>
 
     <!-- spaces before name -->
-    <% for(let i=0; i<cueKeys.nestedGroupModes.length; i++){ %>
+    <% for(let i=0; i<cueKeys.parentKeys.length; i++){ %>
+        <% let parent = cueKeys.parentKeys[i+1]; %>
+        <%  %>
 
-        <% if(cue.type=="Group" && cue.cues.length==0 && i==cueKeys.nestedGroupModes.length-1){ %>
-            <td class="gMode-<%= cueKeys.nestedGroupModes[i] %> gLeft gBot gTop group-arrow"></td>
-          
-        <% }else if(cue.type=="Group" && i==cueKeys.nestedGroupModes.length-1){ %>
-        <td class="gMode-<%= cueKeys.mode %> gLeft gTop group-arrow"></td>
+        <% if(cueKeys.type=="Group" && cueKeys.cues.length==0 && i==cueKeys.parentKeys.length-1){ %>
+            <td class="gMode-<%= cueKeys.mode %> gLeft gTop gBot group-arrow"></td>
 
-        <% }else if(cueKeys.nestedGroupPosition[i]<=0){ %>
-            <% if(cueKeys.nestedGroupPosition.slice(i+1).every(v => v === 0)){ %>
-                <td class="gMode-<%= cueKeys.nestedGroupModes[i] %> gLeft gBot"></td>
+        <% }else if(cueKeys.type=="Group" && i==cueKeys.parentKeys.length-1){ %>
+            <td class="gMode-<%= cueKeys.mode %> gLeft gTop group-arrow"></td>
+
+        <%}else if(parent){%>
+
+            <% let parentCues = parent.cueInWorkspace.cues %>
+            <% let lastCueInMe = parentCues[parentCues.length-1]%>
+
+            <% while(lastCueInMe.type=="Group" && lastCueInMe.cues.length){
+                parentCues = lastCueInMe.cues;
+                lastCueInMe = parentCues[parentCues.length-1];
+            } %>
+                    
+            <% if(lastCueInMe.uniqueID == cueKeys.uniqueID){ %>
+                <td class="gMode-<%= parent.mode %> gLeft gBot">x</td>
 
             <% }else{ %>
-                <td class="gMode-<%= cueKeys.nestedGroupModes[i] %> gLeft"></td>
+                <td class="gMode-<%= parent.mode %> gLeft"></td>
+                
 
             <% } %>
 
-        <% }else if(i<cueKeys.nestedGroupModes.length-1){ %>
-        <td class="gMode-<%= cueKeys.nestedGroupModes[i] %> gLeft"></td>
 
-        <% }else if(cueKeys.nestedGroupPosition[i]==undefined && cueKeys.nestedGroupPosition[i-1]==0){ %>
-            <td class="gMode-<%= cueKeys.nestedGroupModes[i] %> gBot"></td>
+        <% }else if(cueKeys.parentKeys[i]){ %>
+            <% let nextCue2 = cueKeys.parentKeys[i].cues[cueKeys.cueInWorkspace.sortIndex+1]; %>
 
-        <% }else{ %>
-        <td class="gMode-<%= cueKeys.nestedGroupModes[i] %>"></td>
+            <% if(!nextCue2){ %>
+                <td class="gMode-<%= cueKeys.parentKeys[i].mode %> gBot"></td>
+
+            <% }else{ %>
+                <td></td>
+
+            <% } %>
+
 
         <% } %>
         
-  
-    <% } %>
+    <% } %>    
 
             
 
@@ -87,19 +103,19 @@
   
     <% if(cue.type=="Group"){ %>
         
-        <% if(cue.cues.length==0){ %>
-          <td id="cue-name" colspan="<%= 11-cueKeys.nestedGroupModes.length %>" class="gMode-<%= cueKeys.mode %> gTop gBot gRight"><%= cueKeys.listName %></td>
+        <% if(cue.cues && cue.cues.length==0){ %>
+          <td id="cue-name" colspan="<%= 11-cueKeys.parentKeys.length %>" class="gMode-<%= cueKeys.mode %> gTop gBot gRight"><%= cueKeys.listName %></td>
     
         <% }else{ %>
-          <td id="cue-name" colspan="<%= 11-cueKeys.nestedGroupModes.length %>" class="gMode-<%= cueKeys.mode %> gTop gRight"><%= cueKeys.listName %></td>
+          <td id="cue-name" colspan="<%= 11-cueKeys.parentKeys.length %>" class="gMode-<%= cueKeys.mode %> gTop gRight"><%= cueKeys.listName %></td>
     
         <% } %>
     
-    <% }else if(cueKeys.nestedGroupPosition[cueKeys.nestedGroupModes.length-2]==0){ %>
-        <td colspan="<%= 11-cueKeys.nestedGroupModes.length %>" class="cue-name gMode-<%= cueKeys.nestedGroupModes[cueKeys.nestedGroupModes.length-2] %> gBot gRight"><%= cueKeys.listName %></td>
+    <% }else if(!nextCue){ %>
+        <td colspan="<%= 11-cueKeys.parentKeys.length %>" class="cue-name gMode-<%= cueKeys.parent.mode %> gBot gRight"><%= cueKeys.listName %></td>
     
     <% }else{ %>
-        <td colspan="<%= 11-cueKeys.nestedGroupModes.length %>" class="cue-name gMode-<%= cueKeys.nestedGroupModes[cueKeys.nestedGroupModes.length-2] %> gRight"><%= cueKeys.listName %></td>
+        <td colspan="<%= 11-cueKeys.parentKeys.length %>" class="cue-name gMode-<%= cueKeys.parent.mode %> gRight"><%= cueKeys.listName %></td>
     
     <% } %>
     
