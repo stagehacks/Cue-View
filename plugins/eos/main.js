@@ -80,9 +80,12 @@ exports.data = function data(_device, osc) {
   } else if (match(addressParts, ['eos', 'out', 'event', 'cue', '*', '*', 'fire'])) {
     device.data.EOS.activeCue = addressParts[5];
     device.draw();
-    device.update('activeCue', {
-      uid: device.data.EOS.cueLists[addressParts[4]][addressParts[5]][0].uid,
-    });
+    const cues = device.data.EOS.cueLists[addressParts[4]][addressParts[5]];
+    if (cues) {
+      device.update('activeCue', {
+        uid: cues[0].uid,
+      });
+    }
   } else if (match(addressParts, ['eos', 'out', 'notify', 'cue', '*', '*', '*', '*'])) {
     const cueList = addressParts[4];
     const cueNumber = osc.args[1];
