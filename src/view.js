@@ -313,10 +313,13 @@ module.exports.selectNextDevice = function selectNextDevice() {
 };
 
 module.exports.trafficSignal = function trafficSignal(device) {
-  document.querySelector(`#device-${device.id} .device-traffic-signal`).style.opacity = 1;
-  setTimeout(() => {
-    document.querySelector(`#device-${device.id} .device-traffic-signal`).style.opacity = 0.3;
-  }, 50);
+  const $signal = document.querySelector(`#device-${device.id} .device-traffic-signal`);
+  if ($signal) {
+    $signal.style.opacity = 1;
+    setTimeout(() => {
+      $signal.style.opacity = 0.3;
+    }, 50);
+  }
 };
 
 function populatePluginLists() {
