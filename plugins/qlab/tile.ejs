@@ -1,17 +1,17 @@
 <%
+
   let height = 0;
   let width = 0;
   let left = 0;
   let top = 0;
-  let cueKeys = allCues[cue.uniqueID];
-  let parent = allCues[cue.parent];
 
-  if(cueKeys.parent){
-    width = 100/cueKeys.parent.cartColumns;
-    height = 600/cueKeys.parent.cartRows;
 
-    top = (cueKeys.cartPosition[0]-1)*height;
-    left = (cueKeys.cartPosition[1]-1)*width;
+  if(cue.parent){
+    width = 100/allCues[cue.parent].cartColumns;
+    height = 600/allCues[cue.parent].cartRows;
+
+    top = (cue.cartPosition[0]-1)*height;
+    left = (cue.cartPosition[1]-1)*width;
   }
 
   let style = `style="left:${left}%; top:${top}px; width:${width }%; height:${height}px;"`;
@@ -21,21 +21,17 @@
 <div id="<%= cue.uniqueID %>" class="cartCueWrapper" <%= style %> > 
 
   <div class="cartCueIcon">
-    <% if(cueKeys.isBroken){ %>
+    <% if(cue.broken){ %>
       <img src="plugins/qlab/img/status_broken_white.png" height="18px">
-    <% }else if(cueKeys.isRunning){ %>
+    <% }else if(cue.running){ %>
       <img src="plugins/qlab/img/pause_circled.png" height="24px">
     <% }else{ %>
       <img src="plugins/qlab/img/play_circled.png" height="24px">
     <% } %>
   </div>
 
-  <div class="cartCue cartColor-<%= cueKeys.colorName %>">
-    <p>
-      <%= cueKeys.number %>
-      <% if(cueKeys.number){ %> &bull; <% } %>
-      <%= cueKeys.displayName %>
-    </p>
+  <div class="cartCue cartColor-<%= cue.colorName %>">
+    <p><%= cue.number %> &bull;  <%= cue.displayName %></p>
   </div>
 
 </div>
