@@ -185,6 +185,15 @@ a {
 #device-settings #device-settings-port {
   width: 70px;
 }
+#network-indicator-dot {
+  position: absolute;
+  left: 250px;
+  bottom: 8px;
+  background: #00ff00;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+}
 
 /* SECOND COL */
 #all-devices {
@@ -194,10 +203,19 @@ a {
 }
 .device-pin {
   position: absolute;
+  right: 45px;
+  top: 4px;
+  height: 20px;
+  padding: inherit;
+}
+.device-traffic-signal {
+  position: absolute;
   right: 15px;
   top: 4px;
   height: 20px;
   padding: inherit;
+  opacity: 0.3;
+  transition: opacity 0.1s ease-in-out;
 }
 .device-wrapper {
   box-sizing: border-box;

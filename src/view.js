@@ -171,7 +171,10 @@ function switchDevice(id) {
   const $deviceWrapper = document.getElementById(`device-${i}`);
 
   if (!$deviceWrapper) {
-    const html = `<div class="col device-wrapper" id="device-${i}"><img id="device-${i}-pinned" class="device-pin" src="src/assets/img/outline_push_pin_white_18dp.png"><iframe id="device-${i}-draw-area" class="draw-area"></iframe></div>`;
+    let html = `<div class="col device-wrapper" id="device-${i}">`;
+    html += `<img id="device-${i}-pinned" class="device-pin" src="src/assets/img/outline_push_pin_white_18dp.png">`;
+    html += `<img id="device-${i}-traffic" class="device-traffic-signal" src="src/assets/img/outline_link_white_18dp.png">`;
+    html += `<iframe id="device-${i}-draw-area" class="draw-area"></iframe></div>`;
     document.getElementById('all-devices').insertAdjacentHTML('afterbegin', html);
   }
 
@@ -303,6 +306,13 @@ module.exports.selectNextDevice = function selectNextDevice() {
   const keys = Object.keys(DEVICE.all);
   const prevIndex = Math.min(keys.length - 1, keys.indexOf(activeDevice.id) + 1);
   switchDevice(keys[prevIndex]);
+};
+
+module.exports.trafficSignal = function trafficSignal(device) {
+  document.querySelector(`#device-${device.id} .device-traffic-signal`).style.opacity = 1;
+  setTimeout(() => {
+    document.querySelector(`#device-${device.id} .device-traffic-signal`).style.opacity = 0.3;
+  }, 50);
 };
 
 function populatePluginLists() {
