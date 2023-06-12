@@ -78,7 +78,10 @@ a {
 #device-list {
   box-sizing: border-box;
   width: 100%;
+  height: calc(100% - 387px);
   padding: 0px 10px;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 #device-list div {
   pointer-events: none;
@@ -348,4 +351,21 @@ select.button:focus {
 /* only allow select on input fields */
 body :not(input):not(select):not(textarea) {
   user-select: none;
+}
+
+::-webkit-scrollbar {
+  background-color: black;
+  width: 12px;
+}
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background-color: #2b2b2b;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #6b6b6b;
+  border-radius: 16px;
+  border: 3px solid #2b2b2b;
+}
+::-webkit-scrollbar-button {
+  display: none;
 }
