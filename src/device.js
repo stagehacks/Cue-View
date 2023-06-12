@@ -129,6 +129,7 @@ function initDeviceConnection(id) {
       } catch (err) {
         console.error(err);
       }
+      device.trafficSignal(device);
       device.lastMessage = Date.now();
     });
     device.send = (address, args) => {
@@ -162,6 +163,7 @@ function initDeviceConnection(id) {
       // log("SOCK IN", message);
       plugins[type].data(device, message);
       device.lastMessage = Date.now();
+      device.trafficSignal(device);
       infoUpdate(device, 'status', 'ok');
     });
     device.send = (data) => {
@@ -180,6 +182,7 @@ function initDeviceConnection(id) {
       device.connection.on('message', (msg, info) => {
         plugins[type].data(device, msg);
         device.lastMessage = Date.now();
+        device.trafficSignal(device);
         infoUpdate(device, 'status', 'ok');
       });
     });
@@ -201,6 +204,7 @@ function initDeviceConnection(id) {
       device.connection.on('message', (msg, info) => {
         plugins[type].data(device, msg);
         device.lastMessage = Date.now();
+        device.trafficSignal(device);
         infoUpdate(device, 'status', 'ok');
       });
     });
@@ -215,6 +219,7 @@ function initDeviceConnection(id) {
 
     device.connection.on('connected', () => {
       infoUpdate(device, 'status', 'ok');
+      device.trafficSignal(device);
       plugins[type].ready(device);
     });
 
