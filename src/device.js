@@ -47,6 +47,7 @@ function registerDevice(newDevice, discoveryMethod) {
     sendQueue: [],
     heartbeatInterval: PLUGINS.all[newDevice.type].heartbeatInterval,
     heartbeatTimeout: PLUGINS.all[newDevice.type].heartbeatTimeout,
+    trafficSignal: VIEW.trafficSignal,
     draw() {
       VIEW.draw(this);
     },
@@ -320,10 +321,7 @@ function infoUpdate(device, param, value) {
 }
 module.exports.infoUpdate = infoUpdate;
 
-let $networkIndicatorDot;
-
 function heartbeat() {
-  $networkIndicatorDot = document.getElementById('network-indicator-dot');
   Object.keys(devices).forEach((deviceID) => {
     const d = devices[deviceID];
 
@@ -356,7 +354,7 @@ function networkTick() {
     if (d.sendQueue.length > 0 && d.sendNow) {
       d.sendNow(d.sendQueue[0]);
       d.sendQueue.shift();
-      $networkIndicatorDot.style.background = 'green';
+      d.trafficSignal(d);
     }
   });
 }
