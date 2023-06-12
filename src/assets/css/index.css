@@ -372,12 +372,12 @@ body :not(input):not(select):not(textarea) {
 }
 
 ::-webkit-scrollbar {
-  background-color: black;
+  /* background-color: black; */
   width: 12px;
 }
 ::-webkit-scrollbar-track,
 ::-webkit-scrollbar-corner {
-  background-color: #2b2b2b;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 ::-webkit-scrollbar-thumb {
   background-color: #6b6b6b;
