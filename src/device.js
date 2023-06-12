@@ -343,7 +343,6 @@ function heartbeat() {
       d.sendQueue.shift();
     }
   });
-  document.getElementById('network-indicator-dot').style.background = '#111';
 }
 setInterval(heartbeat, 50);
 

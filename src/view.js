@@ -162,6 +162,10 @@ function switchDevice(id) {
   if (id === undefined) {
     document.getElementById('refresh-device-button').disabled = true;
     document.getElementById('device-settings-table').style.display = 'none';
+    const $activeDevice = document.querySelector('.active-device');
+    if ($activeDevice) {
+      $activeDevice.classList.remove('active-device');
+    }
     return;
   }
 

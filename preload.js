@@ -91,6 +91,8 @@ window.init = function init() {
     const deviceID = e.srcElement.id;
     if (e.srcElement.id !== 'device-list') {
       VIEW.switchDevice(deviceID);
+    } else {
+      VIEW.switchDevice(undefined);
     }
   };
 
@@ -124,22 +126,6 @@ window.init = function init() {
         document.getElementById('device-settings-name').select();
       }
     }
-  };
-
-  document.getElementById('device-list-col').onclick = function deviceListClick(e) {
-    try {
-      document.querySelector('#device-list .active-device').classList.remove('active-device');
-      ipcRenderer.send('disableDeviceDropdown', '');
-    } catch (err) {
-      // console.log(err)
-    }
-    try {
-      document.getElementsByClassName('active-device-outline')[0].classList.remove('active-device-outline');
-    } catch (err) {
-      // console.log(err)
-    }
-
-    VIEW.switchDevice();
   };
 };
 
