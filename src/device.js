@@ -44,8 +44,10 @@ function registerDevice(newDevice, discoveryMethod) {
     lastDrawn: 0,
     lastHeartbeat: 0,
     lastMessage: 0,
+    sendQueue: [],
     heartbeatInterval: PLUGINS.all[newDevice.type].heartbeatInterval,
     heartbeatTimeout: PLUGINS.all[newDevice.type].heartbeatTimeout,
+    trafficSignal: VIEW.trafficSignal,
     draw() {
       VIEW.draw(this);
     },
@@ -130,7 +132,12 @@ function initDeviceConnection(id) {
       device.lastMessage = Date.now();
     });
     device.send = (address, args) => {
-      device.connection.send({ address, args });
+      const addr = address;
+      const arg = args;
+      device.sendQueue.push({ address: addr, args: arg });
+    };
+    device.sendNow = (data) => {
+      device.connection.send(data);
     };
   } else if (plugins[type].config.connectionType === 'TCPsocket') {
     device.connection = new net.Socket();
@@ -159,6 +166,9 @@ function initDeviceConnection(id) {
     });
     device.send = (data) => {
       // log("SOCK OUT", data);
+      device.sendQueue.push(data);
+    };
+    device.sendNow = (data) => {
       device.connection.write(data);
     };
   } else if (plugins[type].config.connectionType === 'UDPsocket') {
@@ -175,6 +185,9 @@ function initDeviceConnection(id) {
     });
 
     device.send = (data) => {
+      device.sendQueue.push(data);
+    };
+    device.sendNow = (data) => {
       device.connection.send(Buffer.from(data), device.port, device.addresses[0], (err) => {
         // console.log(err);
       });
@@ -324,9 +337,28 @@ function heartbeat() {
       }
       d.lastHeartbeat = Date.now();
     }
+
+    if (d.sendQueue.length > 0 && d.sendNow) {
+      d.sendNow(d.sendQueue[0]);
+      d.sendQueue.shift();
+    }
+  });
+  document.getElementById('network-indicator-dot').style.background = '#111';
+}
+setInterval(heartbeat, 50);
+
+function networkTick() {
+  Object.keys(devices).forEach((deviceID) => {
+    const d = devices[deviceID];
+
+    if (d.sendQueue.length > 0 && d.sendNow) {
+      d.sendNow(d.sendQueue[0]);
+      d.sendQueue.shift();
+      d.trafficSignal(d);
+    }
   });
 }
-setInterval(heartbeat, 100);
+setInterval(networkTick, 10);
 
 function isDeviceAlreadyAdded(newDevice) {
   let deviceAlreadyAdded = false;
