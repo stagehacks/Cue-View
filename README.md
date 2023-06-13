@@ -21,14 +21,9 @@ A dashboard for everything in your show.
 - XAir Audio Consoles
 - Art-Net Universes
 - sACN Universes
+- ATEM VIdeo Mixers
+- Shure ULXD Wireless
 
-#### Future Devices
-
-- ATEM Video Mixers
-- DiGiCo Consoles
-- d&b DS100, amps
-- Hog
-- Meyer Galileo Processors
 
 # Plugins
 
