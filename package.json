@@ -1,7 +1,7 @@
 {
   "name": "cue-view",
   "productName": "Cue View",
-  "version": "0.9.9-pre",
+  "version": "1.0.0",
   "description": "A dashboard for everything in your show",
   "main": "main.js",
   "scripts": {
