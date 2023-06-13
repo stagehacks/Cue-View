@@ -1,4 +1,4 @@
-# <img width="27" alt="icon" src="https://github.com/stagehacks/Cue-View/assets/919746/5d2ece55-3d3f-415b-99c5-2d4b43859a7b"> Cue View
+# <img width="30" alt="icon" src="https://github.com/stagehacks/Cue-View/assets/919746/b8fb5fa8-de7e-4e1b-9043-47194fb2762d"> Cue View
 
 A dashboard for everything in your show.
 
