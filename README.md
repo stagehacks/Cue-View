@@ -21,6 +21,6 @@ A dashboard for everything in your show.
 - XAir Audio Consoles
 - Art-Net Universes
 - sACN Universes
-- ATEM VIdeo Mixers
+- ATEM Video Mixers
 - Shure ULXD Wireless
 - DiGico SD Consoles
