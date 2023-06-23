@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 exports.config = {
-  defaultName: 'DiGiCo',
+  defaultName: 'DiGiCo SD',
   connectionType: 'osc-udp',
   remotePort: 8000,
   localPort: 8001,
