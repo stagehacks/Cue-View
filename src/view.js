@@ -21,23 +21,26 @@ function drawDeviceFrame(id) {
 
   const d = DEVICE.all[id];
 
-  let str = '<html><head>';
-  str += `<link href='./plugins/${d.type}/styles.css' rel='stylesheet' type='text/css'>`;
+  const str = `
+    <html>
+      <head>
+        <link href='./plugins/${d.type}/styles.css' rel='stylesheet' type='text/css'>
 
-  // scrollbar styles are inline to prevent the styles flickering in
-  str += '<style>';
-  str += '::-webkit-scrollbar {background-color: black;width: 12px;}';
-  str += '::-webkit-scrollbar-track, ::-webkit-scrollbar-corner {background-color: #2b2b2b;}';
-  str += '::-webkit-scrollbar-thumb {background-color: #6b6b6b;border-radius: 16px;border: 3px solid #2b2b2b;}';
-  str += '::-webkit-scrollbar-button {display:none;}';
-  str += 'body{visibility: hidden;}';
-  str += '</style>';
-  str += "<link href='src/assets/css/plugin_default.css' rel='stylesheet' type='text/css'>";
-  str += '</head><body>';
-
-  str += generateBodyHTML(d);
-
-  str += '</body></html>';
+        <!--scrollbar styles are inline to prevent the styles flickering in-->
+        <style>
+            ::-webkit-scrollbar {background-color: black;width: 12px;}
+            ::-webkit-scrollbar-track, ::-webkit-scrollbar-corner {background-color: #2b2b2b;}
+            ::-webkit-scrollbar-thumb {background-color: #6b6b6b;border-radius: 16px;border: 3px solid #2b2b2b;}
+            ::-webkit-scrollbar-button {display:none;}
+            body{visibility: hidden;}
+        </style>
+        <link href='src/assets/css/plugin_default.css' rel='stylesheet' type='text/css'>
+      </head>
+      <body>
+        ${generateBodyHTML(d)}
+      </body>
+    </html>
+  `;
 
   $deviceDrawArea.setAttribute('class', `${d.type} draw-area`);
   $deviceDrawArea.contentWindow.document.open();
@@ -57,29 +60,34 @@ function drawDeviceFrame(id) {
 }
 
 function generateBodyHTML(d) {
-  let str = '';
-
   if (d.status === 'ok') {
     try {
-      str += PLUGINS.all[d.type].template({
+      return PLUGINS.all[d.type].template({
+        templates: d.templates,
         data: d.data,
         listName: d.displayName || d.defaultName,
       });
     } catch (err) {
       console.log(err);
-      str += '<h3>Plugin Template Error</h3>';
+      return '<h3>Plugin Template Error</h3>';
     }
   } else {
-    str += `<header><h1>${d.displayName || d.defaultName}</h1></header>`;
-    str += "<div class='not-responding'>";
-    str += `<h2><em>${d.type}</em> is not responding to requests for data.</h2>`;
-    str += `<h3>IP <em>${d.addresses[0]}</em></h3>`;
-    str += `<h3>Port <em>${d.remotePort}</em></h3>`;
-    str += '<hr></div>';
-    str += `<div class="device-info">${PLUGINS.all[d.type].info()}<div>`;
-  }
+    return `
+      <header>
+        <h1>${d.displayName || d.defaultName}</h1>
+      </header>
 
-  return str;
+      <div class='not-responding'>
+        <h2><em>${d.type}</em> is not responding to requests for data.</h2>
+        <h3>IP <em>${d.addresses[0]}</em></h3>
+        <h3>Port <em>${d.port}</em></h3>
+        <hr>
+      </div>
+      <div class="device-info">
+        ${PLUGINS.all[d.type].info()}
+      </div>
+    `;
+  }
 }
 
 module.exports.draw = function draw(device) {
@@ -114,8 +122,10 @@ module.exports.addDeviceToList = function addDeviceToList(device) {
     html += "<div class='status material-icons red'>clear</div>";
   }
 
-  html += `<div class='type'><img height='18px' src='plugins/${d.type}/icon.png'></div>`;
-  html += `<div class='name'>${d.displayName || d.defaultName}</div>`;
+  html += `
+    <div class='type'><img height='18px' src='plugins/${d.type}/icon.png'></div>
+    <div class='name'>${d.displayName || d.defaultName}</div>
+  `;
 
   const elem = document.getElementById(d.id);
   if (elem == null) {
@@ -152,6 +162,10 @@ function switchDevice(id) {
   if (id === undefined) {
     document.getElementById('refresh-device-button').disabled = true;
     document.getElementById('device-settings-table').style.display = 'none';
+    const $activeDevice = document.querySelector('.active-device');
+    if ($activeDevice) {
+      $activeDevice.classList.remove('active-device');
+    }
     return;
   }
 
@@ -161,7 +175,10 @@ function switchDevice(id) {
   const $deviceWrapper = document.getElementById(`device-${i}`);
 
   if (!$deviceWrapper) {
-    const html = `<div class="col device-wrapper" id="device-${i}"><img id="device-${i}-pinned" class="device-pin" src="src/assets/img/outline_push_pin_white_18dp.png"><iframe id="device-${i}-draw-area" class="draw-area"></iframe></div>`;
+    let html = `<div class="col device-wrapper" id="device-${i}">`;
+    html += `<img id="device-${i}-pinned" class="device-pin" src="src/assets/img/outline_push_pin_white_18dp.png">`;
+    html += `<img id="device-${i}-traffic" class="device-traffic-signal" src="src/assets/img/outline_link_white_18dp.png">`;
+    html += `<iframe id="device-${i}-draw-area" class="draw-area"></iframe></div>`;
     document.getElementById('all-devices').insertAdjacentHTML('afterbegin', html);
   }
 
@@ -213,8 +230,8 @@ function updateFields() {
     const fields = activeDevice.plugin.config.fields;
 
     fields.forEach((field) => {
+      // generic input setup
       const $elem = document.createElement('input');
-      $elem.type = 'text';
       $elem.value = activeDevice.fields[field.key];
       $elem.name = field.key;
       $elem.onchange = function onchange(e) {
@@ -223,7 +240,9 @@ function updateFields() {
         saveAll();
       };
 
+      // type specific setup
       if (field.type === 'textinput') {
+        $elem.type = 'text';
         const rowHTML = `<tr><th>${field.label}:</th><td colspan="3" id="${field.key}"></td></tr>`;
         document.getElementById('device-settings-fields').insertAdjacentHTML('beforeend', rowHTML);
         document.getElementById(field.key).appendChild($elem);
@@ -308,6 +327,16 @@ module.exports.selectNextDevice = function selectNextDevice() {
   const keys = Object.keys(DEVICE.all);
   const prevIndex = Math.min(keys.length - 1, keys.indexOf(activeDevice.id) + 1);
   switchDevice(keys[prevIndex]);
+};
+
+module.exports.trafficSignal = function trafficSignal(device) {
+  const $signal = document.querySelector(`#device-${device.id} .device-traffic-signal`);
+  if ($signal) {
+    $signal.style.opacity = 1;
+    setTimeout(() => {
+      $signal.style.opacity = 0.3;
+    }, 50);
+  }
 };
 
 function populatePluginLists() {

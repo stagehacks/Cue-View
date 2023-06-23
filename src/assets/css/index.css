@@ -78,7 +78,10 @@ a {
 #device-list {
   box-sizing: border-box;
   width: 100%;
+  height: calc(100% - 387px);
   padding: 0px 10px;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 #device-list div {
   pointer-events: none;
@@ -183,6 +186,15 @@ a {
 #device-settings #device-settings-rx-port {
   width: 70px;
 }
+#network-indicator-dot {
+  position: absolute;
+  left: 250px;
+  bottom: 8px;
+  background: #00ff00;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+}
 
 /* SECOND COL */
 #all-devices {
@@ -192,10 +204,19 @@ a {
 }
 .device-pin {
   position: absolute;
+  right: 45px;
+  top: 4px;
+  height: 20px;
+  padding: inherit;
+}
+.device-traffic-signal {
+  position: absolute;
   right: 15px;
   top: 4px;
   height: 20px;
   padding: inherit;
+  opacity: 0.3;
+  transition: opacity 0.1s ease-in-out;
 }
 .device-wrapper {
   box-sizing: border-box;
@@ -349,4 +370,21 @@ select.button:focus {
 /* only allow select on input fields */
 body :not(input):not(select):not(textarea) {
   user-select: none;
+}
+
+::-webkit-scrollbar {
+  /* background-color: black; */
+  width: 12px;
+}
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+::-webkit-scrollbar-thumb {
+  background-color: #6b6b6b;
+  border-radius: 16px;
+  border: 3px solid #2b2b2b;
+}
+::-webkit-scrollbar-button {
+  display: none;
 }

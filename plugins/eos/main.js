@@ -6,14 +6,14 @@ const Cue = require('./cue');
 exports.config = {
   defaultName: 'ETC Eos',
   connectionType: 'osc',
-  remotePort: 3032,
-  mayChangePorts: true,
+  defaultPort: 3037,
+  mayChangePort: true,
   heartbeatInterval: 5000,
   heartbeatTimeout: 6000,
   searchOptions: {
     type: 'TCPport',
     searchBuffer: Buffer.from('\xc0/eos/ping\x00\x00\x2c\x00\x00\x00\xc0', 'ascii'),
-    testPort: 3032,
+    testPort: 3037,
     validateResponse(msg, info) {
       return msg.toString().includes('/eos/out');
     },
@@ -23,6 +23,9 @@ exports.config = {
 exports.ready = function ready(_device) {
   const device = _device;
   device.data.EOS = new EOS();
+  device.templates = {
+    cue: _.template(fs.readFileSync(path.join(__dirname, `cue.ejs`))),
+  };
   device.send('/eos/get/cuelist/count');
   device.send('/eos/get/version');
   device.send('/eos/subscribe', [{ type: 'i', value: 1 }]);
@@ -30,6 +33,7 @@ exports.ready = function ready(_device) {
 
 exports.data = function data(_device, osc) {
   const device = _device;
+  this.deviceInfoUpdate(device, 'status', 'ok');
 
   const addressParts = osc.address.split('/');
   addressParts.shift();
@@ -50,7 +54,10 @@ exports.data = function data(_device, osc) {
       device.send(`/eos/get/cue/${addressParts[4]}/index/${i}`);
     }
   } else if (match(addressParts, ['eos', 'out', 'get', 'cue', '*', '*', '*', 'list', '*', '*'])) {
-    this.deviceInfoUpdate(device, 'status', 'ok');
+    if (device.data.EOS.cueLists[addressParts[4]] === undefined) {
+      device.data.EOS.cueLists[addressParts[4]] = {};
+      device.send(`/eos/get/cue/${addressParts[4]}/count`);
+    }
     if (device.data.EOS.cueLists[addressParts[4]][addressParts[5]] === undefined) {
       device.data.EOS.cueLists[addressParts[4]][addressParts[5]] = {};
     }
@@ -73,9 +80,12 @@ exports.data = function data(_device, osc) {
   } else if (match(addressParts, ['eos', 'out', 'event', 'cue', '*', '*', 'fire'])) {
     device.data.EOS.activeCue = addressParts[5];
     device.draw();
-    device.update('activeCue', {
-      uid: device.data.EOS.cueLists[addressParts[4]][addressParts[5]][0].uid,
-    });
+    const cues = device.data.EOS.cueLists[addressParts[4]][addressParts[5]];
+    if (cues) {
+      device.update('activeCue', {
+        uid: cues[0].uid,
+      });
+    }
   } else if (match(addressParts, ['eos', 'out', 'notify', 'cue', '*', '*', '*', '*'])) {
     const cueList = addressParts[4];
     const cueNumber = osc.args[1];
@@ -87,14 +97,11 @@ exports.data = function data(_device, osc) {
   }
 };
 
-const cueTemplate = _.template(fs.readFileSync(path.join(__dirname, `cue.ejs`)));
-
 exports.update = function update(device, doc, updateType, data) {
   if (updateType === 'cueData') {
     const $elem = doc.getElementById(data.uid);
-
     if ($elem) {
-      $elem.outerHTML = cueTemplate({
+      $elem.outerHTML = device.templates.cue({
         q: data.cue,
         cueNumber: data.cueNumber,
         isActive: false,

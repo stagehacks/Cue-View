@@ -8,6 +8,7 @@ class Channel {
     this.rx_rf_lvl = 0;
     this.rf_antenna = 0;
     this.tx_type = 0;
+    this.rx_graph_bars = 0;
   }
 }
 

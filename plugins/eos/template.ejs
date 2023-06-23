@@ -3,45 +3,40 @@
 	<h2>Eos <%= data.version  %></h2>
 </header>
 
-<%
-  const fs = require('fs');
-  const path = require('path');
-  let cueTemplate = _.template(fs.readFileSync(path.join(__dirname, `/plugins/eos/cue.ejs`)));
-%>
-
-
 <% for(var i in data.EOS.cueLists){ %>
-	<strong>List <%= i %></strong>
-	<table cellspacing="0">
-		<tr>
-			<th width="70px">Cue</th>
-			<th width="30px">Int Up</th>
-			<th width="30px">Int Down</th>
-			<th width="40px" class="hide-medium">Focus</th>
-			<th width="40px" class="hide-medium">Color</th>
-			<th width="40px" class="hide-medium">Beam</th>
-			<th width="40px" class="hide-small">Dur</th>
-			<th width="20px" class="hide-small">M</th>
-			<th width="20px" class="hide-small">B</th>
-			<th width="20px" class="hide-small">A</th>
-			<th width="70px" class="hide-small">Fw/Hg</th>
-			<th width="150px">Label</th>
-			<th width="10px" class="hide-medium">Ext Links</th>
-		</tr>
+	<div class="list_container">
+		<div class="list_name">List <%= i %></div>
+		<table cellspacing="0">
+			<tr>
+				<th width="70px">Cue</th>
+				<th width="30px">Int Up</th>
+				<th width="30px">Int Down</th>
+				<th width="40px" class="hide-medium">Focus</th>
+				<th width="40px" class="hide-medium">Color</th>
+				<th width="40px" class="hide-medium">Beam</th>
+				<th width="40px" class="hide-small">Dur</th>
+				<th width="20px" class="hide-small">M</th>
+				<th width="20px" class="hide-small">B</th>
+				<th width="20px" class="hide-small">A</th>
+				<th width="70px" class="hide-small">Fw/Hg</th>
+				<th width="150px">Label</th>
+				<th width="10px" class="hide-medium">Ext Links</th>
+			</tr>
 
-		<% var cues = Object.keys(data.EOS.cueLists[i]).sort(function(a, b){return Number(a)-Number(b)}) %>
+			<% var cues = Object.keys(data.EOS.cueLists[i]).sort(function(a, b){return Number(a)-Number(b)}) %>
 
-		<% for(var j=0; j<cues.length; j++){ %>
-			<% var q = data.EOS.cueLists[i][cues[j]] %>
-			
-			<%= cueTemplate({
-				q: q,
-				cues: cues,
-				cueNumber: cues[j],
-				isActive: (cues[j]==data.EOS.activeCue+"")
-			}) %>
+			<% for(var j=0; j<cues.length; j++){ %>
+				<% var q = data.EOS.cueLists[i][cues[j]] %>
+				
+				<%= templates.cue({
+					q: q,
+					cues: cues,
+					cueNumber: cues[j],
+					isActive: (cues[j]==data.EOS.activeCue+"")
+				}) %>
 
-		<% } %>
-	</table>
+			<% } %>
+		</table>
+	</div>
 
 <% } %>

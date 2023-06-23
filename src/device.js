@@ -2,7 +2,7 @@ const { v4: uuid } = require('uuid');
 const osc = require('osc');
 const net = require('net');
 const udp = require('dgram');
-
+const { Atem } = require('atem-connection');
 const PLUGINS = require('./plugins.js');
 const VIEW = require('./view.js');
 const SAVESLOTS = require('./saveSlots.js');
@@ -49,13 +49,16 @@ function registerDevice(newDevice, discoveryMethod) {
     localPort: newLocalPort,
     addresses: newDevice.addresses,
     data: {},
+    templates: {},
     fields: newDevice.fields || {},
     pinIndex: false,
     lastDrawn: 0,
     lastHeartbeat: 0,
     lastMessage: 0,
+    sendQueue: [],
     heartbeatInterval: PLUGINS.all[newDevice.type].heartbeatInterval,
     heartbeatTimeout: PLUGINS.all[newDevice.type].heartbeatTimeout,
+    trafficSignal: VIEW.trafficSignal,
     draw() {
       VIEW.draw(this);
     },
@@ -138,10 +141,16 @@ function initDeviceConnection(id) {
       } catch (err) {
         console.error(err);
       }
+      device.trafficSignal(device);
       device.lastMessage = Date.now();
     });
     device.send = (address, args) => {
-      device.connection.send({ address, args });
+      const addr = address;
+      const arg = args;
+      device.sendQueue.push({ address: addr, args: arg });
+    };
+    device.sendNow = (data) => {
+      device.connection.send(data);
     };
   } else if (plugins[type].config.connectionType === 'TCPsocket') {
     device.connection = new net.Socket();
@@ -166,10 +175,14 @@ function initDeviceConnection(id) {
       // log("SOCK IN", message);
       plugins[type].data(device, message);
       device.lastMessage = Date.now();
+      device.trafficSignal(device);
       infoUpdate(device, 'status', 'ok');
     });
     device.send = (data) => {
       // log("SOCK OUT", data);
+      device.sendQueue.push(data);
+    };
+    device.sendNow = (data) => {
       device.connection.write(data);
     };
   } else if (plugins[type].config.connectionType === 'UDPsocket') {
@@ -181,12 +194,16 @@ function initDeviceConnection(id) {
       device.connection.on('message', (msg, info) => {
         plugins[type].data(device, msg);
         device.lastMessage = Date.now();
+        device.trafficSignal(device);
         infoUpdate(device, 'status', 'ok');
       });
     });
 
     device.send = (data) => {
-      device.connection.send(Buffer.from(data), device.remotePort, device.addresses[0], (err) => {
+      device.sendQueue.push(data);
+    };
+    device.sendNow = (data) => {
+      device.connection.send(Buffer.from(data), device.port, device.addresses[0], (err) => {
         // console.log(err);
       });
     };
@@ -199,11 +216,33 @@ function initDeviceConnection(id) {
       device.connection.on('message', (msg, info) => {
         plugins[type].data(device, msg);
         device.lastMessage = Date.now();
+        device.trafficSignal(device);
         infoUpdate(device, 'status', 'ok');
       });
     });
 
     device.send = (data) => {};
+  } else if (plugins[type].config.connectionType === 'atem') {
+    device.connection = new Atem({
+      // this gets around the no workers nodejs error
+      disableMultithreaded: true,
+    });
+    device.connection.connect(device.addresses[0]);
+
+    device.connection.on('connected', () => {
+      infoUpdate(device, 'status', 'ok');
+      device.trafficSignal(device);
+      plugins[type].ready(device);
+    });
+
+    device.connection.on('stateChanged', (state, pathToChange) => {
+      device.lastMessage = Date.now();
+      plugins[type].data(device, {
+        pathToChange,
+        state,
+      });
+      infoUpdate(device, 'status', 'ok');
+    });
   }
 
   return true;
@@ -217,8 +256,14 @@ module.exports.deleteActive = function deleteActive() {
   );
 
   if (choice) {
-    if (device.plugin.connectionType === 'TCPsocket') {
+    if (device.plugin.config.connectionType === 'TCPsocket') {
       device.connection.destroy();
+    } else if (device.plugin.config.connectionType === 'UDPsocket') {
+      device.connection.close();
+    } else if (device.plugin.config.connectionType === 'multicast') {
+      device.connection.close();
+    } else if (device.plugin.config.connectionType.startsWith('osc')) {
+      device.connection.close();
     }
     VIEW.removeDeviceFromList(device);
     delete devices[device.id];
@@ -315,9 +360,27 @@ function heartbeat() {
       }
       d.lastHeartbeat = Date.now();
     }
+
+    if (d.sendQueue.length > 0 && d.sendNow) {
+      d.sendNow(d.sendQueue[0]);
+      d.sendQueue.shift();
+    }
   });
 }
-setInterval(heartbeat, 100);
+setInterval(heartbeat, 50);
+
+function networkTick() {
+  Object.keys(devices).forEach((deviceID) => {
+    const d = devices[deviceID];
+
+    if (d.sendQueue.length > 0 && d.sendNow) {
+      d.sendNow(d.sendQueue[0]);
+      d.sendQueue.shift();
+      d.trafficSignal(d);
+    }
+  });
+}
+setInterval(networkTick, 10);
 
 function isDeviceAlreadyAdded(newDevice) {
   let deviceAlreadyAdded = false;

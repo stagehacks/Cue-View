@@ -1,8 +1,8 @@
-# Cue View
+# <img width="30" alt="icon" src="https://github.com/stagehacks/Cue-View/assets/919746/b8fb5fa8-de7e-4e1b-9043-47194fb2762d"> Cue View
 
 A dashboard for everything in your show.
 
-![Screen Shot 2021-10-26 at 11 57 21 PM](https://user-images.githubusercontent.com/919746/138997636-dfca293a-7c98-459d-85a3-405c9b11ce8a.png)
+<img width="100%" alt="screenshot" src="https://github.com/stagehacks/Cue-View/assets/919746/dd89a45b-620c-4358-8001-8406bc2c2497">
 
 ## Features
 
@@ -21,14 +21,9 @@ A dashboard for everything in your show.
 - XAir Audio Consoles
 - Art-Net Universes
 - sACN Universes
+- ATEM VIdeo Mixers
+- Shure ULXD Wireless
 
-#### Future Devices
-
-- ATEM Video Mixers
-- DiGiCo Consoles
-- d&b DS100, amps
-- Hog
-- Meyer Galileo Processors
 
 # Plugins
 
