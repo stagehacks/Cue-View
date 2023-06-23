@@ -190,13 +190,30 @@ function switchDevice(id) {
   document.getElementById('device-settings-plugin-dropdown').value = activeDevice.type;
   document.getElementById('device-settings-name').value = activeDevice.displayName || activeDevice.defaultName || '';
   document.getElementById('device-settings-ip').value = activeDevice.addresses[0] || '';
-  document.getElementById('device-settings-port').value = activeDevice.port || '';
+  document.getElementById('device-settings-port').value = activeDevice.remotePort || '';
   document.getElementById('device-settings-pin').checked = activeDevice.pinIndex;
 
-  if (activeDevice.plugin.config.mayChangePort) {
+  if (activeDevice.plugin.config.mayChangePorts) {
     document.getElementById('device-settings-port').disabled = false;
+    document.getElementById('device-settings-rx-port').disabled = false;
   } else {
     document.getElementById('device-settings-port').disabled = true;
+    document.getElementById('device-settings-rx-port').disabled = true;
+  }
+
+  if (activeDevice.plugin.config.mayChangeLocalPort === false) {
+    document.getElementById('device-settings-rx-port').disabled = true;
+  } else {
+    document.getElementById('device-settings-rx-port').disabled = false;
+  }
+
+  if (activeDevice.plugin.config.localPort) {
+    // document.getElementById('device-settings-port-label').textContent = 'Remote\nPort:';
+    document.getElementById('device-settings-rx-port-row').style.display = 'table-row';
+    document.getElementById('device-settings-rx-port').value = activeDevice.localPort || '';
+  } else {
+    document.getElementById('device-settings-port-label').textContent = 'Port:';
+    document.getElementById('device-settings-rx-port-row').style.display = 'none';
   }
 
   updateFields();

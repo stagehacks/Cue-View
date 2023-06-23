@@ -59,6 +59,11 @@ window.init = function init() {
     DEVICE.changeActivePort(e.target.value);
   };
 
+  document.getElementById('device-settings-rx-port').onchange = function portChange(e) {
+    e.stopPropagation();
+    DEVICE.changeActiveRxPort(e.target.value);
+  };
+
   document.getElementById('device-settings-pin').onchange = function pinChange(e) {
     e.stopPropagation();
     if (e.target.checked) {
@@ -101,7 +106,7 @@ window.init = function init() {
       {
         type: e.target.value,
         defaultName: 'New Device',
-        port: undefined,
+        remotePort: PLUGINS.all[e.target.value].config.remotePort || '',
         addresses: [],
       },
       'fromAddButton'

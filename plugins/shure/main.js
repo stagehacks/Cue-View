@@ -3,8 +3,8 @@ const Channel = require('./channel');
 exports.config = {
   defaultName: 'Shure Wireless',
   connectionType: 'TCPsocket',
-  defaultPort: 2202,
-  mayChangePort: false,
+  remotePort: 2202,
+  mayChangePorts: false,
   heartbeatInterval: 5000,
   heartbeatTimeout: 10000,
   searchOptions: {

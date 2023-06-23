@@ -49,16 +49,32 @@
               <tr>
                 <th>Addr:</th>
                 <td colspan="3">
-                  <input id="device-settings-ip" type="text" maxlength="30" />
+                  <input id="device-settings-ip" type="text" maxlength="30" title="IP Address of the remote device" />
                 </td>
               </tr>
               <tr>
-                <th>Port:</th>
+                <th id="device-settings-port-label" title="'Receive' port on the remote device">Port:</th>
                 <td>
-                  <input id="device-settings-port" type="number" value="53000" maxlength="5" />
+                  <input
+                    id="device-settings-port"
+                    type="number"
+                    maxlength="5"
+                    title="'Receive' port on the remote device" />
                 </td>
                 <th>Pin:</th>
                 <td><input id="device-settings-pin" type="checkbox" /></td>
+              </tr>
+              <tr id="device-settings-rx-port-row">
+                <th title="'Send' port on the remote device">Local:</th>
+                <td>
+                  <input
+                    id="device-settings-rx-port"
+                    type="number"
+                    maxlength="5"
+                    title="'Send' port on the remote device" />
+                </td>
+                <th></th>
+                <td></td>
               </tr>
               <tbody id="device-settings-fields"></tbody>
             </table>

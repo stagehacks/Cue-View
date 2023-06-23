@@ -1,8 +1,8 @@
 exports.config = {
   defaultName: 'Dataton Watchout',
   connectionType: 'TCPsocket',
-  defaultPort: 3040,
-  mayChangePort: false,
+  remotePort: 3040,
+  mayChangePorts: false,
   heartbeatInterval: 250,
   heartbeatTimeout: 5000,
   searchOptions: {

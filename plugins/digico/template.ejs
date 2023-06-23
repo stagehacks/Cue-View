@@ -1,0 +1,56 @@
+<header>
+  <h1><%= listName %></h1>
+  <h2><%= data.Console.Session.Filename %></h2>
+</header>
+
+<% 
+const fs = require('fs');
+let _ = require('lodash');
+const path = require('path');
+  
+  let faderTemplate = _.template(fs.readFileSync(path.join(__dirname, `/plugins/digico/fader.ejs`)));
+%>
+
+<div class="column">
+  <div class="section">
+    <h3>snapshot <span id="snapshot"></span></h3>
+  </div>
+
+  <div class="section">
+  <h3>control groups</h3>
+  <table>
+    <% for(let i=1; i<=data.Console.Control_Groups; i++){ %>
+      <%= faderTemplate({type: "Control_Groups", fader: data.Control_Groups[i], index: i}) %>
+    <% } %>
+  </table>
+  </div>
+
+  <div class="section">
+  <h3>group outputs</h3>
+  <table>
+    <% for(let i=1; i<=data.Console.Group_Outputs; i++){ %>
+      <%= faderTemplate({type: "Group_Outputs", fader: data.Group_Outputs[i], index: i}) %>
+    <% } %>
+  </table>
+  </div>
+
+  <div class="section">
+    <h3>aux outputs</h3>
+    <table>
+      <% for(let i=1; i<=data.Console.Aux_Outputs; i++){ %>
+        <%= faderTemplate({type: "Aux_Outputs", fader: data.Aux_Outputs[i], index: i}) %>
+      <% } %>
+    </table>
+    </div>
+</div>
+
+<div class="column section">
+  <h3>input channels</h3>
+  <table>
+    <% for(let i=1; i<=data.Console.Input_Channels; i++){ %>
+      <%= faderTemplate({type: "Input_Channels", fader: data.Input_Channels[i], index: i}) %>
+    <% } %>
+  </table>
+</div>
+
+
