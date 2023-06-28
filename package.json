@@ -42,13 +42,22 @@
   "build": {
     "appId": "com.stagehacks.cueview",
     "icon": "src/assets/img/",
-    "artifactName": "${name}.${os}.v${version}.${ext}",
+    "artifactName": "${name}.${os}-${arch}.v${version}.${ext}",
     "mac": {
       "category": "Utilities",
       "icon": "src/assets/img/icon.icns",
       "hardenedRuntime": true,
       "electronLanguages": [
         "en"
+      ],
+      "target": [
+        {
+          "target": "default",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
       ],
       "publish": [
         "github"
