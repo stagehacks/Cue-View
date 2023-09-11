@@ -39,6 +39,7 @@ exports.data = function data(_device, buf) {
       data: device.psn.data,
       info: device.psn.info,
     };
+    device.draw();
   }
 };
 

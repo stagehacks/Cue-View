@@ -1,16 +1,95 @@
 <header>
-  <h1><%= data.info.system_name ? data.info.system_name : '' %> PosiStageNet</h1>
+  <h1><%= listName%></h1>
 </header>
 
 <div>
   <h2>Tracker Count: <%= Object.keys(data.data.trackers).length %></h2>
+
+  <table>
+    <tr>
+      <th></th>
+      <th></th>
+      <th colspan="3">POS</th>
+      <th colspan="3">SPEED</th>
+      <th colspan="3">ORI</th>
+      <th></th>
+      <th colspan="3">ACCEL</th>
+      <th colspan="3">TRGTPOS</th>
+      
+      
+    </tr>
+     <tr>
+       <th>ID</th>
+       <th>Name</th>
+       <th>x</th>
+       <th>y</th>
+       <th>z</th>
+       
+       <th>x</th>
+       <th>y</th>
+       <th>z</th>
+       
+       <th>x</th>
+       <th>y</th>
+       <th>z</th>
+       
+       <th>validity</th>
+       
+       <th>x</th>
+       <th>y</th>
+       <th>z</th>
+       
+       <th>x</th>
+       <th>y</th>
+       <th>z</th>
+       
+       <th>tracker_timestamp</th>
+     </tr>
+     
   <% Object.entries(data.info.trackers).forEach(([trackerId,trackerInfo]) => { 
-    
+      const trackerData = data.data.trackers[trackerId]
   %>
 
-  <div id="tracker-<%= trackerId %>">
-    <%= trackerInfo.name %>
-  </div>
+  <tr>
+      
+      <td><%= trackerId %></td>
+      <td><%= trackerInfo.name %></td>
+
+      <!-- pos -->
+      <td><%= trackerData.pos_x?.toFixed(2) %></td>
+      <td><%= trackerData.pos_y?.toFixed(2) %></td>
+      <td><%= trackerData.pos_z?.toFixed(2) %></td>
+
+      <!-- speed -->
+      <td><%= trackerData.speed_x?.toFixed(2) %></td>
+      <td><%= trackerData.speed_y?.toFixed(2) %></td>
+      <td><%= trackerData.speed_z?.toFixed(2) %></td>
+
+      <!-- ori -->
+      <td><%= trackerData.ori_x?.toFixed(2) %></td>
+      <td><%= trackerData.ori_y?.toFixed(2) %></td>
+      <td><%= trackerData.ori_z?.toFixed(2) %></td>
+
+      <td><%= trackerData.validity?.toFixed(2) %></td>
+
+      <!-- accel -->
+      <td><%= trackerData.accel_x?.toFixed(2) %></td>
+      <td><%= trackerData.accel_y?.toFixed(2) %></td>
+      <td><%= trackerData.accel_z?.toFixed(2) %></td>
+
+      <!-- trgtpos -->
+      <td><%= trackerData.trgtpos_x?.toFixed(2) %></td>
+      <td><%= trackerData.trgtpos_y?.toFixed(2) %></td>
+      <td><%= trackerData.trgtpos_z?.toFixed(2) %></td>
+
+      <!-- pos -->
+      <td><%= trackerData.tracker_timestamp %></td>
+
+       
+  </tr>
 
   <% }); %>
+
+</table>
+
 </div>

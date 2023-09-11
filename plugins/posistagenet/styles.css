@@ -1,3 +1,11 @@
-[id^='tracker-'] {
-  color: white;
+table,
+th,
+td {
+  border: 1px solid darkgray;
+  border-collapse: collapse;
+  color: gainsboro;
+}
+
+td {
+  text-align: center;
 }
