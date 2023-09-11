@@ -1,0 +1,16 @@
+<header>
+  <h1><%= data.info.system_name ? data.info.system_name : '' %> PosiStageNet</h1>
+</header>
+
+<div>
+  <h2>Tracker Count: <%= Object.keys(data.data.trackers).length %></h2>
+  <% Object.entries(data.info.trackers).forEach(([trackerId,trackerInfo]) => { 
+    
+  %>
+
+  <div id="tracker-<%= trackerId %>">
+    <%= trackerInfo.name %>
+  </div>
+
+  <% }); %>
+</div>
