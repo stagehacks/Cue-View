@@ -214,7 +214,7 @@ function initDeviceConnection(id) {
       plugins[type].ready(device);
 
       device.connection.on('message', (msg, info) => {
-        plugins[type].data(device, msg);
+        plugins[type].data(device, msg, info);
         device.lastMessage = Date.now();
         device.trafficSignal(device);
         infoUpdate(device, 'status', 'ok');
