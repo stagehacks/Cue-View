@@ -57,34 +57,34 @@
       <td><%= trackerInfo.name %></td>
 
       <!-- pos -->
-      <td><%= trackerData.pos_x?.toFixed(2) %></td>
-      <td><%= trackerData.pos_y?.toFixed(2) %></td>
-      <td><%= trackerData.pos_z?.toFixed(2) %></td>
+      <td><%= trackerData.pos?.x?.toFixed(2) %></td>
+      <td><%= trackerData.pos?.y?.toFixed(2) %></td>
+      <td><%= trackerData.pos?.z?.toFixed(2) %></td>
 
       <!-- speed -->
-      <td><%= trackerData.speed_x?.toFixed(2) %></td>
-      <td><%= trackerData.speed_y?.toFixed(2) %></td>
-      <td><%= trackerData.speed_z?.toFixed(2) %></td>
+      <td><%= trackerData.speed?.x?.toFixed(2) %></td>
+      <td><%= trackerData.speed?.y?.toFixed(2) %></td>
+      <td><%= trackerData.speed?.z?.toFixed(2) %></td>
 
       <!-- ori -->
-      <td><%= trackerData.ori_x?.toFixed(2) %></td>
-      <td><%= trackerData.ori_y?.toFixed(2) %></td>
-      <td><%= trackerData.ori_z?.toFixed(2) %></td>
+      <td><%= trackerData.ori?.x?.toFixed(2) %></td>
+      <td><%= trackerData.ori?.y?.toFixed(2) %></td>
+      <td><%= trackerData.ori?.z?.toFixed(2) %></td>
 
-      <td><%= trackerData.validity?.toFixed(2) %></td>
+      <td><%= trackerData.status?.validity?.toFixed(2) %></td>
 
       <!-- accel -->
-      <td><%= trackerData.accel_x?.toFixed(2) %></td>
-      <td><%= trackerData.accel_y?.toFixed(2) %></td>
-      <td><%= trackerData.accel_z?.toFixed(2) %></td>
+      <td><%= trackerData.accel?.x?.toFixed(2) %></td>
+      <td><%= trackerData.accel?.y?.toFixed(2) %></td>
+      <td><%= trackerData.accel?.z?.toFixed(2) %></td>
 
       <!-- trgtpos -->
-      <td><%= trackerData.trgtpos_x?.toFixed(2) %></td>
-      <td><%= trackerData.trgtpos_y?.toFixed(2) %></td>
-      <td><%= trackerData.trgtpos_z?.toFixed(2) %></td>
+      <td><%= trackerData.trgtpos?.x?.toFixed(2) %></td>
+      <td><%= trackerData.trgtpos?.y?.toFixed(2) %></td>
+      <td><%= trackerData.trgtpos?.z?.toFixed(2) %></td>
 
       <!-- pos -->
-      <td><%= trackerData.tracker_timestamp %></td>
+      <td><%= trackerData.timestamp?.tracker_timestamp %></td>
   </tr>
 
   <% }); %>
