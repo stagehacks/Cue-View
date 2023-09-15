@@ -46,8 +46,8 @@ exports.data = function data(_device, buf, info) {
   Object.keys(device.decoders).forEach((address) => {
     if (!device.data[address]) {
       device.data[address] = {
-        data: device.decoders[address].data,
-        info: device.decoders[address].info,
+        trackers: device.decoders[address].trackers,
+        system_name: device.decoders[address].system_name,
       };
     }
   });

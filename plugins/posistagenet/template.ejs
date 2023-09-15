@@ -6,8 +6,8 @@
   <% Object.keys(data).forEach((address) => { 
     const instanceData = data[address]
   %>
-  <h2>Server: <%= instanceData.info.system_name ? instanceData.info.system_name : ''%> (<%= address %>)</h2>
-  <h3>Tracker Count: <%= Object.keys(instanceData.data.trackers).length %></h3>
+  <h2>Server: <%= instanceData.system_name ? instanceData.system_name : ''%> (<%= address %>)</h2>
+  <h3>Tracker Count: <%= Object.keys(instanceData.trackers).length %></h3>
 
   <table>
     <tr>
@@ -48,40 +48,39 @@
       <th>tracker_timestamp</th>
     </tr>
      
-  <% Object.entries(instanceData.info.trackers).forEach(([trackerId,trackerInfo]) => { 
-      const trackerData = instanceData.data.trackers[trackerId]
+  <% Object.entries(instanceData.trackers).forEach(([trackerId,trackerData]) => { 
   %>
 
     <tr>
       <td><%= trackerId %></td>
-      <td><%= trackerInfo.name %></td>
+      <td><%= trackerData.tracker_name.tracker_name %></td>
 
       <!-- pos -->
-      <td><%= trackerData.pos?.x?.toFixed(2) %></td>
-      <td><%= trackerData.pos?.y?.toFixed(2) %></td>
-      <td><%= trackerData.pos?.z?.toFixed(2) %></td>
+      <td><%= trackerData.pos?.pos_x?.toFixed(2) %></td>
+      <td><%= trackerData.pos?.pos_y?.toFixed(2) %></td>
+      <td><%= trackerData.pos?.pos_z?.toFixed(2) %></td>
 
       <!-- speed -->
-      <td><%= trackerData.speed?.x?.toFixed(2) %></td>
-      <td><%= trackerData.speed?.y?.toFixed(2) %></td>
-      <td><%= trackerData.speed?.z?.toFixed(2) %></td>
+      <td><%= trackerData.speed?.speed_x?.toFixed(2) %></td>
+      <td><%= trackerData.speed?.speed_y?.toFixed(2) %></td>
+      <td><%= trackerData.speed?.speed_z?.toFixed(2) %></td>
 
       <!-- ori -->
-      <td><%= trackerData.ori?.x?.toFixed(2) %></td>
-      <td><%= trackerData.ori?.y?.toFixed(2) %></td>
-      <td><%= trackerData.ori?.z?.toFixed(2) %></td>
+      <td><%= trackerData.ori?.ori_x?.toFixed(2) %></td>
+      <td><%= trackerData.ori?.ori_y?.toFixed(2) %></td>
+      <td><%= trackerData.ori?.ori_z?.toFixed(2) %></td>
 
       <td><%= trackerData.status?.validity?.toFixed(2) %></td>
 
       <!-- accel -->
-      <td><%= trackerData.accel?.x?.toFixed(2) %></td>
-      <td><%= trackerData.accel?.y?.toFixed(2) %></td>
-      <td><%= trackerData.accel?.z?.toFixed(2) %></td>
+      <td><%= trackerData.accel?.accel_x?.toFixed(2) %></td>
+      <td><%= trackerData.accel?.accel_y?.toFixed(2) %></td>
+      <td><%= trackerData.accel?.accel_z?.toFixed(2) %></td>
 
       <!-- trgtpos -->
-      <td><%= trackerData.trgtpos?.x?.toFixed(2) %></td>
-      <td><%= trackerData.trgtpos?.y?.toFixed(2) %></td>
-      <td><%= trackerData.trgtpos?.z?.toFixed(2) %></td>
+      <td><%= trackerData.trgtpos?.trgtpos_x?.toFixed(2) %></td>
+      <td><%= trackerData.trgtpos?.trgtpos_y?.toFixed(2) %></td>
+      <td><%= trackerData.trgtpos?.trgtpos_z?.toFixed(2) %></td>
 
       <!-- pos -->
       <td><%= trackerData.timestamp?.tracker_timestamp %></td>
