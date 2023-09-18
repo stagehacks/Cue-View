@@ -3,10 +3,11 @@
 </header>
 
 <div>
+  <!-- Server Loop -->
   <% Object.keys(data).forEach((address) => { 
     const instanceData = data[address]
   %>
-  <h2>Server: <%= instanceData.system_name ? instanceData.system_name : ''%> (<%= address %>)</h2>
+  <h2>Server: <%= instanceData.system_name %> (<%= address %>)</h2>
   <h3>Tracker Count: <%= Object.keys(instanceData.trackers).length %></h3>
 
   <table>
@@ -47,13 +48,12 @@
       
       <th>tracker_timestamp</th>
     </tr>
-     
-  <% Object.entries(instanceData.trackers).forEach(([trackerId,trackerData]) => { 
-  %>
+    <!-- Tracker Loop -->
+    <% Object.entries(instanceData.trackers).forEach(([trackerId,trackerData]) => { %>
 
     <tr>
       <td><%= trackerId %></td>
-      <td><%= trackerData.tracker_name ? trackerData.tracker_name.tracker_name : ''%></td>
+      <td><%= trackerData.tracker_name?.tracker_name%></td>
 
       <!-- pos -->
       <td><%= trackerData.pos?.pos_x?.toFixed(2) %></td>
@@ -84,12 +84,11 @@
 
       <!-- pos -->
       <td><%= trackerData.timestamp?.tracker_timestamp %></td>
-  </tr>
+    </tr>
 
-  <% }); %>
-</table>
-<% 
-  }); 
-%>
-
+    <% }); %>
+  </table>
+  <% 
+    }); 
+  %>
 </div>
