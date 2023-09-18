@@ -53,7 +53,7 @@
 
     <tr>
       <td><%= trackerId %></td>
-      <td><%= trackerData.tracker_name.tracker_name %></td>
+      <td><%= trackerData.tracker_name ? trackerData.tracker_name.tracker_name : ''%></td>
 
       <!-- pos -->
       <td><%= trackerData.pos?.pos_x?.toFixed(2) %></td>

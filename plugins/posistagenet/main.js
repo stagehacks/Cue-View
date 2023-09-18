@@ -44,12 +44,10 @@ exports.data = function data(_device, buf, info) {
   device.decoders[info.address].decode(buf);
 
   Object.keys(device.decoders).forEach((address) => {
-    if (!device.data[address]) {
-      device.data[address] = {
-        trackers: device.decoders[address].trackers,
-        system_name: device.decoders[address].system_name,
-      };
-    }
+    device.data[address] = {
+      trackers: device.decoders[address].trackers,
+      system_name: device.decoders[address].system_name,
+    };
   });
   device.draw();
 };
