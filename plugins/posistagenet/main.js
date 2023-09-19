@@ -47,6 +47,7 @@ exports.data = function data(_device, buf, info) {
     device.data[address] = {
       trackers: device.decoders[address].trackers,
       system_name: device.decoders[address].system_name,
+      fields: device.decoders[address].getTrackerFields(),
     };
   });
   device.draw();
