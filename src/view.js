@@ -21,6 +21,10 @@ function drawDeviceFrame(id) {
 
   const d = DEVICE.all[id];
 
+  if (d.frameDrawn) {
+    return true;
+  }
+
   const str = `
     <html>
       <head>
@@ -55,6 +59,8 @@ function drawDeviceFrame(id) {
   } else {
     $devicePinned.style.display = 'none';
   }
+
+  d.frameDrawn = true;
 
   return true;
 }
@@ -143,8 +149,9 @@ module.exports.removeDeviceFromList = function removeDeviceFromList(device) {
 };
 
 function switchDevice(id) {
-  if (activeDevice && activeDevice.pinIndex === false) {
+  if (activeDevice && activeDevice.pinIndex === false && activeDevice.id !== id) {
     document.getElementById(`device-${activeDevice.id}`).remove();
+    activeDevice.frameDrawn = false;
     activeDevice = false;
   }
   activeDevice = DEVICE.all[id];
