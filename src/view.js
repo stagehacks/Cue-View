@@ -183,7 +183,12 @@ function switchDevice(id) {
   }
 
   window.switchClass(document.getElementById(id), 'active-device');
-  drawDeviceFrame(id);
+
+  if (!DEVICE.all[id].drawn) {
+    // don't re-draw the whole device frame if it's already drawn
+    drawDeviceFrame(id);
+  }
+
   window.switchClass(document.getElementById(`device-${id}`), 'active-device-outline');
 
   document.getElementById('device-settings-table').style.display = 'block';
