@@ -353,7 +353,7 @@ function heartbeat() {
         initDeviceConnection(deviceID);
       } else if (Date.now() - d.lastMessage > d.heartbeatTimeout) {
         infoUpdate(d, 'status', 'broken');
-      } else if (d.port !== undefined && d.addresses.length > 0 && d.send) {
+      } else if ((d.remotePort !== undefined || d.defaultPort !== undefined) && d.addresses.length > 0 && d.send) {
         PLUGINS.all[d.type].heartbeat(d);
       } else {
         //
