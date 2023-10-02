@@ -1,7 +1,7 @@
 {
   "name": "cue-view",
   "productName": "Cue View",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A dashboard for everything in your show",
   "main": "main.js",
   "scripts": {
@@ -30,6 +30,7 @@
     "prettier": "^3.0.2"
   },
   "dependencies": {
+    "@jwetzell/posistagenet": "^0.4.6",
     "atem-connection": "^3.3.0",
     "bonjour": "^3.5.0",
     "electron-updater": "^6.1.1",
