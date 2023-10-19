@@ -1,7 +1,7 @@
 const Channel = require('./channel');
 
 exports.config = {
-  defaultName: 'Sennheiser Wireless',
+  defaultName: 'Sennheiser G Wireless',
   connectionType: 'UDPsocket',
   heartbeatInterval: 5000,
   heartbeatTimeout: 10000,
