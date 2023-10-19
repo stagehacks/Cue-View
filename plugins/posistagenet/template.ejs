@@ -1,0 +1,154 @@
+<header>
+  <h1><%= listName%></h1>
+</header>
+
+<div>
+  <!-- Server Loop -->
+  <% Object.keys(data).forEach((address) => { 
+    const instanceData = data[address]
+  %>
+  <section>
+  <h2>Server: <%= instanceData.system_name %> (<%= address %>)</h2>
+  <h3>Tracker Count: <%= Object.keys(instanceData.trackers).length %></h3>
+
+  <table>
+    <tr>
+      <th></th>
+      <% if(instanceData.fields.has('tracker_name')) { %>
+        <th></th>
+      <% } %>
+
+      <% if(instanceData.fields.has('pos')) { %>
+        <th colspan="3" class="bg-pos border-right">POS</th>
+      <% } %>
+
+      <% if(instanceData.fields.has('speed')) { %>
+        <th colspan="3" class="bg-speed border-right">SPEED</th>
+      <% } %>
+
+      <% if(instanceData.fields.has('ori')) { %>
+        <th colspan="3" class="bg-ori border-right">ORI</th>
+      <% } %>
+
+      <% if(instanceData.fields.has('status')) { %>
+        <th class="border-right"></th>
+      <% } %>
+
+      <% if(instanceData.fields.has('accel')) { %>
+        <th colspan="3" class="bg-accel border-right">ACCEL</th>
+      <% } %>
+
+      <% if(instanceData.fields.has('trgtpos')) { %>
+        <th colspan="3" class="bg-trgtpos border-right">TRGTPOS</th>
+      <% } %>
+
+      <% if(instanceData.fields.has('timestamp')) { %>
+        <th></th>
+      <% } %>
+    </tr>
+    <tr>
+      <th>ID</th>
+      <% if(instanceData.fields.has('tracker_name')) { %>
+        <th>Name</th>
+      <% } %>
+
+      <% if(instanceData.fields.has('pos')) { %>
+        <th class="bg-pos">x</th>
+        <th class="bg-pos">y</th>
+        <th class="bg-pos border-right">z</th>
+      <% } %>
+
+      <% if(instanceData.fields.has('speed')) { %>
+        <th class="bg-speed">x</th>
+        <th class="bg-speed">y</th>
+        <th class="bg-speed border-right">z</th>
+      <% } %>
+
+      <% if(instanceData.fields.has('ori')) { %>
+        <th class="bg-ori">x</th>
+        <th class="bg-ori">y</th>
+        <th class="bg-ori border-right">z</th>
+      <% } %>
+
+      <% if(instanceData.fields.has('status')) { %>
+        <th class="border-right">validity</th>
+      <% } %>
+
+      <% if(instanceData.fields.has('accel')) { %>
+        <th class="bg-accel">x</th>
+        <th class="bg-accel">y</th>
+        <th class="bg-accel border-right">z</th>
+      <% } %>
+
+      <% if(instanceData.fields.has('trgtpos')) { %>
+        <th class="bg-trgtpos">x</th>
+        <th class="bg-trgtpos">y</th>
+        <th class="bg-trgtpos border-right">z</th>
+      <% } %>
+
+      <% if(instanceData.fields.has('timestamp')) { %>
+        <th>tracker_timestamp</th>
+      <% } %>
+
+    </tr>
+    <!-- Tracker Loop -->
+    <% Object.entries(instanceData.trackers).forEach(([trackerId,trackerData]) => { %>
+
+    <tr>
+      <td><%= trackerId %></td>
+      <% if(instanceData.fields.has('tracker_name')) { %>
+        <td><%= trackerData.tracker_name?.tracker_name%></td>
+      <% } %>
+      
+      <% if(instanceData.fields.has('pos')) { %>
+        <!-- pos -->
+        <td class="bg-pos"><%= trackerData.pos?.pos_x?.toFixed(2) %></td>
+        <td class="bg-pos"><%= trackerData.pos?.pos_y?.toFixed(2) %></td>
+        <td class="bg-pos border-right"><%= trackerData.pos?.pos_z?.toFixed(2) %></td>
+      <% } %>
+
+      <% if(instanceData.fields.has('speed')) { %>
+        <!-- speed -->
+        <td class="bg-speed"><%= trackerData.speed?.speed_x?.toFixed(2) %></td>
+        <td class="bg-speed"><%= trackerData.speed?.speed_y?.toFixed(2) %></td>
+        <td class="bg-speed border-right"><%= trackerData.speed?.speed_z?.toFixed(2) %></td>
+      <% } %>
+
+      <% if(instanceData.fields.has('ori')) { %>
+        <!-- ori -->
+        <td class="bg-ori"><%= trackerData.ori?.ori_x?.toFixed(2) %></td>
+        <td class="bg-ori"><%= trackerData.ori?.ori_y?.toFixed(2) %></td>
+        <td class="bg-ori border-right"><%= trackerData.ori?.ori_z?.toFixed(2) %></td>
+      <% } %>
+
+      <% if(instanceData.fields.has('status')) { %>
+        <td class="border-right"><%= trackerData.status?.validity?.toFixed(2) %></td>
+      <% } %>
+
+      <% if(instanceData.fields.has('accel')) { %>
+        <!-- accel -->
+        <td class="bg-accel"><%= trackerData.accel?.accel_x?.toFixed(2) %></td>
+        <td class="bg-accel"><%= trackerData.accel?.accel_y?.toFixed(2) %></td>
+        <td class="bg-accel border-right"><%= trackerData.accel?.accel_z?.toFixed(2) %></td>
+      <% } %>
+
+      <% if(instanceData.fields.has('trgtpos')) { %>
+        <!-- trgtpos -->
+        <td class="bg-trgtpos"><%= trackerData.trgtpos?.trgtpos_x?.toFixed(2) %></td>
+        <td class="bg-trgtpos"><%= trackerData.trgtpos?.trgtpos_y?.toFixed(2) %></td>
+        <td class="bg-trgtpos border-right"><%= trackerData.trgtpos?.trgtpos_z?.toFixed(2) %></td>
+      <% } %>
+
+      <% if(instanceData.fields.has('timestamp')) { %>
+        <td><%= trackerData.timestamp?.tracker_timestamp %></td>
+      <% } %>
+
+    </tr>
+
+    <% }); %>
+  </table>
+</section>
+  <% 
+    }); 
+  %>
+</div>

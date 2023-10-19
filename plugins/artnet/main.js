@@ -1,8 +1,8 @@
 exports.config = {
   defaultName: 'Art-Net',
   connectionType: 'UDPsocket',
-  defaultPort: 6454,
-  mayChangePort: false,
+  remotePort: 6454,
+  mayChangePorts: false,
   heartbeatInterval: 5000,
   heartbeatTimeout: 15000,
   searchOptions: {
@@ -23,11 +23,21 @@ exports.ready = function ready(_device) {
 };
 
 exports.data = function data(_device, buf) {
-  if (buf.length < 18) {
+  const device = _device;
+
+  if (buf.length < 18 || buf.slice(0, 7).toString() !== 'Art-Net') {
     return;
   }
+
+  const opCode = buf.readUInt16BE(8);
+
+  if (opCode === 33) {
+    sendArtPollReply(device);
+    return;
+  }
+
   const universeIndex = buf.readUInt8(14);
-  const device = _device;
+
   let universe = device.data.universes[universeIndex];
 
   if (!universe) {
@@ -93,3 +103,53 @@ exports.update = function update(_device, _document, updateType, updateData) {
     });
   }
 };
+
+function sendArtPollReply(device) {
+  // minimum viable Art-Net packet
+  // not to full Art-Net spec
+  // https://art-net.org.uk/how-it-works/discovery-packets/artpollreply/
+
+  const interfaces = device.getNetworkInterfaces();
+
+  for (let i = 0; i < Object.keys(interfaces).length; i++) {
+    const buf = Buffer.alloc(213);
+    buf.write('Art-Net', 0);
+
+    buf.writeInt16LE(0x2100, 8);
+
+    const addr = interfaces[Object.keys(interfaces)[i]][0].address.split('.');
+
+    buf.writeUInt8(addr[0], 10);
+    buf.writeUInt8(addr[1], 11);
+    buf.writeUInt8(addr[2], 12);
+    buf.writeUInt8(addr[3], 13);
+
+    buf.writeInt16LE(6454, 14);
+
+    buf.write('Cue View', 26);
+
+    buf.writeUInt8(4, 173);
+
+    buf.writeUInt8(0xc0, 174);
+    buf.writeUInt8(0xc0, 175);
+    buf.writeUInt8(0xc0, 176);
+    buf.writeUInt8(0xc0, 177);
+
+    buf.writeUInt8(0x80, 178);
+    buf.writeUInt8(0x80, 179);
+    buf.writeUInt8(0x80, 180);
+    buf.writeUInt8(0x80, 181);
+
+    buf.writeUInt8(0x80, 182);
+    buf.writeUInt8(0x80, 183);
+    buf.writeUInt8(0x80, 184);
+    buf.writeUInt8(0x80, 185);
+
+    buf.writeUInt8(0x00, 186);
+    buf.writeUInt8(0x01, 187);
+    buf.writeUInt8(0x02, 188);
+    buf.writeUInt8(0x03, 189);
+
+    device.send(buf);
+  }
+}

@@ -3,8 +3,8 @@ const Channel = require('./channel');
 exports.config = {
   defaultName: 'Shure Wireless',
   connectionType: 'TCPsocket',
-  defaultPort: 2202,
-  mayChangePort: false,
+  remotePort: 2202,
+  mayChangePorts: false,
   heartbeatInterval: 5000,
   heartbeatTimeout: 10000,
   searchOptions: {
@@ -21,6 +21,10 @@ exports.ready = function ready(_device) {
   const device = _device;
   device.data.channelCount = 0;
   device.data.channels = [{}, new Channel(), new Channel(), new Channel(), new Channel()];
+
+  device.send('< GET 0 ALL >');
+  device.send('< SET 0 METER_RATE 00100 >');
+  device.send('< SAMPLE 0 AUDIO_LVL>');
 };
 
 exports.data = function data(_device, message) {
@@ -30,6 +34,8 @@ exports.data = function data(_device, message) {
   if (!msgStr.startsWith('< ')) {
     return;
   }
+
+  // console.log(msgStr);
 
   msgStr = msgStr.slice(2).slice(0, -1);
   const msgs = msgStr.split('><');
@@ -84,23 +90,23 @@ exports.data = function data(_device, message) {
 exports.update = function update(device, doc, updateType, data) {
   for (let i = 1; i < data.channels.length; i++) {
     const channel = data.channels[i];
-
-    const $rf = doc.getElementById(`ch-${i}-rf`);
-    if ($rf) {
-      $rf.style.height = 90 - (channel.rx_rf_lvl + 90) * 2;
-    }
-
     const $audio = doc.getElementById(`ch-${i}-audio`);
+    const $audioText = doc.getElementById(`ch-${i}-audio-text`);
     if ($audio) {
       $audio.style.height = 90 - channel.audio_lvl * 2;
+    }
+    if ($audioText) {
+      $audioText.textContent = channel.audio_lvl;
     }
 
     const $rfA = doc.getElementById(`ch-${i}-a`);
     const $rfB = doc.getElementById(`ch-${i}-b`);
+    let rfClass = '';
 
     if ($rfA) {
       if (channel.rf_antenna.charAt(0) === 'A') {
         $rfA.style.color = '#53c3c3';
+        rfClass = 'color-1';
       } else {
         $rfA.style.color = '#333';
       }
@@ -108,9 +114,31 @@ exports.update = function update(device, doc, updateType, data) {
     if ($rfB) {
       if (channel.rf_antenna.charAt(1) === 'B') {
         $rfB.style.color = '#53c3c3';
+        rfClass = 'color-2';
       } else {
         $rfB.style.color = '#333';
       }
+    }
+
+    const $rf = doc.getElementById(`ch-${i}-rf`);
+    const $rfGraph = doc.getElementById(`ch-${i}-graph`);
+    const $rfText = doc.getElementById(`ch-${i}-rf-text`);
+    const rfHeight = 90 - (channel.rx_rf_lvl + 90) * 2;
+    if ($rf) {
+      $rf.style.height = rfHeight;
+    }
+    if ($rfGraph) {
+      if ($rfGraph.childElementCount > 115) {
+        $rfGraph.removeChild($rfGraph.firstElementChild);
+      }
+      $rfGraph.insertAdjacentHTML(
+        'beforeend',
+        `<div class="rf-graph-bar ${rfClass}" style="height: ${channel.rx_rf_lvl + 100}px;"></div>`
+      );
+      channel.rx_graph_bars++;
+    }
+    if ($rfText) {
+      $rfText.textContent = channel.rx_rf_lvl;
     }
   }
 };

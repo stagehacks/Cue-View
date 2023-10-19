@@ -24,7 +24,7 @@
           id="ch-<%= i %>-rf"
           style="height: <%= 90- ((ch.rx_rf_lvl + 90) * 2) %>"></div>
       </div>
-      <small><%= ch.rx_rf_lvl %><br /><small>dBm</small></small>
+      <small><span id="ch-<%= i %>-rf-text"><%= ch.rx_rf_lvl %></span><br /><small>dBm</small></small>
     </td>
     <td style="width: 40px">
       <div class="rf-indicator-wrapper">&nbsp;</div>
@@ -33,9 +33,9 @@
         <div
           class="bar"
           id="ch-<%= i %>-audio"
-          style="height: <%= 90- (ch.audio_lvl * 2) %>"></div>
+          style="height: <%= 90- (ch.rx_rf_lvl * 2) %>"></div>
       </div>
-      <small><%= ch.audio_lvl %><br /><small>dBFS</small></small>
+      <small><span id="ch-<%= i %>-audio-text"><%= ch.audio_lvl %></span><br /><small>dBFS</small></small>
     </td>
     <td style="width: 40px">
       <div class="rf-indicator-wrapper">&nbsp;</div>
@@ -43,7 +43,12 @@
       <div class="bar-wrapper pink">
         <div class="bar" style="height: <%= 60- (ch.audio_gain * 1.4) %>"></div>
       </div>
-      <small><%= ch.audio_gain %><br /><small>dB</small></small>
+      <small id=""><%= ch.audio_gain %><br /><small>dB</small></small>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="3" id="ch-<%= i %>-graph" class="rf-graph">
+     
     </td>
   </tr>
   <tr>

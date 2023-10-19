@@ -1,13 +1,13 @@
-<h3 id="<%= cueList.uniqueID %>"><%= workspace.displayName %> &mdash; <%= cueList.displayName %></h3>
+<h3 id="<%= cueList.uniqueID %>"><%= workspace.displayName %> &mdash; <%= cueList.listName %></h3>
 
 <table cellspacing="0">
   <tr>
-    <th width="1px" style="border-left: none; border-right: none;"></th>
+    <th width="3px" style="border-left: none; border-right: none;"></th>
     <th width="20px" style="border-left: none; border-right: none;"></th>
     <th width="20px" style="border-left: none;"></th>
     <th width="55px">Number</th>
+    <th width="25px" class="no-border">Name</th>
     <th width="25px" style="padding: 0px"></th>
-    <th width="25px" class="no-border">Q</th>
     <th width="25px" class="no-border"></th>
     <th width="25px" class="no-border"></th>
     <th width="25px" class="no-border"></th>
@@ -18,17 +18,17 @@
     <th width="25px" class="no-border"></th>
     <th class="no-border"></th>
     <th width="55px" class="hide-medium">Target</th>
-    <th width="80px" class="hide-small"style="border-right: none;">Pre Wait</th>
-    <th width="80px" class="hide-medium" style="border-left: none; border-right: none;">Action</th>
-    <th width="80px" class="hide-medium" style="border-left: none; border-right: none;">Post Wait</th>
+    <th width="80px" class="hide-small"style="border-right: none;">Pre-Wait</th>
+    <th width="80px" class="hide-medium" style="border-left: none; border-right: none;">Duration</th>
+    <th width="80px" class="hide-medium" style="border-left: none; border-right: none;">Post-Wait</th>
     <th width="20px" class="hide-small" style="border-left: none; border-right: none;">
       <img src="plugins/qlab/img/auto_continue_stubby.png" height="20px">
     </th>
   </tr>
   <tbody id="">
     
-    <% for(const cue_id in cueList.cues){ %>
-      <%= displayCueRow(cueList.cues[cue_id]) %>
+    <% for(let i=0; i<cueList.cues.length; i++){ %>
+      <%= displayCueRow(cueList.cues[i]) %>
     <% } %>
 
   </tbody>
@@ -36,16 +36,13 @@
 
 
 <% 
-
-
-
 function displayCueRow(q){
-  let html = rowTemplate({cue: allCues[q.uniqueID], allCues: allCues, workspace: workspace});
+  let html = rowTemplate({cue: q, allCues: allCues, workspace: workspace});
 
   if(q.cues){
-    q.cues.forEach(q =>{
-      html += displayCueRow(q);
-    })
+    for(let i=0; i<q.cues.length; i++){
+      html += displayCueRow(q.cues[i]);
+    }
   }
   return html;
 }

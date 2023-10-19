@@ -72,7 +72,7 @@ table td {
   border-radius: 2px;
 }
 .batt-knob.green {
-  background-color: greenyellow;
+  background-color: #adff2f;
 }
 .batt-bar {
   height: 26px;
@@ -98,4 +98,26 @@ small {
 }
 small small {
   color: #444;
+}
+
+.rf-graph {
+  height: 80px;
+  vertical-align: bottom;
+  text-align: left;
+}
+.rf-graph-bar {
+  padding: 0px;
+  margin: 0px;
+  width: 1px;
+  height: 1px;
+  background: #383943;
+  display: inline-block;
+}
+.color-1 {
+  background: #292662;
+  border-top: #554ed4 1px solid;
+}
+.color-2 {
+  background: #283636;
+  border-top: #50c3c3 1px solid;
 }

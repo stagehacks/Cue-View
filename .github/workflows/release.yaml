@@ -17,7 +17,6 @@ jobs:
       - run: npm ci
       - run: npm run release
   build-windows:
-    needs: build-linux
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
@@ -28,8 +27,7 @@ jobs:
       - run: npm ci
       - run: npm run release
   build-macos:
-    needs: build-windows
-    runs-on: macos-latest
+    runs-on: macos-13
     env:
       CSC_LINK: ${{ secrets.MACOS_CSC_LINK }}
       CSC_KEY_PASSWORD: ${{ secrets.MACOS_CSC_KEY_PASSWORD }}
