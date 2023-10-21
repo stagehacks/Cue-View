@@ -1,0 +1,28 @@
+section {
+  background-color: #2d2d2d;
+  border: gray 1px solid;
+  padding: 10px;
+  padding-top: 0px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+table {
+  width: 100%;
+  border: #414142 1px solid;
+  background-color: #272727;
+}
+table,
+th,
+td {
+  border-collapse: collapse;
+  color: #ccc;
+  font-size: 13px;
+}
+th {
+  padding: 2px 10px;
+}
+td {
+  text-align: center;
+  padding: 2px 7px;
+  font-family: 'Courier New', Courier, monospace;
+}

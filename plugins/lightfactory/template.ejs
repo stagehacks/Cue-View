@@ -1,0 +1,31 @@
+<header>
+	<h1><%= listName %></h1>
+</header>
+
+<div>
+	<!-- Server Loop -->
+	<% Object.entries(data.cueLists).forEach(([cueListName,cueListData]) => { %>
+	
+	<section>
+		<h2>Cue List: <%= cueListData.name %> <%= cueListData.active ? '(Active)': '' %></h2>
+
+		<table>
+			<tr>
+			<th>Name</th>
+
+			</tr>
+			<!-- Tracker Loop -->
+			<% Object.entries(cueListData.cues).forEach(([cueName,cueData]) => { %>
+
+			<tr>
+			<td><%= cueName %></td>
+			</tr>
+
+			<% }); %>
+		</table>
+	</section>
+
+	<% 
+    }); 
+  	%>
+</div>
