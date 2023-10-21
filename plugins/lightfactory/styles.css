@@ -7,7 +7,6 @@ section {
   overflow: hidden;
 }
 table {
-  width: 100%;
   border: #414142 1px solid;
   background-color: #272727;
 }
@@ -22,7 +21,11 @@ th {
   padding: 2px 10px;
 }
 td {
-  text-align: center;
+  text-align: left;
   padding: 2px 7px;
   font-family: 'Courier New', Courier, monospace;
+}
+
+.active_indicator {
+  color: green;
 }
