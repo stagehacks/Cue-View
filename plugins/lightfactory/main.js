@@ -5,10 +5,10 @@ exports.config = {
   mayChangePorts: true,
   searchOptions: {
     type: 'TCPport',
-    searchBuffer: Buffer.from('authenticate 1\n', 'ascii'),
+    searchBuffer: Buffer.from('\n', 'ascii'),
     testPort: 3100,
     validateResponse(msg, info) {
-      return msg.toString().substring(0, 5) === 'Ready';
+      return msg.toString().includes('LightFactory');
     },
   },
 };
