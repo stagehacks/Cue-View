@@ -22,17 +22,15 @@ function cleanMessage(message) {
   return message.split('\n').filter((line) => line.trim() !== '');
 }
 
-// TODO(jwetzell): process updates? are they live or do we need to poll?
+// TODO(jwetzell): try to grab notes?
 exports.data = function data(_device, _message) {
   const message = _message.toString();
   const device = _device;
-  console.log(message);
 
   if (message.includes('Current Cue List')) {
     // NOTE(jwetzell): loading cue list info
     const cueListMessage = cleanMessage(message);
     if (cueListMessage.includes('<LIST START>') && cueListMessage.includes('<LIST FINISHED>')) {
-      console.log('message is a cue list message');
       const cueListstartIndex = cueListMessage.indexOf('<LIST START>');
       const cueListFinishedIndex = cueListMessage.indexOf('<LIST FINISHED>');
 
@@ -58,7 +56,6 @@ exports.data = function data(_device, _message) {
         }
       }
       device.data.cueListToLoad = Object.keys(device.data.cueLists)[0];
-      console.log(device.data.cueListToLoad);
       device.send(`get cues ${device.data.cueListToLoad}\n`);
     }
   } else if (message.includes('Current Live Cue')) {
@@ -66,9 +63,7 @@ exports.data = function data(_device, _message) {
     const cueList = device.data.cueLists[device.data.cueListToLoad];
     const cueListCuesMessage = cleanMessage(message);
 
-    console.log(cueListCuesMessage);
     if (cueListCuesMessage.includes('<LIST START>') && cueListCuesMessage.includes('<LIST FINISHED>')) {
-      console.log('message is a cue list message');
       const cuesStartIndex = cueListCuesMessage.indexOf('<LIST START>');
       const cuesFinishedIndex = cueListCuesMessage.indexOf('<LIST FINISHED>');
       for (let i = cuesStartIndex + 1; i < cuesFinishedIndex; i++) {
@@ -83,13 +78,37 @@ exports.data = function data(_device, _message) {
           cueList[cueName].active = false;
         }
       }
-    }
-    const cueListNames = Object.keys(device.data.cueLists);
 
+      const activeCueLine = cueListCuesMessage[cuesFinishedIndex + 1];
+      if (activeCueLine) {
+        const activeCueLineParts = activeCueLine.split('Current Live Cue');
+        const activeCue = activeCueLineParts[activeCueLineParts.length - 1].trim();
+        if (activeCue && cueList.cues[activeCue] !== undefined) {
+          cueList.cues[activeCue].active = true;
+        }
+      }
+    }
+    // NOTE(jwetzell): load next cue list's cues if there is one
+    const cueListNames = Object.keys(device.data.cueLists);
     const cueListIndex = cueListNames.indexOf(device.data.cueListToLoad);
     device.data.cueListToLoad = cueListNames.at(cueListIndex + 1);
     if (device.data.cueListToLoad !== undefined) {
       device.send(`get cues ${device.data.cueListToLoad}\n`);
+    }
+  } else if (message.includes('Running cue') || message.includes('Goto cue')) {
+    const cueUpdateMessage = message
+      .trim()
+      .slice(0, -1)
+      .split(':')
+      .map((item) => item.trim());
+    if (cueUpdateMessage.length === 3) {
+      const cueListName = cueUpdateMessage[1];
+      const updatedCueName = cueUpdateMessage[2];
+      if (device.data.cueLists[cueListName] !== undefined) {
+        Object.entries(device.data.cueLists[cueListName].cues).forEach(([cueName, cueData]) => {
+          cueData.active = cueName === updatedCueName;
+        });
+      }
     }
   }
   device.draw();
