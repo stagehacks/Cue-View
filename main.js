@@ -152,7 +152,7 @@ const windowMac = {
   width: 1500,
   height: 900,
   titleBarStyle: 'customButtonsOnHover',
-  transparent: true,
+  transparent: false,
   frame: false,
   show: false,
   vibrancy: 'window',
