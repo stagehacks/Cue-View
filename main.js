@@ -151,7 +151,7 @@ const menuTemplate = [
 const windowMac = {
   width: 1500,
   height: 900,
-  titleBarStyle: 'hiddenInset',
+  titleBarStyle: 'customButtonsOnHover',
   transparent: true,
   frame: false,
   show: false,
