@@ -38,6 +38,13 @@ const menuTemplate = [
     label: 'View',
     submenu: [
       { role: 'togglefullscreen' },
+      {
+        label: 'Toggle Sidebar',
+        id: 'toggleSidebar',
+        click(menuItem, window, event) {
+          mainWindow.webContents.send('toggleSidebar');
+        },
+      },
       { type: 'separator' },
       {
         label: 'Arrangement 1',
