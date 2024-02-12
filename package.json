@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@jwetzell/posistagenet": "^0.4.6",
-    "atem-connection": "^3.3.2",
+    "atem-connection": "^3.5.0",
     "bonjour": "^3.5.0",
     "electron-updater": "^6.1.7",
     "lodash": "^4.17.21",
