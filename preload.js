@@ -155,6 +155,10 @@ ipcRenderer.on('clearSavedData', (event, message) => {
   SAVESLOTS.clearSavedData();
 });
 
+ipcRenderer.on('toggleSidebar', (event, message) => {
+  document.getElementById('main').classList.toggle('sidebar-hidden');
+});
+
 ipcRenderer.on('loadSlot', (event, slot) => {
   if (slot) {
     SAVESLOTS.loadSlot(slot);
