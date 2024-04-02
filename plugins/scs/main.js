@@ -1,15 +1,16 @@
 exports.config = {
   defaultName: 'Show Cue Systems',
-  connectionType: 'TCPsocket',
-  defaultPort: 58000,
+  connectionType: 'osc',
+  useSLIP: false,
+  defaultPort: 58100,
   mayChangePort: true,
   heartbeatInterval: 5000,
   searchOptions: {
     type: 'TCPport',
-    searchBuffer: Buffer.from('/_status', 'ascii'),
-    testPort: 58000,
+    searchBuffer: Buffer.from('/status', 'ascii'),
+    testPort: 58100,
     validateResponse(msg, info) {
-      return msg.toString().includes('/_status');
+      return msg.toString().includes('/status');
     },
   },
   fields: [],
@@ -65,7 +66,7 @@ exports.ready = function ready(_device) {
   const device = _device;
   console.log('Show Cue Systems ready');
   device.data.cues = [];
-  device.send(Buffer.from('/_prod/gettitle'));
+  device.send('/prod/gettitle');
 };
 
 exports.data = function data(_device, message) {
