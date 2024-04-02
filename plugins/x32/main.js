@@ -1,8 +1,8 @@
 exports.config = {
   defaultName: 'X32 Mixer',
   connectionType: 'osc-udp',
-  defaultPort: 10023,
-  mayChangePort: false,
+  remotePort: 10023,
+  mayChangePorts: false,
   heartbeatInterval: 9000,
   heartbeatTimeout: 11000,
   searchOptions: {

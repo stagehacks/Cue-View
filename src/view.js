@@ -21,6 +21,10 @@ function drawDeviceFrame(id) {
 
   const d = DEVICE.all[id];
 
+  if (d.frameDrawn) {
+    return true;
+  }
+
   const str = `
     <html>
       <head>
@@ -55,6 +59,8 @@ function drawDeviceFrame(id) {
   } else {
     $devicePinned.style.display = 'none';
   }
+
+  d.frameDrawn = true;
 
   return true;
 }
@@ -143,8 +149,9 @@ module.exports.removeDeviceFromList = function removeDeviceFromList(device) {
 };
 
 function switchDevice(id) {
-  if (activeDevice && activeDevice.pinIndex === false) {
+  if (activeDevice && activeDevice.pinIndex === false && activeDevice.id !== id) {
     document.getElementById(`device-${activeDevice.id}`).remove();
+    activeDevice.frameDrawn = false;
     activeDevice = false;
   }
   activeDevice = DEVICE.all[id];
@@ -162,6 +169,10 @@ function switchDevice(id) {
   if (id === undefined) {
     document.getElementById('refresh-device-button').disabled = true;
     document.getElementById('device-settings-table').style.display = 'none';
+    const $activeDevice = document.querySelector('.active-device');
+    if ($activeDevice) {
+      $activeDevice.classList.remove('active-device');
+    }
     return;
   }
 
@@ -171,7 +182,10 @@ function switchDevice(id) {
   const $deviceWrapper = document.getElementById(`device-${i}`);
 
   if (!$deviceWrapper) {
-    const html = `<div class="col device-wrapper" id="device-${i}"><img id="device-${i}-pinned" class="device-pin" src="src/assets/img/outline_push_pin_white_18dp.png"><iframe id="device-${i}-draw-area" class="draw-area"></iframe></div>`;
+    let html = `<div class="col device-wrapper" id="device-${i}">`;
+    html += `<img id="device-${i}-pinned" class="device-pin" src="src/assets/img/outline_push_pin_white_18dp.png">`;
+    html += `<img id="device-${i}-traffic" class="device-traffic-signal" src="src/assets/img/outline_link_white_18dp.png">`;
+    html += `<iframe id="device-${i}-draw-area" class="draw-area"></iframe></div>`;
     document.getElementById('all-devices').insertAdjacentHTML('afterbegin', html);
   }
 
@@ -183,13 +197,30 @@ function switchDevice(id) {
   document.getElementById('device-settings-plugin-dropdown').value = activeDevice.type;
   document.getElementById('device-settings-name').value = activeDevice.displayName || activeDevice.defaultName || '';
   document.getElementById('device-settings-ip').value = activeDevice.addresses[0] || '';
-  document.getElementById('device-settings-port').value = activeDevice.port || '';
+  document.getElementById('device-settings-port').value = activeDevice.remotePort || '';
   document.getElementById('device-settings-pin').checked = activeDevice.pinIndex;
 
-  if (activeDevice.plugin.config.mayChangePort) {
+  if (activeDevice.plugin.config.mayChangePorts) {
     document.getElementById('device-settings-port').disabled = false;
+    document.getElementById('device-settings-rx-port').disabled = false;
   } else {
     document.getElementById('device-settings-port').disabled = true;
+    document.getElementById('device-settings-rx-port').disabled = true;
+  }
+
+  if (activeDevice.plugin.config.mayChangeLocalPort === false) {
+    document.getElementById('device-settings-rx-port').disabled = true;
+  } else {
+    document.getElementById('device-settings-rx-port').disabled = false;
+  }
+
+  if (activeDevice.plugin.config.localPort) {
+    // document.getElementById('device-settings-port-label').textContent = 'Remote\nPort:';
+    document.getElementById('device-settings-rx-port-row').style.display = 'table-row';
+    document.getElementById('device-settings-rx-port').value = activeDevice.localPort || '';
+  } else {
+    document.getElementById('device-settings-port-label').textContent = 'Port:';
+    document.getElementById('device-settings-rx-port-row').style.display = 'none';
   }
 
   updateFields();
@@ -303,6 +334,16 @@ module.exports.selectNextDevice = function selectNextDevice() {
   const keys = Object.keys(DEVICE.all);
   const prevIndex = Math.min(keys.length - 1, keys.indexOf(activeDevice.id) + 1);
   switchDevice(keys[prevIndex]);
+};
+
+module.exports.trafficSignal = function trafficSignal(device) {
+  const $signal = document.querySelector(`#device-${device.id} .device-traffic-signal`);
+  if ($signal) {
+    $signal.style.opacity = 1;
+    setTimeout(() => {
+      $signal.style.opacity = 0.3;
+    }, 50);
+  }
 };
 
 function populatePluginLists() {

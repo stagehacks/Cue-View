@@ -3,8 +3,8 @@ const _ = require('lodash');
 exports.config = {
   defaultName: 'sACN',
   connectionType: 'multicast',
-  defaultPort: 5568,
-  mayChangePort: false,
+  remotePort: 5568,
+  mayChangePorts: false,
   heartbeatInterval: 5000,
   heartbeatTimeout: 15000,
   searchOptions: {
@@ -55,10 +55,7 @@ exports.data = function data(_device, buf) {
   universe.priority = buf.readUInt8(108);
   universe.cid = buf.toString('hex', 22, 38);
   universe.slots = buf.slice(126);
-
-  if (buf.readUInt8(125) !== 0) {
-    universe.startCode = buf.readUInt8(125);
-  }
+  universe.startCode = buf.readUInt8(125);
 
   device.data.source = buf.toString('utf8', 44, 108);
   device.displayName = `${device.data.source} sACN`;
@@ -70,12 +67,12 @@ exports.data = function data(_device, buf) {
     universe.slotElems = [];
     universe.slotElemsSet = false;
 
-    if (universe.priority > 0) {
+    if (universe.priority > 0 && universe.startCode === 0) {
       device.draw();
       device.update('elementCache');
     }
   }
-  if (universe.priority > 0) {
+  if (universe.priority > 0 && universe.startCode === 0) {
     device.update('universeData', {
       universeIndex,
       universe,
@@ -115,7 +112,7 @@ exports.update = function update(_device, doc, updateType, updateData) {
       } else if (data.startCode === 0xcc) {
         $code.textContent = 'RDM';
       }
-    } else {
+    } else if (data.universe.startCode === 0) {
       device.draw();
       device.update('elementCache');
     }

@@ -5,6 +5,7 @@ const net = require('net');
 const os = require('os');
 const ip = require('ip');
 
+const { Netmask } = require('netmask');
 const DEVICE = require('./device.js');
 const PLUGINS = require('./plugins.js');
 
@@ -91,6 +92,8 @@ function searchAll() {
         searchUDP(pluginType, plugin.config);
       } else if (searchType === 'multicast') {
         searchMulticast(pluginType, plugin.config);
+      } else if (searchType === 'UDPScan') {
+        searchUDPScan(pluginType, plugin.config);
       }
     } catch (err) {
       console.error(`Unable to search for plugin ${pluginType}`);
@@ -127,7 +130,7 @@ function searchBonjour(pluginType, pluginConfig) {
       {
         type: pluginType,
         defaultName: e.name,
-        port: e.port,
+        remotePort: e.port,
         addresses: validAddresses,
       },
       'fromSearch'
@@ -154,7 +157,7 @@ function TCPtest(ipAddr, pluginType, pluginConfig) {
           {
             type: pluginType,
             defaultName: pluginConfig.defaultName,
-            port: pluginConfig.defaultPort,
+            remotePort: pluginConfig.remotePort,
             addresses: [ipAddr],
           },
           'fromSearch'
@@ -165,6 +168,36 @@ function TCPtest(ipAddr, pluginType, pluginConfig) {
   client.on('error', (err) => {
     // no device here
   });
+}
+
+function searchUDPScan(pluginType, pluginConfig) {
+  for (let i = 0; i < Object.keys(validInterfaces).length; i++) {
+    const interfaceID = Object.keys(validInterfaces)[i];
+    const interfaceObj = validInterfaces[interfaceID];
+    interfaceObj.forEach((netInterface) => {
+      const udpSocket = dgram.createSocket('udp4');
+      udpSocket.bind(pluginConfig.searchOptions.listenPort, netInterface.address);
+
+      udpSocket.on('message', (msg, info) => {
+        if (pluginConfig.searchOptions.validateResponse(msg, info, DEVICE.all)) {
+          udpSocket.close();
+          DEVICE.registerDevice(
+            {
+              type: pluginType,
+              defaultName: pluginConfig.defaultName,
+              port: pluginConfig.defaultPort,
+              addresses: [info.address],
+            },
+            'fromSearch'
+          );
+        }
+      });
+      const interfaceBlock = new Netmask(netInterface.cidr);
+      interfaceBlock.forEach((address, long, index) => {
+        udpSocket.send(pluginConfig.searchOptions.searchBuffer, pluginConfig.searchOptions.devicePort, address);
+      });
+    });
+  }
 }
 
 function searchUDP(pluginType, pluginConfig) {
@@ -182,7 +215,7 @@ function searchUDP(pluginType, pluginConfig) {
             {
               type: pluginType,
               defaultName: pluginConfig.defaultName,
-              port: pluginConfig.defaultPort,
+              remotePort: pluginConfig.remotePort,
               addresses: [info.address],
             },
             'fromSearch'
@@ -214,7 +247,7 @@ function searchMulticast(pluginType, pluginConfig) {
           {
             type: pluginType,
             defaultName: pluginConfig.defaultName,
-            port: pluginConfig.defaultPort,
+            remotePort: pluginConfig.remotePort,
             addresses: [info.address],
           },
           'fromSearch'
