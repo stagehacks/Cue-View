@@ -3,7 +3,7 @@ exports.config = {
   connectionType: 'osc',
   useSLIP: false,
   defaultPort: 58100,
-  mayChangePort: true,
+  mayChangePorts: true,
   heartbeatInterval: 5000,
   searchOptions: {
     type: 'TCPport',
@@ -62,25 +62,33 @@ const activationMap = {
   ocm: 'On Cue Marker',
 };
 
+const stateMap = {
+  0: 'Ready',
+  1: 'Playing',
+  2: 'Paused',
+  3: 'Completed',
+};
+
 exports.ready = function ready(_device) {
   const device = _device;
   console.log('Show Cue Systems ready');
   device.data.cues = [];
+  device.data.initialized = false;
   device.send('/prod/gettitle');
 };
 
-exports.data = function data(_device, message) {
+exports.data = function data(_device, oscData) {
   const device = _device;
   this.deviceInfoUpdate(device, 'status', 'ok');
-  const msg = message.toString();
-  const messagePath = msg.substring(0, msg.indexOf(' '));
-  if (messagePath === '/_prod/gettitle') {
-    const title = msg.replace(messagePath, '').replaceAll('"', '').trim();
+  console.log(oscData);
+  const messagePath = oscData.address;
+  if (messagePath === '/prod/gettitle') {
+    const title = oscData.args[0].replaceAll('"', '').trim();
     this.deviceInfoUpdate(device, 'defaultName', title);
-    device.send(Buffer.from('/_info/scsversion'));
-  } else if (messagePath === '/_info/scsversion') {
-    const versionInfo = msg.replace(messagePath, '').trim().split(' ');
-    const versionNumber = versionInfo[0];
+    device.send('/info/scsversion');
+  } else if (messagePath === '/info/scsversion') {
+    const versionInfo = oscData.args;
+    const versionNumber = versionInfo[0].toString();
     const versionMajor = versionNumber.substring(0, 2).replace('0', '');
     const versionMinor = versionNumber.substring(2, 4).replace('0', '');
     const versionPatch = versionNumber.substring(4, 6).replace('0', '');
@@ -91,49 +99,57 @@ exports.data = function data(_device, message) {
       number: versionString,
       type: versionType,
     };
-    device.send(Buffer.from('/_info/finalcue', 'ascii'));
-  } else if (messagePath === '/_info/finalcue') {
-    const cueCount = parseInt(msg.replace(messagePath, '').trim(), 10);
-    device.data.cues = new Array(cueCount).fill(0).map(() => ({
-      label: '',
-      page: '',
-      description: '',
-      type: { code: '', display: '' },
-      state: '',
-      activation: { code: '', display: '' },
-      file_info: '',
-      length: '',
-      colors: ['', ''],
-    }));
-    device.send(Buffer.from(`/_cue/getitemsn 1 QNTCLSPARZ`));
-  } else if (messagePath === '/_info/getcue') {
-    const cueLabelInfo = msg.replace(messagePath, '').trim().split(' ');
-    const cueNumber = parseInt(cueLabelInfo[0], 10);
+    device.send('/info/finalcue');
+  } else if (messagePath === '/info/finalcue') {
+    const cueCount = oscData.args[0];
+    if (cueCount !== device.data.cues.length) {
+      device.data.initialized = false;
+      device.data.cues = new Array(cueCount).fill(0).map(() => ({
+        label: '',
+        page: '',
+        description: '',
+        type: { code: '', display: '' },
+        state: '',
+        activation: { code: '', display: '' },
+        file_info: '',
+        length: '',
+        colors: ['', ''],
+      }));
+      device.send('/cue/getitemsn', [
+        { type: 'i', value: 1 },
+        { type: 's', value: 'QNTCLSPARZ' },
+      ]);
+    }
+  } else if (messagePath === '/info/getcue') {
+    const cueLabelInfo = oscData.args;
+    const cueNumber = cueLabelInfo[0];
     const cueLabel = cueLabelInfo[1].replaceAll('"', '');
 
     device.data.cues[cueNumber - 1].label = cueLabel;
     device.draw();
-  } else if (messagePath === '/_cue/getpage') {
-    const pageInfo = msg.replace(messagePath, '').trim().match(/".*?"/g);
+  } else if (messagePath === '/cue/getpage') {
+    const pageInfo = oscData.args;
     const cueLabel = pageInfo[0].replaceAll('"', '');
     const cueIndex = device.data.cues.map((cue) => cue.label).indexOf(cueLabel);
     device.data.cues[cueIndex].page = pageInfo[1].replaceAll('"', '');
+    console.log(`cue index ${cueIndex}`);
     if (cueIndex < device.data.cues.length - 1) {
-      device.send(Buffer.from(`/_cue/getpage ${device.data.cues[cueIndex + 1].label}`));
+      device.send('/cue/getpage', [{ type: 's', value: device.data.cues[cueIndex + 1].label }]);
     } else {
       // console.log('done loading cue pages');
       device.draw();
-      device.send(Buffer.from('/_status'));
+      device.data.initialized = true;
+      device.send('/status');
     }
-  } else if (messagePath === '/_cue/getname') {
-    const nameInfo = msg.replace(messagePath, '').trim().match(/".*?"/g);
+  } else if (messagePath === '/cue/getname') {
+    const nameInfo = oscData.args;
     const cueLabel = nameInfo[0].replaceAll('"', '');
     const cueIndex = device.data.cues.map((cue) => cue.label).indexOf(cueLabel);
 
     device.data.cues[cueIndex].description = nameInfo[1].replaceAll('"', '');
     device.draw();
-  } else if (messagePath === '/_cue/gettype') {
-    const typeInfo = msg.replace(messagePath, '').trim().match(/".*?"/g);
+  } else if (messagePath === '/cue/gettype') {
+    const typeInfo = oscData.args;
     const cueLabel = typeInfo[0].replaceAll('"', '');
     const cueIndex = device.data.cues.map((cue) => cue.label).indexOf(cueLabel);
 
@@ -142,51 +158,76 @@ exports.data = function data(_device, message) {
       display: typeMap[typeInfo[1].replaceAll('"', '')],
     };
     device.draw();
-  } else if (messagePath === '/_cue/getitemsn') {
-    const itemParts = msg
-      .replace(messagePath, '')
-      .trim('')
-      .match(/".*?"|\d+/g);
+  } else if (messagePath === '/cue/getitemsn') {
+    const itemParts = oscData.args;
     if (itemParts.length === 12) {
       const cueIndex = itemParts[0] - 1;
-      device.data.cues[cueIndex].label = sanitizeSCSString(itemParts[2]);
-      device.data.cues[cueIndex].description = sanitizeSCSString(itemParts[3]);
+      device.data.cues[cueIndex].label = itemParts[2];
+      device.data.cues[cueIndex].description = itemParts[3];
       device.data.cues[cueIndex].type = {
-        code: sanitizeSCSString(itemParts[4]),
-        display: typeMap[sanitizeSCSString(itemParts[4])],
+        code: itemParts[4],
+        display: typeMap[itemParts[4]],
       };
-      device.data.cues[cueIndex].colors = sanitizeSCSString(itemParts[5]).split(', ');
+      device.data.cues[cueIndex].colors = itemParts[5].split(', ');
       device.data.cues[cueIndex].length = millisToString(itemParts[6]);
-      device.data.cues[cueIndex].state = itemParts[7];
+      device.data.cues[cueIndex].state = stateMap[itemParts[7]];
       device.data.cues[cueIndex].position = itemParts[8];
       device.data.cues[cueIndex].activation = {
-        code: sanitizeSCSString(itemParts[9]),
-        display: activationMap[sanitizeSCSString(itemParts[9])],
+        code: itemParts[9],
+        display: activationMap[itemParts[9]],
       };
       device.data.cues[cueIndex].repeat = itemParts[10];
       device.data.cues[cueIndex].loop = itemParts[11];
       device.draw();
 
-      if (cueIndex < device.data.cues.length - 1) {
-        device.send(Buffer.from(`/_cue/getitemsn ${cueIndex + 2} QNTCLSPARZ`));
-      } else {
-        // console.log('done loading cue items');
-        device.send(Buffer.from(`/_cue/getpage ${device.data.cues[0].label}`));
+      if (!device.data.initialized) {
+        console.log(`cueIndex: ${cueIndex} cue count: ${device.data.cues.length}`);
+        if (cueIndex < device.data.cues.length - 1) {
+          console.log(`loading next cue ${cueIndex + 2}`);
+          device.send('/cue/getitemsn', [
+            { type: 'i', value: cueIndex + 2 },
+            { type: 's', value: 'QNTCLSPARZ' },
+          ]);
+        } else {
+          console.log('done loading cue items');
+          device.send('/cue/getpage', [{ type: 's', value: device.data.cues[0].label }]);
+        }
       }
     } else {
       console.error('bad response from getitems');
     }
-  } else if (messagePath === '/_status') {
-    const status = parseInt(msg.split(' ')[1].trim(), 10);
+  } else if (messagePath === '/cue/statechange') {
+    const cueLabel = oscData.args[0];
+    const cueIndex = device.data.cues.map((cue) => cue.label).indexOf(cueLabel);
+    if (cueIndex !== undefined) {
+      device.data.cues[cueIndex].state = stateMap[oscData.args[1]];
+      device.draw();
+      device.send('/cue/getitemsn', [
+        { type: 'i', value: cueIndex + 1 },
+        { type: 's', value: 'QNTCLSPARZ' },
+      ]);
+    }
+  } else if (messagePath === '/status') {
+    const status = oscData.args[0];
     console.log(`status: ${status}`);
+    device.send('/info/currcue');
+  } else if (messagePath === '/connected') {
+    device.send('/prod/gettitle');
+  } else if (messagePath === '/info/currcue') {
+    device.data.currentCue = oscData.args[0];
+    device.draw();
+  } else if (messagePath === '/info/nextcue') {
+    device.data.nextCue = oscData.args[0];
+    device.draw();
+    device.data.initialized = false;
+    device.send('/cue/getitemsn', [
+      { type: 'i', value: 1 },
+      { type: 's', value: 'QNTCLSPARZ' },
+    ]);
   } else {
     console.error(`unhandled message path: ${messagePath}`);
   }
 };
-
-function sanitizeSCSString(string) {
-  return string.substring(1, string.length - 1);
-}
 
 function millisToString(duration) {
   const milliseconds = parseInt(duration % 1000, 10);
@@ -205,4 +246,6 @@ function millisToString(duration) {
   return `${minutes}:${seconds}.${milliseconds}`;
 }
 
-exports.heartbeat = function heartbeat(device) {};
+exports.heartbeat = function heartbeat(device) {
+  device.send('/info/finalcue');
+};

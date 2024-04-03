@@ -11,8 +11,17 @@
 	  <th>Activation</th>
 	  <th>Length</th>
 	</tr>
-	<% data.cues.forEach((cue)=>{ %>
-	<tr style="background-color: <%=cue.colors[0]%>; color: <%=cue.colors[1]%>;">
+	<% data.cues.forEach((cue, index )=>{ %>
+
+		<% if (data.currentCue === index + 1){ %>
+			<tr style="background-color: black; color: white;">
+		<%} else if (index + 1 < data.currentCue){ %>
+			<tr style="background-color: #808080; color: #E5E5E5;">
+		<%} else{ %>
+			<tr style="background-color: <%=cue.colors[0]%>; color: <%=cue.colors[1]%>;">
+		<% } %>
+
+		
 		<td><%=cue.label%></td>
 		<td><%=cue.page%></td>
 		<td><%=cue.description%></td>
