@@ -201,7 +201,7 @@ exports.data = function data(_device, oscData) {
       ]);
     }
   } else if (messagePath === '/status') {
-    const status = oscData.args[0];
+    // const status = oscData.args[0];
     device.send('/info/currcue');
   } else if (messagePath === '/connected') {
     device.send('/prod/gettitle');
