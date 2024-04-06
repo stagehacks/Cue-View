@@ -71,7 +71,6 @@ const stateMap = {
 
 exports.ready = function ready(_device) {
   const device = _device;
-  console.log('Show Cue Systems ready');
   device.data.cues = [];
   device.data.initialized = false;
   device.send('/prod/gettitle');
@@ -80,7 +79,6 @@ exports.ready = function ready(_device) {
 exports.data = function data(_device, oscData) {
   const device = _device;
   this.deviceInfoUpdate(device, 'status', 'ok');
-  console.log(oscData);
   const messagePath = oscData.address;
   if (messagePath === '/prod/gettitle') {
     const title = oscData.args[0].replaceAll('"', '').trim();
@@ -132,11 +130,9 @@ exports.data = function data(_device, oscData) {
     const cueLabel = pageInfo[0].replaceAll('"', '');
     const cueIndex = device.data.cues.map((cue) => cue.label).indexOf(cueLabel);
     device.data.cues[cueIndex].page = pageInfo[1].replaceAll('"', '');
-    console.log(`cue index ${cueIndex}`);
     if (cueIndex < device.data.cues.length - 1) {
       device.send('/cue/getpage', [{ type: 's', value: device.data.cues[cueIndex + 1].label }]);
     } else {
-      // console.log('done loading cue pages');
       device.draw();
       device.data.initialized = true;
       device.send('/status');
@@ -181,15 +177,12 @@ exports.data = function data(_device, oscData) {
       device.draw();
 
       if (!device.data.initialized) {
-        console.log(`cueIndex: ${cueIndex} cue count: ${device.data.cues.length}`);
         if (cueIndex < device.data.cues.length - 1) {
-          console.log(`loading next cue ${cueIndex + 2}`);
           device.send('/cue/getitemsn', [
             { type: 'i', value: cueIndex + 2 },
             { type: 's', value: 'QNTCLSPARZ' },
           ]);
         } else {
-          console.log('done loading cue items');
           device.send('/cue/getpage', [{ type: 's', value: device.data.cues[0].label }]);
         }
       }
@@ -209,7 +202,6 @@ exports.data = function data(_device, oscData) {
     }
   } else if (messagePath === '/status') {
     const status = oscData.args[0];
-    console.log(`status: ${status}`);
     device.send('/info/currcue');
   } else if (messagePath === '/connected') {
     device.send('/prod/gettitle');
