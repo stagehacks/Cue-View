@@ -7,7 +7,7 @@ exports.config = {
   defaultName: 'ETC Eos',
   connectionType: 'osc',
   defaultPort: 3037,
-  mayChangePort: true,
+  mayChangePorts: true,
   heartbeatInterval: 5000,
   heartbeatTimeout: 6000,
   searchOptions: {
