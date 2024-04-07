@@ -48,6 +48,9 @@
       "category": "Utilities",
       "icon": "src/assets/img/icon.icns",
       "hardenedRuntime": true,
+      "notarize": {
+        "teamId": "JHA7H7P56J"
+      },
       "electronLanguages": [
         "en"
       ],
