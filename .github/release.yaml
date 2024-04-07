@@ -1,0 +1,11 @@
+changelog:
+  exclude:
+    authors:
+      - dependabot
+  categories:
+    - title: Plugins 🖥️
+      labels:
+        - plugin
+    - title: Other Changes
+      labels:
+        - '*'
