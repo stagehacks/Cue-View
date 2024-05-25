@@ -31,6 +31,14 @@ a {
   float: right;
 }
 
+#main.sidebar-hidden {
+  grid-template-columns: auto;
+}
+
+#main.sidebar-hidden > #device-list-col {
+  display: none;
+}
+
 #main {
   box-sizing: border-box;
   display: grid;
