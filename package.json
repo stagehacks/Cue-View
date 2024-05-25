@@ -20,7 +20,7 @@
   "homepage": "https://github.com/stagehacks/Cue-View",
   "repository": "https://github.com/stagehacks/Cue-View",
   "devDependencies": {
-    "@electron/notarize": "^2.3.0",
+    "@electron/notarize": "^2.3.2",
     "electron": "^30.0.6",
     "electron-builder": "^24.13.3",
     "eslint": "^8.57.0",
