@@ -22,7 +22,7 @@
   "devDependencies": {
     "@electron/notarize": "^2.4.0",
     "electron": "^31.4.0",
-    "electron-builder": "^24.13.3",
+    "electron-builder": "^25.0.5",
     "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.1.0",
