@@ -3,7 +3,6 @@ const { Decoder } = require('@jwetzell/posistagenet');
 exports.config = {
   defaultName: 'PosiStageNet',
   connectionType: 'multicast',
-  port: 56565,
   remotePort: 56565,
   mayChangePorts: false,
   heartbeatInterval: 5000,
