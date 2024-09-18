@@ -1,7 +1,6 @@
 exports.config = {
   defaultName: 'Show Cue Systems',
   connectionType: 'osc',
-  useSLIP: false,
   defaultPort: 58100,
   mayChangePorts: true,
   heartbeatInterval: 5000,
