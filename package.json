@@ -21,7 +21,7 @@
   "repository": "https://github.com/stagehacks/Cue-View",
   "devDependencies": {
     "@electron/notarize": "^2.4.0",
-    "electron": "^32.1.0",
+    "electron": "^32.1.2",
     "electron-builder": "^25.0.5",
     "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
