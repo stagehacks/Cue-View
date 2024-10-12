@@ -40,15 +40,17 @@ function drawDeviceFrame(id) {
         </style>
         <link href='src/assets/css/plugin_default.css' rel='stylesheet' type='text/css'>
       </head>
-      <body>
-        ${generateBodyHTML(d)}
-      </body>
     </html>
   `;
+
+  d.contentBodyElement = document.createElement('body');
+
+  d.contentBodyElement.innerHTML = generateBodyHTML(d);
 
   $deviceDrawArea.setAttribute('class', `${d.type} draw-area`);
   $deviceDrawArea.contentWindow.document.open();
   $deviceDrawArea.contentWindow.document.write(str);
+  $deviceDrawArea.contentWindow.document.body = d.contentBodyElement;
   $deviceDrawArea.contentWindow.document.close();
   $deviceDrawArea.contentWindow.document.onclick = function (e) {
     switchDevice(d.id);
@@ -98,7 +100,6 @@ function generateBodyHTML(d) {
 
 module.exports.draw = function draw(device) {
   const d = device;
-  const $deviceDrawArea = document.getElementById(`device-${d.id}-draw-area`);
 
   if (device.drawTimeout !== undefined) {
     clearTimeout(device.drawTimeout);
