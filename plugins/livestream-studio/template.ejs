@@ -1,0 +1,95 @@
+<header>
+	<h1><%= listName  %></h1>
+</header>
+
+<% if (data.inputCount) { %>
+    <div class="inputs-container show-small">
+        <h3 class="lss-gray">Preview/Program</h3>
+        <div class="source-wrapper">
+            <% data.inputs.forEach((input)=>{ %>
+                <div id="input-<%= input.number %>" class="lss-input">
+                    <div class="source-label"><%= input.name %></div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+    <div class="float-left" style="margin-right: 30px;">
+        <div class="program-container hide-small">
+            <h3 class="lss-gray">Program</h3>
+            <div class="source-wrapper">
+                <% data.inputs.forEach((input)=>{ %>
+                    <div id="program-input-<%= input.number %>" class="lss-input">
+                        <div class="source-label"><%= input.name %></div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+        <div class="preview hide-small">
+            <h3 class="lss-gray">Preview</h3>
+            <div class="source-wrapper">
+                <% data.inputs.forEach((input)=>{ %>
+                    <div id="preview-input-<%= input.number %>" class="lss-input">
+                        <div class="source-label"><%= input.name %></div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    </div>
+    <div class="transition-container float-left">
+        <div class="transition-settings">
+            <!-- <div class="next-transition">
+                <h3>Next Transition</h3>
+                <div class="source-wrapper" style="width: 260px;">
+                        <div class="lss-input clear"></div>
+                        <div id="key-1-onair" class="lss-input">
+                            <div class="source-label" style="flex-direction: column;">
+                                <div>ON</div> <div>AIR</div>
+                            </div>
+                        </div>
+                        <div id="key-2-onair" class="lss-input">
+                            <div class="source-label" style="flex-direction: column;">
+                                <div>ON</div> <div>AIR</div>
+                            </div>
+                        </div>
+                        <div id="key-3-onair" class="lss-input">
+                            <div class="source-label" style="flex-direction: column;">
+                                <div>ON</div> <div>AIR</div>
+                            </div>
+                        </div>
+                        <div id="key-4-onair" class="lss-input">
+                            <div class="source-label" style="flex-direction: column;">
+                                <div>ON</div> <div>AIR</div>
+                            </div>
+                        </div>
+                </div>
+            </div> -->
+        
+            <div class="transition-style">
+                <h3>Transition Style</h3>
+                <div class="source-wrapper" style="width: 260px;">
+                    <div id="cut" class="lss-input">
+                        <div class="source-label">CUT</div>
+                    </div>
+                    <div id="auto" class="lss-input">
+                        <div class="source-label">AUTO</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tbar-container">
+            <div class="tbar-bg"></div>
+            <div id="tbar-handle-div" class="tbar-handle"></div>
+            <div id="tbar-div" class="tbar-div" ></div>
+        </div>
+        <div class="fade-to-black-container">
+            <div class="fade-to-black">
+                <h3 class="lss-gray">Fade to Black</h3>
+                <div class="source-wrapper">
+                    <div id="ftb" class="lss-input">
+                        <div class="source-label">FTB</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<% } %>
