@@ -12,7 +12,6 @@
     "build:mac": "electron-builder -m",
     "build:windows": "electron-builder -w",
     "build:linux": "electron-builder -l",
-    "build:arm": "electron-builder -l --arm64",
     "release": "electron-builder"
   },
   "author": "alec@stagehacks.com",
@@ -44,6 +43,7 @@
     "appId": "com.stagehacks.cueview",
     "icon": "src/assets/img/",
     "artifactName": "${name}.${os}-${arch}.v${version}.${ext}",
+    "npmRebuild": false,
     "mac": {
       "category": "Utilities",
       "icon": "src/assets/img/icon.icns",
@@ -78,7 +78,16 @@
       "oneClick": false
     },
     "linux": {
-      "target": "AppImage",
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64",
+            "arm64",
+            "armv7l"
+          ]
+        }
+      ],
       "maintainer": "alec@stagehacks.com",
       "category": "Utility",
       "publish": [
