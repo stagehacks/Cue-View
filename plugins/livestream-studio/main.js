@@ -82,6 +82,8 @@ exports.update = function update(device, _document, updateType, data) {
 exports.data = function data(_device, msg) {
   const device = _device;
 
+  this.deviceInfoUpdate(device, 'status', 'ok');
+
   const packets = msg.toString().split('\n');
 
   packets.forEach((packet) => {
