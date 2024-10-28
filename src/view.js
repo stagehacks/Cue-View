@@ -253,6 +253,14 @@ function updateFields() {
         const rowHTML = `<tr><th>${field.label}:</th><td colspan="3" id="${field.key}"></td></tr>`;
         document.getElementById('device-settings-fields').insertAdjacentHTML('beforeend', rowHTML);
         document.getElementById(field.key).appendChild($elem);
+      } else if (field.type === 'numberinput') {
+        $elem.type = 'number';
+        $elem.min = 1;
+        $elem.max = 99;
+        $elem.step = 1;
+        const rowHTML = `<tr><th>${field.label}:</th><td colspan="3" id="${field.key}"></td></tr>`;
+        document.getElementById('device-settings-fields').insertAdjacentHTML('beforeend', rowHTML);
+        document.getElementById(field.key).appendChild($elem);
       }
     });
   }
