@@ -29,18 +29,14 @@ exports.update = function update(device, _document, updateType, data) {
   if (updateType === 'programInput' || updateType === 'previewInput' || updateType === 'inputs') {
     device.data.inputs.forEach((input) => {
       if (device.data.program === input.number) {
-        document.getElementById(`program-input-${input.number}`).classList.add('lss-red');
         document.getElementById(`input-${input.number}`).classList.add('lss-red');
       } else {
-        document.getElementById(`program-input-${input.number}`).classList.remove('lss-red');
         document.getElementById(`input-${input.number}`).classList.remove('lss-red');
       }
 
       if (device.data.preview === input.number) {
-        document.getElementById(`preview-input-${input.number}`).classList.add('lss-green');
         document.getElementById(`input-${input.number}`).classList.add('lss-green');
       } else {
-        document.getElementById(`preview-input-${input.number}`).classList.remove('lss-green');
         document.getElementById(`input-${input.number}`).classList.remove('lss-green');
       }
     });
@@ -48,22 +44,18 @@ exports.update = function update(device, _document, updateType, data) {
     const ftbId = 'ftb';
 
     if (device.data.fadeToBlack) {
-      if (document.getElementById(ftbId).classList.contains('lss-red')) {
-        document.getElementById(ftbId).classList.remove('lss-red');
-      } else {
-        document.getElementById(ftbId).classList.add('lss-red');
-      }
+      document.getElementById(ftbId).classList.add('lss-ftb-glow');
     } else {
-      document.getElementById(ftbId).classList.remove('lss-red');
+      document.getElementById(ftbId).classList.remove('lss-ftb-glow');
     }
   } else if (updateType === 'tbar') {
     const tbarId = `tbar-div`;
     const tbarHandleId = `tbar-handle-div`;
     if (document.getElementById(tbarId)) {
-      document.getElementById(tbarId).style.height = `${device.data.tBar.percent}%`;
+      document.getElementById(tbarId).style.height = `${device.data.tBar.percent * 1.4 + 10}px`;
     }
     if (document.getElementById(tbarHandleId)) {
-      document.getElementById(tbarHandleId).style.bottom = `${device.data.tBar.percent}%`;
+      document.getElementById(tbarHandleId).style.bottom = `${device.data.tBar.percent * 1.4 + 10}px`;
     }
 
     if (device.data.tBar.status === 'Automatic') {
@@ -120,8 +112,11 @@ exports.data = function data(_device, msg) {
       device.update('previewInput', device.data);
     } else if (packetType === 'Cut') {
       [device.data.preview, device.data.program] = [device.data.program, device.data.preview];
+      device.data.tBar.percent = 0;
+      device.data.tBar.status = 'Stop';
       device.update('cut');
-      device.update('program', device.data);
+      device.update('inputs', device.data);
+      device.update('tbar', device.data);
     } else if (packetType === 'FOut') {
       device.data.fadeToBlack = true;
       device.update('fadeToBlack', device.data);
@@ -139,6 +134,9 @@ exports.data = function data(_device, msg) {
       }
       device.update('tbar', device.data);
     } else if (packetType === 'TrAStart' || packetType === 'TrAStop') {
+      if (device.data.tBar === undefined) {
+        device.data.tBar = {};
+      }
       device.data.tBar.status = packetType.slice(3);
       if (packetType === 'TrAStop') {
         device.data.tBar.percent = 0;
