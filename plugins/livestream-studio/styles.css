@@ -1,0 +1,179 @@
+body {
+  background-color: #191919;
+}
+h1 {
+  font-family: 'Open Sans', sans-serif;
+}
+h5 {
+  color: white;
+  margin: 0px 0px 10px 3px;
+  font-weight: bold;
+  width: 100%;
+  /* font-family: 'Open Sans', sans-serif; */
+}
+
+.lss-input {
+  width: 120px;
+  height: 40px;
+  background-color: #242424;
+  color: white;
+  border: #242424 6px solid;
+  outline: black 1px solid;
+  outline-offset: -1px;
+}
+
+.lss-button {
+  width: 80px;
+  height: 30px;
+  background: linear-gradient(#363636, #282828);
+  border-radius: 5px;
+  border: black 2px solid;
+  color: gray;
+  margin-bottom: 5px;
+}
+
+.source-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: #000000;
+  width: 122px;
+  border: black 1px solid;
+}
+
+.lss-red {
+  border-color: #6f1607;
+  outline-color: #ff0000;
+}
+.lss-button.lss-red {
+  color: #6f1607;
+}
+
+.lss-green {
+  border-color: #395a13;
+  outline-color: #558522;
+}
+
+.lss-disabled {
+  color: #3a3a3a;
+}
+
+.lss-ftb-glow {
+  border: gray 2px solid;
+  animation: ftb-glow 0.75s infinite alternate;
+}
+
+@keyframes ftb-glow {
+  0% {
+    border-color: #666666;
+    color: #666666;
+  }
+  100% {
+    border-color: #fc584b;
+    color: #fc584b;
+  }
+}
+
+.source-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.inputs-container {
+  width: 200px;
+}
+
+.transition-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.transition-settings {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-right: 30px;
+}
+
+.tbar-container {
+  display: flex;
+  flex-direction: column-reverse;
+  background-color: red;
+  border: 2px black solid;
+  width: 80px;
+  height: 176px;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.tbar-bg {
+  position: absolute;
+  background-image: url('img/tbar_bg.png');
+  width: 80px;
+  height: 176px;
+}
+.tbar-handle {
+  position: absolute;
+  background-image: url('img/tbar_handle.png');
+  width: 42px;
+  height: 20px;
+  left: 19px;
+  bottom: 10px;
+}
+.tbar-div {
+  width: 100%;
+  background-color: #7aff58;
+  overflow: hidden;
+}
+
+.fade-to-black-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.fade-to-black .source-wrapper {
+  display: flex;
+  width: 100%;
+  padding: 5px;
+  justify-content: center;
+}
+
+.fade-to-black h3 {
+  text-align: center;
+}
+
+.clear {
+  background: transparent;
+  border-color: transparent;
+  background-color: transparent;
+}
+
+.hide {
+  display: none;
+}
+
+.no-wrap {
+  flex-wrap: nowrap;
+}
+
+.show-small {
+  display: none;
+}
+
+@media screen and (min-width: 0px) and (max-width: 480px) {
+  .hide-small {
+    display: none;
+  }
+  .show-small {
+    display: block;
+  }
+}
+
+.float-left {
+  float: left;
+}
