@@ -18,6 +18,19 @@ exports.config = {
       return msg.toString().includes('/eos/out');
     },
   },
+  fields: [
+    {
+      key: 'cueListFilter',
+      label: 'Q List',
+      type: 'numberinput',
+      value: '',
+      action(_device) {
+        const device = _device;
+        device.data.cueListFilter = device.fields.cueListFilter;
+        device.draw();
+      },
+    },
+  ],
 };
 
 exports.ready = function ready(_device) {
@@ -26,6 +39,8 @@ exports.ready = function ready(_device) {
   device.templates = {
     cue: _.template(fs.readFileSync(path.join(__dirname, `cue.ejs`))),
   };
+  device.data.cueListFilter = device.fields.cueListFilter;
+
   device.send('/eos/get/cuelist/count');
   device.send('/eos/get/version');
   device.send('/eos/subscribe', [{ type: 'i', value: 1 }]);

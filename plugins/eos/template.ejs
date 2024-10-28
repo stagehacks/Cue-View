@@ -4,6 +4,7 @@
 </header>
 
 <% for(var i in data.EOS.cueLists){ %>
+	<% if(data.cueListFilter == i || data.cueListFilter.length==0){ %>
 	<div class="list_container">
 		<div class="list_name">List <%= i %></div>
 		<table cellspacing="0">
@@ -38,5 +39,6 @@
 			<% } %>
 		</table>
 	</div>
+	<% } %>
 
 <% } %>
