@@ -1,6 +1,10 @@
 html {
   font-size: 1rem;
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont;
 }
 *,
 a,
@@ -31,6 +35,14 @@ a {
   float: right;
 }
 
+#main.sidebar-hidden {
+  grid-template-columns: auto;
+}
+
+#main.sidebar-hidden > #device-list-col {
+  display: none;
+}
+
 #main {
   box-sizing: border-box;
   display: grid;
@@ -48,7 +60,7 @@ a {
 
 /* FIRST COL */
 #device-list-col {
-  background-color: transparent;
+  background-color: #2b2b2b;
   color: #707070;
 }
 #view-buttons-bar {
@@ -339,7 +351,9 @@ select.button:focus {
   font-family: 'Material Icons';
   font-style: normal;
   font-weight: 400;
-  src: local('Material Icons'), local('MaterialIcons-Regular'),
+  src:
+    local('Material Icons'),
+    local('MaterialIcons-Regular'),
     url(../font/MaterialIcons-Regular.ttf) format('truetype');
 }
 .material-icons {

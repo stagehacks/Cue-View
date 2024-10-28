@@ -86,7 +86,7 @@ function generateBodyHTML(d) {
       <div class='not-responding'>
         <h2><em>${d.type}</em> is not responding to requests for data.</h2>
         <h3>IP <em>${d.addresses[0]}</em></h3>
-        <h3>Port <em>${d.port}</em></h3>
+        <h3>Port <em>${d.remotePort}</em></h3>
         <hr>
       </div>
       <div class="device-info">

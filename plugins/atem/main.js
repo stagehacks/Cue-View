@@ -6,7 +6,7 @@ exports.config = {
   defaultName: 'ATEM',
   connectionType: 'atem',
   defaultPort: 9910,
-  mayChangePort: false,
+  mayChangePorts: false,
   searchOptions: {
     type: 'UDPScan',
     searchBuffer: Buffer.from([
