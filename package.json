@@ -30,7 +30,7 @@
     "prettier": "^3.3.3"
   },
   "dependencies": {
-    "@jwetzell/posistagenet": "^0.4.7",
+    "@jwetzell/posistagenet": "^1.1.0",
     "atem-connection": "^3.5.0",
     "bonjour": "^3.5.0",
     "electron-updater": "^6.3.9",
