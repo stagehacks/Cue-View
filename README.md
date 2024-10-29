@@ -24,3 +24,5 @@ A dashboard for everything in your show.
 - ATEM Video Mixers
 - Shure ULXD Wireless
 - DiGico SD Consoles
+- PosiStageNet
+- Livestream Studio (soon)
