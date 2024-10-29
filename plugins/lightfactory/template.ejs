@@ -11,16 +11,18 @@
 
 		<table>
 			<tr>
-				<th></th>
-				<th>Name</th>
+				<th width="10px" style="padding: 0px;"></th>
+				<th width="50px">Cue No</th>
+				<th>Description</th>
 
 			</tr>
 			<!-- Tracker Loop -->
 			<% Object.entries(cueListData.cues).forEach(([cueName,cueData]) => { %>
 
 			<tr>
-				<td class="active_indicator"><%= cueData.active ? '>': '' %></td>
-				<td><%= cueName %> </td>
+				<td style="padding: 0px;"><span class="active_indicator"><%= cueData.active ? '&#9698;': '' %></span></td>
+				<td><%= cueData.number %></td>
+				<td><%= cueData.name %> </td>
 			</tr>
 
 			<% }); %>

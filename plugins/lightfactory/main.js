@@ -13,9 +13,11 @@ exports.config = {
   },
 };
 
-exports.ready = function ready(device) {
+exports.ready = function ready(_device) {
+  const device = _device;
   device.data.cueLists = {};
   device.send('get cue list\n');
+  console.log('sent');
 };
 
 function cleanMessage(message) {
@@ -70,7 +72,8 @@ exports.data = function data(_device, _message) {
         const cueName = cueListCuesMessage[i];
         if (cueList.cues[cueName] === undefined) {
           cueList.cues[cueName] = {
-            name: cueName,
+            name: cueName.substring(cueName.indexOf(' ')),
+            number: cueName.substring(0, cueName.indexOf(' ')),
             active: false,
           };
         } else {
