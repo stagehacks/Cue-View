@@ -3,6 +3,8 @@ exports.config = {
   connectionType: 'TCPsocket',
   remotePort: 3100,
   mayChangePorts: true,
+  heartbeatInterval: 5000,
+  heartbeatTimeout: 10000,
   searchOptions: {
     type: 'TCPport',
     searchBuffer: Buffer.from('\n', 'ascii'),
@@ -118,4 +120,6 @@ exports.data = function data(_device, _message) {
 };
 
 // TODO(jwetzell): keep alive? refresh cue list info?
-exports.heartbeat = function heartbeat(device) {};
+exports.heartbeat = function heartbeat(device) {
+  device.send('get cue list\n');
+};
