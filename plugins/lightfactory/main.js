@@ -19,7 +19,6 @@ exports.ready = function ready(_device) {
   const device = _device;
   device.data.cueLists = {};
   device.send('get cue list\n');
-  console.log('sent');
 };
 
 function cleanMessage(message) {
@@ -67,22 +66,30 @@ exports.data = function data(_device, _message) {
     const cueList = device.data.cueLists[device.data.cueListToLoad];
     const cueListCuesMessage = cleanMessage(message);
 
+    // NOTE(jwetzell): this is so gross
     if (cueListCuesMessage.includes('<LIST START>') && cueListCuesMessage.includes('<LIST FINISHED>')) {
       const cuesStartIndex = cueListCuesMessage.indexOf('<LIST START>');
       const cuesFinishedIndex = cueListCuesMessage.indexOf('<LIST FINISHED>');
+
+      const validCueNumbers = [];
       for (let i = cuesStartIndex + 1; i < cuesFinishedIndex; i++) {
-        const cueName = cueListCuesMessage[i];
-        if (cueList.cues[cueName] === undefined) {
-          cueList.cues[cueName] = {
-            name: cueName.substring(cueName.indexOf(' ')),
-            number: cueName.substring(0, cueName.indexOf(' ')),
-            active: false,
-          };
-        } else {
-          // NOTE(jwetzell): reset active as it will be computed in a few lines
-          cueList[cueName].active = false;
-        }
+        const cueData = cueListCuesMessage[i];
+        const cueSplit = cueData.indexOf(' ');
+        const cueNumber = cueSplit > 0 ? cueData.substring(0, cueSplit).trim() : cueData.trim();
+        const cueName = cueSplit > 0 ? cueData.substring(cueSplit + 1).trim() : '';
+        cueList.cues[cueNumber] = {
+          name: cueName,
+          number: cueNumber,
+          active: false,
+        };
+        validCueNumbers.push(cueNumber);
       }
+
+      const invalidCueNumbers = Object.keys(cueList.cues).filter((cueNumber) => !validCueNumbers.includes(cueNumber));
+
+      invalidCueNumbers.forEach((cueNumber) => {
+        delete cueList.cues[cueNumber];
+      });
 
       const activeCueLine = cueListCuesMessage[cuesFinishedIndex + 1];
       if (activeCueLine) {
@@ -108,10 +115,14 @@ exports.data = function data(_device, _message) {
       .map((item) => item.trim());
     if (cueUpdateMessage.length === 3) {
       const cueListName = cueUpdateMessage[1];
-      const updatedCueName = cueUpdateMessage[2];
+      const updatedCue = cueUpdateMessage[2];
+
+      const split = updatedCue.indexOf(' ');
+
+      const updatedCueNumber = split > 0 ? updatedCue.substring(0, split).trim() : updatedCue.trim();
       if (device.data.cueLists[cueListName] !== undefined) {
         Object.entries(device.data.cueLists[cueListName].cues).forEach(([cueName, cueData]) => {
-          cueData.active = cueName === updatedCueName;
+          cueData.active = cueData.number === updatedCueNumber;
         });
       }
     }
