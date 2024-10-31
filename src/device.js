@@ -257,13 +257,13 @@ module.exports.deleteActive = function deleteActive() {
 
   if (choice) {
     if (device.plugin.config.connectionType === 'TCPsocket') {
-      device.connection.destroy();
+      device.connection?.destroy();
     } else if (device.plugin.config.connectionType === 'UDPsocket') {
-      device.connection.close();
+      device.connection?.close();
     } else if (device.plugin.config.connectionType === 'multicast') {
-      device.connection.close();
+      device.connection?.close();
     } else if (device.plugin.config.connectionType.startsWith('osc')) {
-      device.connection.close();
+      device.connection?.close();
     }
     VIEW.removeDeviceFromList(device);
     delete devices[device.id];
