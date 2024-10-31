@@ -2,6 +2,13 @@ const { ipcRenderer } = require('electron');
 const DEVICE = require('./device.js');
 const PLUGINS = require('./plugins.js');
 const { saveAll } = require('./saveSlots.js');
+const { h, diff, patch, create } = require('virtual-dom');
+const VNode = require('virtual-dom/vnode/vnode');
+const VText = require('virtual-dom/vnode/vtext');
+const convertHtml = require('html-to-vdom')({
+  VNode,
+  VText,
+});
 
 const pinnedDevices = [];
 module.exports.pinnedDevices = pinnedDevices;
@@ -43,16 +50,15 @@ function drawDeviceFrame(id) {
     </html>
   `;
 
-  d.contentBodyElement = document.createElement('body');
-
-  d.contentBodyElement.innerHTML = generateBodyHTML(d);
+  d.contentBodyVNode = h('body', convertHtml(generateBodyHTML(d)));
+  d.contentBodyElement = create(d.contentBodyVNode);
 
   $deviceDrawArea.setAttribute('class', `${d.type} draw-area`);
   $deviceDrawArea.contentWindow.document.open();
   $deviceDrawArea.contentWindow.document.write(str);
   $deviceDrawArea.contentWindow.document.body = d.contentBodyElement;
   $deviceDrawArea.contentWindow.document.close();
-  $deviceDrawArea.contentWindow.document.onclick = function (e) {
+  $deviceDrawArea.contentWindow.document.onclick = (e) => {
     switchDevice(d.id);
   };
 
@@ -76,7 +82,7 @@ function generateBodyHTML(d) {
         listName: d.displayName || d.defaultName,
       });
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return '<h3>Plugin Template Error</h3>';
     }
   } else {
@@ -101,21 +107,15 @@ function generateBodyHTML(d) {
 module.exports.draw = function draw(device) {
   const d = device;
 
-  if (device.drawTimeout !== undefined) {
-    clearTimeout(device.drawTimeout);
+  if (d.contentBodyElement) {
+    const newVNode = h('body', convertHtml(generateBodyHTML(d)));
+    const domPatches = diff(d.contentBodyVNode, newVNode);
+    d.contentBodyElement = patch(d.contentBodyElement, domPatches);
+    d.contentBodyVNode = newVNode;
+  } else {
+    drawDeviceFrame(d.id);
   }
-
-  d.drawTimeout = setTimeout(() => {
-    if ($deviceDrawArea) {
-      const scriptEl = $deviceDrawArea.contentWindow.document
-        .createRange()
-        .createContextualFragment(generateBodyHTML(d));
-      $deviceDrawArea.contentWindow.document.body.replaceChildren(scriptEl);
-    } else {
-      drawDeviceFrame(d.id);
-    }
-    d.drawn = true;
-  }, 200);
+  d.drawn = true;
 };
 
 module.exports.update = function update(device, type, data) {
