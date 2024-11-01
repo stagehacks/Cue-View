@@ -50,8 +50,7 @@ function drawDeviceFrame(id) {
     </html>
   `;
 
-  d.contentBodyVNode = h('body', convertHtml(generateBodyHTML(d)));
-  d.contentBodyElement = create(d.contentBodyVNode);
+  d.contentBodyElement = create(h('body', convertHtml(generateBodyHTML(d))));
 
   $deviceDrawArea.setAttribute('class', `${d.type} draw-area`);
   $deviceDrawArea.contentWindow.document.open();
@@ -109,9 +108,8 @@ module.exports.draw = function draw(device) {
 
   if (d.contentBodyElement) {
     const newVNode = h('body', convertHtml(generateBodyHTML(d)));
-    const domPatches = diff(d.contentBodyVNode, newVNode);
+    const domPatches = diff(d.contentBodyElement, newVNode);
     d.contentBodyElement = patch(d.contentBodyElement, domPatches);
-    d.contentBodyVNode = newVNode;
   } else {
     drawDeviceFrame(d.id);
   }
