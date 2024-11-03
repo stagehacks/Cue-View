@@ -73,7 +73,7 @@ exports.data = function data(_device, oscData) {
       return;
     }
     if (json.status === 'error') {
-      device.send('/workspaces');
+      // device.send('/workspaces');
       return;
     }
   }
