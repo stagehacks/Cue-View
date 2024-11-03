@@ -106,14 +106,20 @@ function generateBodyHTML(d) {
 module.exports.draw = function draw(device) {
   const d = device;
 
-  if (d.contentBodyElement) {
-    const newVNode = h('body', convertHtml(generateBodyHTML(d)));
-    const domPatches = diff(d.contentBodyElement, newVNode);
-    d.contentBodyElement = patch(d.contentBodyElement, domPatches);
-  } else {
-    drawDeviceFrame(d.id);
+  if (device.drawTimeout !== undefined) {
+    clearTimeout(device.drawTimeout);
   }
-  d.drawn = true;
+
+  d.drawTimeout = setTimeout(() => {
+    if (d.contentBodyElement) {
+      const newVNode = h('body', convertHtml(generateBodyHTML(d)));
+      const domPatches = diff(d.contentBodyElement, newVNode);
+      d.contentBodyElement = patch(d.contentBodyElement, domPatches);
+    } else {
+      drawDeviceFrame(d.id);
+    }
+    d.drawn = true;
+  }, 200);
 };
 
 module.exports.update = function update(device, type, data) {
