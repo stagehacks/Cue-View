@@ -100,13 +100,21 @@ module.exports.draw = function draw(device) {
   const d = device;
   const $deviceDrawArea = document.getElementById(`device-${d.id}-draw-area`);
 
-  if ($deviceDrawArea) {
-    const scriptEl = $deviceDrawArea.contentWindow.document.createRange().createContextualFragment(generateBodyHTML(d));
-    $deviceDrawArea.contentWindow.document.body.replaceChildren(scriptEl);
-  } else {
-    drawDeviceFrame(d.id);
+  if (device.drawTimeout !== undefined) {
+    clearTimeout(device.drawTimeout);
   }
-  d.drawn = true;
+
+  d.drawTimeout = setTimeout(() => {
+    if ($deviceDrawArea) {
+      const scriptEl = $deviceDrawArea.contentWindow.document
+        .createRange()
+        .createContextualFragment(generateBodyHTML(d));
+      $deviceDrawArea.contentWindow.document.body.replaceChildren(scriptEl);
+    } else {
+      drawDeviceFrame(d.id);
+    }
+    d.drawn = true;
+  }, 200);
 };
 
 module.exports.update = function update(device, type, data) {
