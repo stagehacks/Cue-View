@@ -25,4 +25,4 @@ A dashboard for everything in your show.
 - Shure ULXD Wireless
 - DiGico SD Consoles
 - PosiStageNet
-- Livestream Studio (soon)
+- Livestream Studio
