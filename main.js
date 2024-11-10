@@ -40,6 +40,7 @@ const menuTemplate = [
       { role: 'togglefullscreen' },
       {
         label: 'Toggle Sidebar',
+        accelerator: 'CommandOrControl+B',
         id: 'toggleSidebar',
         click(menuItem, window, event) {
           mainWindow.webContents.send('toggleSidebar');
