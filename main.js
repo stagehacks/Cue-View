@@ -151,9 +151,7 @@ const menuTemplate = [
 const windowMac = {
   width: 1500,
   height: 900,
-  titleBarStyle: 'customButtonsOnHover',
   transparent: false,
-  frame: false,
   show: false,
   vibrancy: 'window',
   visualEffectState: 'followWindow',
