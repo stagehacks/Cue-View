@@ -33,11 +33,13 @@
     "atem-connection": "^3.5.0",
     "bonjour": "^3.5.0",
     "electron-updater": "^6.3.9",
+    "html-to-vdom": "0.7.0",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "netmask": "^2.0.2",
     "osc": "^2.4.5",
-    "uuid": "^11.0.1"
+    "uuid": "^11.0.1",
+    "virtual-dom": "2.1.1"
   },
   "build": {
     "appId": "com.stagehacks.cueview",
