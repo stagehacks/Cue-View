@@ -37,7 +37,7 @@
     "md5": "^2.3.0",
     "netmask": "^2.0.2",
     "osc": "^2.4.5",
-    "uuid": "^11.0.1"
+    "uuid": "^11.0.4"
   },
   "build": {
     "appId": "com.stagehacks.cueview",
