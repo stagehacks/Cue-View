@@ -1,0 +1,34 @@
+<header>
+	<h1><%= listName  %></h1>
+</header>
+<table>
+	<tr class="header-row">
+	  <th>Label</th>
+	  <th>Page</th>
+	  <th>Description</th>
+	  <th>Cue Type</th>
+	  <th>State</th>
+	  <th>Activation</th>
+	  <th>Length</th>
+	</tr>
+	<% data.cues.forEach((cue, index )=>{ %>
+
+		<% if (data.currentCue === index + 1){ %>
+			<tr style="background-color: black; color: white;">
+		<%} else if (index + 1 < data.currentCue){ %>
+			<tr style="background-color: #808080; color: #E5E5E5;">
+		<%} else{ %>
+			<tr style="background-color: <%=cue.colors[0]%>; color: <%=cue.colors[1]%>;">
+		<% } %>
+
+		
+		<td><%=cue.label%></td>
+		<td><%=cue.page%></td>
+		<td><%=cue.description%></td>
+		<td><%=cue.type.display%></td>
+		<td><%=cue.state%></td>
+		<td><%=cue.activation.display%></td>
+		<td><%=cue.length%></td>
+	</tr>
+	<% }) %>
+  </table>
