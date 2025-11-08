@@ -43,14 +43,31 @@ exports.data = function data(_device, buf, info) {
   device.decoders[info.address].decode(buf);
 
   Object.keys(device.decoders).forEach((address) => {
+    console.log(device.decoders[address].trackers)
     device.data[address] = {
       trackers: device.decoders[address].trackers,
       system_name: device.decoders[address].system_name,
-      fields: device.decoders[address].getTrackerFields(),
+      fields: getTrackerFields(device.decoders[address].trackers),
     };
   });
   device.draw();
 };
+
+function getTrackerFields(trackers) {
+    const keys = new Set(
+      Object.values(trackers)
+        .map((tracker) => Object.keys(tracker))
+        .flat(1)
+    );
+
+    // NOTE(jwetzell): remove fields that definitely exist
+    keys.delete('id');
+    keys.delete('has_subchunks');
+    keys.delete('data_len');
+    keys.delete('chunk_data');
+
+    return keys;
+}
 
 exports.heartbeat = function heartbeat(device) {};
 
