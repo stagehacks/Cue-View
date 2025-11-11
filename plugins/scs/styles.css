@@ -1,0 +1,17 @@
+table {
+  background: white;
+}
+
+th {
+  text-align: left;
+  font-weight: normal;
+}
+
+.header-row {
+  background: white;
+}
+
+td {
+  padding-left: 5px;
+  padding-right: 5px;
+}
