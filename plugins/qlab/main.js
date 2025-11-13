@@ -101,7 +101,11 @@ exports.data = function data(_device, oscData) {
     } else {
       device.data.workspaces[json.workspace_id].permission = 'ok';
       device.send(`/workspace/${msgAddr[2]}/cueLists`);
-      device.send(`/updates`, [{ type: 'i', value: 1 }]);
+      if (device.data?.version?.startsWith('5')) {
+        device.send(`/updates`, [{ type: 'i', value: 1 }]);
+      } else {
+        device.send(`/workspace/${msgAddr[2]}/updates`, [{ type: 'i', value: 1 }]);
+      }
     }
   } else if (/reply\/workspace\/.*\/cueLists/.test(oscData.address)) {
     insertChildCues(device, device.data.workspaces[msgAddr[2]].cueLists, json.data, '[root group of cue lists]');
