@@ -162,7 +162,19 @@ exports.data = function data(_device, oscData) {
           device.data.cueKeys[msgAddr[2]].cueInWorkspace
         );
       }
-      device.draw();
+
+      if (cue.type === 'Cue List') {
+        // draw cue list right away
+        device.draw();
+      } else {
+        // set up a timeout in case more messages come along to avoid fast re-drawing
+        if (device.drawTimeout !== undefined) {
+          clearTimeout(device.drawTimeout);
+        }
+        device.drawTimeout = setTimeout(() => {
+          device.draw();
+        }, 250);
+      }
     }
 
     if (cue.type !== 'Cue List' && cue.type !== 'Cart') {
