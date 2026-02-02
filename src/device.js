@@ -122,6 +122,7 @@ function initDeviceConnection(id) {
       device.connection = new osc.TCPSocketPort({
         address: device.addresses[0],
         port: device.remotePort,
+        useSLIP: plugins[type].config.useSLIP !== undefined ? plugins[type].config.useSLIP : true
       });
     }
     device.connection.open();
