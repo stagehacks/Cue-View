@@ -32,7 +32,7 @@
     "@jwetzell/posistagenet": "2.1.1",
     "atem-connection": "3.8.0",
     "bonjour": "3.5.0",
-    "electron-updater": "6.6.2",
+    "electron-updater": "6.7.3",
     "html-to-vdom": "0.7.0",
     "lodash": "4.17.23",
     "md5": "2.3.0",
