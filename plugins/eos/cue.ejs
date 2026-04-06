@@ -11,7 +11,9 @@
       </tr>
 	  <% } %> 
 
-  	<% if(isActive){ %>
+  	<% if(isRunning){ %>
+  		<tr class="running-cue scroll-position">
+	  <% }else if(isComplete || isActive){ %>
   		<tr class="active-cue scroll-position">
 	  <% }else{ %>
       </tr>
@@ -53,7 +55,8 @@
       <td class="black hide-medium">
         <%= part.prettyDuration(part.beamTimeDuration, true) %>
       </td>
-      <td class="hide-small"><%= part.prettyDuration(part.duration) %></td>
+      <% var durValue = (isRunning && remainingDuration !== null && remainingDuration !== undefined) ? remainingDuration : part.duration %>
+      <td class="hide-small"><%= part.prettyDuration(durValue) %></td>
 
     <% }else{ %>
       <td class="black" colspan="2"></td>
@@ -63,13 +66,23 @@
       <td class="hide-small"></td>
     <% } %>
 
-    <td class="black hide-small"><%= part.mark %></td>
-    <td class="black hide-small"><%= part.block %></td>
-    <td class="black hide-small"><%= part.assert %></td>
-    <td class="black hide-small">
-      <%= (part.follow>=0)? "F"+part.prettyDuration(part.follow) : "" %> 
-      <%= (part.hang>=0)? "H"+part.prettyDuration(part.hang) : "" %>
-    </td>
+	    <td class="black hide-small"><%= part.mark %></td>
+	    <td class="black hide-small"><%= part.block %></td>
+	    <td class="black hide-small"><%= part.assert %></td>
+	    <% var followDisplay = (part.follow>=0)? "F"+part.prettyDuration(part.follow) : "" %>
+	    <% var hangDisplay = (part.hang>=0)? "H"+part.prettyDuration(part.hang) : "" %>
+	    <% var followHangDisplay = followDisplay + hangDisplay %>
+	    <% var isFollowHangOnlyRunning = (followHangRemainingDuration !== null && followHangRemainingDuration !== undefined && followHangRemainingDuration > 0 && !isRunning) %>
+	    <% if(followHangRemainingDuration !== null && followHangRemainingDuration !== undefined && followHangRemainingDuration > 0){ %>
+	      <% if(part.follow >= 0){ %>
+	        <% followHangDisplay = "F"+part.prettyDuration(followHangRemainingDuration) %>
+	      <% }else if(part.hang >= 0 && !isRunning){ %>
+	        <% followHangDisplay = "H"+part.prettyDuration(followHangRemainingDuration) %>
+	      <% } %>
+	    <% } %>
+	    <td class="black hide-small <%= isFollowHangOnlyRunning ? 'running-follow-hang' : '' %>">
+	      <%= followHangDisplay %>
+	    </td>
     <td class="black" style="text-align: left">
       <%= (partNumber==0 ? "": "&nbsp;&nbsp;&nbsp;") %> 
       <%= part.label %>
