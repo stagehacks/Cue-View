@@ -63,6 +63,25 @@ tr.active-cue .time {
   border-color: #c78b07;
 }
 
+tr.running-cue {
+  color: #ae0009;
+}
+tr.running-cue td.num div {
+  margin: 0px;
+  padding: 1px 6px;
+  background-color: #ae0009;
+  border-radius: 4px;
+  color: white;
+}
+tr.running-cue .time {
+  border-color: #ae0009;
+}
+
+td.running-follow-hang {
+  color: #ae0009;
+  font-weight: 700;
+}
+
 .list_name {
   color: lightgray;
   margin-left: 5px;

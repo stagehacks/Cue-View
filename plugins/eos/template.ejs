@@ -25,15 +25,30 @@
 			</tr>
 
 			<% var cues = Object.keys(data.EOS.cueLists[i]).sort(function(a, b){return Number(a)-Number(b)}) %>
+			<% var activeCueByList = data.EOS.activeCueByList || {} %>
+			<% var progressByList = data.EOS.progressByList || {} %>
+			<% var activeCueNumber = (activeCueByList[i] !== undefined) ? (activeCueByList[i] + "") : undefined %>
+			<% var progressState = progressByList[i] || {} %>
+			<% var progressCueNumber = (progressState.cueNumber !== undefined && progressState.cueNumber !== null) ? (progressState.cueNumber + "") : undefined %>
+			<% var hasCueRemaining = (progressState.cueRemainingMs !== undefined && progressState.cueRemainingMs !== null) %>
+			<% var hasFollowHangRemaining = (progressState.followHangRemainingMs !== undefined && progressState.followHangRemainingMs !== null) %>
 
 			<% for(var j=0; j<cues.length; j++){ %>
 				<% var q = data.EOS.cueLists[i][cues[j]] %>
-				
+				<% var isComplete = (activeCueNumber !== undefined && cues[j] == activeCueNumber) %>
+				<% var isRunning = isComplete && hasCueRemaining && progressCueNumber === cues[j] && progressState.cueRemainingMs > 0 %>
+				<% var remainingDuration = isRunning ? progressState.cueRemainingMs : null %>
+				<% var followHangRemainingDuration = (isComplete && !isRunning && hasFollowHangRemaining && progressState.followHangRemainingMs > 0) ? progressState.followHangRemainingMs : null %>
+
 				<%= templates.cue({
 					q: q,
 					cues: cues,
 					cueNumber: cues[j],
-					isActive: (cues[j]==data.EOS.activeCue+"")
+					isActive: isComplete,
+					isComplete: isComplete,
+					isRunning: isRunning,
+					remainingDuration: remainingDuration,
+					followHangRemainingDuration: followHangRemainingDuration
 				}) %>
 
 			<% } %>
