@@ -27,7 +27,7 @@ jobs:
       - run: npm ci
       - run: npm run release
   build-macos:
-    runs-on: macos-13
+    runs-on: macos-14
     env:
       CSC_LINK: ${{ secrets.MACOS_CSC_LINK }}
       CSC_KEY_PASSWORD: ${{ secrets.MACOS_CSC_KEY_PASSWORD }}
