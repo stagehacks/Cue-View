@@ -1,0 +1,152 @@
+/* DPA color palette: #202020 bg, #333 surface, #5b5b5b secondary,
+   #a0a0a0 border/muted text, #ddd primary text, #cedc00 brand accent */
+
+table.channel {
+  width: 120px;
+  height: 340px;
+  background-color: #333;
+  border: 1px solid #a0a0a0;
+  border-collapse: collapse;
+  color: #ddd;
+  font-family: Lato, Roboto, sans-serif;
+  text-align: center;
+  float: left;
+  margin: 2px;
+  margin-bottom: 20px;
+}
+
+table td {
+  border: 1px solid #5b5b5b;
+  vertical-align: top;
+}
+
+.chan-name {
+  color: #cedc00;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 2px 4px;
+}
+
+.tx-row {
+  font-size: 11px;
+  padding: 2px 4px;
+  color: #a0a0a0;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.tx-dot {
+  color: #5b5b5b;
+}
+
+.tx-dot.active {
+  color: #cedc00;
+}
+
+.bar-wrapper {
+  width: 20px;
+  height: 90px;
+  margin: 4px auto;
+  border-radius: 4px;
+  outline: #202020 2px solid;
+  outline-offset: -1px;
+  overflow: hidden;
+}
+
+/* RF bars: DPA teal/cyan tones */
+.bar-wrapper.rf-color {
+  background: linear-gradient(0deg, #1a6060, #20b2aa 40%, #20b2aa 80%, #40d4cc);
+}
+
+/* Audio bars: subtle green to accent */
+.bar-wrapper.audio-color {
+  background: linear-gradient(0deg, #6b7a00, #a8b400 30%, #cedc00 100%);
+}
+
+.bar {
+  width: 100%;
+  background-color: #202020;
+  outline: rgba(255, 255, 255, 0.05) 1px solid;
+}
+
+.batt-wrapper {
+  width: 84px;
+  height: 28px;
+  margin: 8px auto;
+  border: 2px solid #5b5b5b;
+  border-radius: 4px;
+  padding: 2px;
+  position: relative;
+}
+
+.batt-wrapper.low {
+  border-color: red;
+}
+
+.batt-knob {
+  background-color: #5b5b5b;
+  position: absolute;
+  right: -5px;
+  top: 8px;
+  width: 5px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.batt-knob.low {
+  background-color: red;
+}
+
+.batt-bar {
+  height: 20px;
+  background: linear-gradient(90deg, #a8b400, #cedc00);
+  border-radius: 2px;
+  font-size: 10px;
+  line-height: 20px;
+  color: #202020;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  padding-left: 3px;
+}
+
+.batt-wrapper.low .batt-bar {
+  background: red;
+  color: #fff;
+}
+
+.warnings {
+  padding: 2px 3px;
+  min-height: 18px;
+}
+
+.warn {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: bold;
+  border-radius: 2px;
+  padding: 1px 3px;
+  margin: 1px;
+}
+
+.warn.alert {
+  background-color: red;
+  color: #fff;
+}
+
+.warn.warning {
+  background-color: #c07000;
+  color: #fff;
+}
+
+.warn.notify {
+  background-color: #5b5b5b;
+  color: #ddd;
+}
+
+.device-warnings {
+  clear: both;
+  padding: 4px;
+  margin-top: 4px;
+  font-family: Lato, Roboto, sans-serif;
+}
