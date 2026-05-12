@@ -218,15 +218,23 @@ a {
   position: absolute;
   right: 45px;
   top: 4px;
-  height: 20px;
-  padding: inherit;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0;
+  opacity: 0.3;
+  cursor: pointer;
+  transition: opacity 0.1s ease-in-out;
+}
+.device-pin.pinned {
+  opacity: 1;
 }
 .device-traffic-signal {
   position: absolute;
   right: 15px;
   top: 4px;
-  height: 20px;
-  padding: inherit;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0;
   opacity: 0.3;
   transition: opacity 0.1s ease-in-out;
 }
@@ -339,6 +347,11 @@ button:focus {
 button:disabled {
   background: rgba(255, 255, 255, 0.03);
 }
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 button img {
   height: 18px;
 }
@@ -355,6 +368,15 @@ select.button:focus {
     local('Material Icons'),
     local('MaterialIcons-Regular'),
     url(../font/MaterialIcons-Regular.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Material Icons Outlined';
+  font-style: normal;
+  font-weight: 400;
+  src:
+    local('Material Icons Outlined'),
+    local('MaterialIconsOutlined-Regular'),
+    url(../font/MaterialIconsOutlined-Regular.otf) format('opentype');
 }
 .material-icons {
   font-family: 'Material Icons';
@@ -378,6 +400,23 @@ select.button:focus {
   -moz-osx-font-smoothing: grayscale;
 
   /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+.material-icons-outlined {
+  font-family: 'Material Icons Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
   font-feature-settings: 'liga';
 }
 

@@ -61,13 +61,7 @@ function drawDeviceFrame(id) {
     switchDevice(d.id);
   };
 
-  if (d.pinIndex) {
-    $devicePinned.style.display = 'block';
-  } else {
-    $devicePinned.style.display = 'none';
-  }
-
-  d.frameDrawn = true;
+d.frameDrawn = true;
 
   return true;
 }
@@ -128,11 +122,11 @@ module.exports.addDeviceToList = function addDeviceToList(device) {
   let html = '';
 
   if (d.status === 'ok') {
-    html += "<div class='status material-icons green'>done</div>";
+    html += "<div class='status material-icons-outlined green'>done</div>";
   } else if (d.status === 'refresh') {
-    html += "<div class='status material-icons'>refresh</div>";
+    html += "<div class='status material-icons-outlined'>refresh</div>";
   } else {
-    html += "<div class='status material-icons red'>clear</div>";
+    html += "<div class='status material-icons-outlined red'>clear</div>";
   }
 
   html += `
@@ -175,6 +169,7 @@ function switchDevice(id) {
 
   if (id === undefined) {
     document.getElementById('refresh-device-button').disabled = true;
+    document.getElementById('delete-device-button').disabled = true;
     document.getElementById('device-settings-table').style.display = 'none';
     const $activeDevice = document.querySelector('.active-device');
     if ($activeDevice) {
@@ -184,20 +179,46 @@ function switchDevice(id) {
   }
 
   document.getElementById('refresh-device-button').disabled = false;
+  document.getElementById('delete-device-button').disabled = false;
 
   const i = DEVICE.all[id].id;
   const $deviceWrapper = document.getElementById(`device-${i}`);
 
   if (!$deviceWrapper) {
     let html = `<div class="col device-wrapper" id="device-${i}">`;
-    html += `<img id="device-${i}-pinned" class="device-pin" src="src/assets/img/outline_push_pin_white_18dp.png">`;
-    html += `<img id="device-${i}-traffic" class="device-traffic-signal" src="src/assets/img/outline_link_white_18dp.png">`;
+    html += `<span id="device-${i}-pinned" class="device-pin material-icons-outlined">push_pin</span>`;
+    html += `<span id="device-${i}-traffic" class="device-traffic-signal material-icons-outlined">link</span>`;
     html += `<iframe id="device-${i}-draw-area" class="draw-area"></iframe></div>`;
     document.getElementById('all-devices').insertAdjacentHTML('afterbegin', html);
   }
 
+  const $pin = document.getElementById(`device-${i}-pinned`);
+  $pin.onclick = (e) => {
+    e.stopPropagation();
+    if (e.detail > 1) return;
+    const dev = DEVICE.all[id];
+    if (!dev.pinIndex) {
+      module.exports.pinDevice(dev);
+      recalculateCols();
+    }
+  };
+  $pin.ondblclick = (e) => {
+    e.stopPropagation();
+    const dev = DEVICE.all[id];
+    if (dev.pinIndex) {
+      module.exports.unpinDevice(dev);
+      if (!activeDevice || activeDevice.id !== dev.id) {
+        const $wrapper = document.getElementById(`device-${dev.id}`);
+        if ($wrapper) $wrapper.remove();
+        dev.frameDrawn = false;
+      }
+      recalculateCols();
+    }
+  };
+
   window.switchClass(document.getElementById(id), 'active-device');
   drawDeviceFrame(id);
+  updatePinIcon(DEVICE.all[id]);
   window.switchClass(document.getElementById(`device-${id}`), 'active-device-outline');
 
   document.getElementById('device-settings-table').style.display = 'block';
@@ -236,6 +257,23 @@ function switchDevice(id) {
   ipcRenderer.send('setDevicePin', !DEVICE.all[id].pinIndex === false);
 }
 module.exports.switchDevice = switchDevice;
+
+function recalculateCols() {
+  let cols = 1;
+  if (pinnedDevices.length > 0) cols += pinnedDevices.length;
+  if (!activeDevice || pinnedDevices.includes(activeDevice)) cols--;
+  document.getElementById('all-devices').style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+}
+
+function updatePinIcon(device) {
+  const $pin = document.getElementById(`device-${device.id}-pinned`);
+  if (!$pin) return;
+  if (device.pinIndex) {
+    $pin.classList.add('pinned');
+  } else {
+    $pin.classList.remove('pinned');
+  }
+}
 
 function updateFields() {
   document.getElementById('device-settings-fields').innerHTML = '';
@@ -286,6 +324,7 @@ module.exports.pinActiveDevice = function pinActiveDevice() {
     pinnedDevices.push(DEVICE.all[activeDevice.id]);
   }
   DEVICE.changeActivePinIndex(true);
+  updatePinIcon(activeDevice);
 };
 
 module.exports.unpinActiveDevice = function unpinActiveDevice() {
@@ -294,21 +333,28 @@ module.exports.unpinActiveDevice = function unpinActiveDevice() {
   }
   pinnedDevices.splice(pinnedDevices.indexOf(DEVICE.all[activeDevice.id]), 1);
   DEVICE.changeActivePinIndex(false);
+  updatePinIcon(activeDevice);
 };
 
 module.exports.pinDevice = function pinDevice(device) {
   pinnedDevices.push(device);
   DEVICE.changePinIndex(device, true);
+  updatePinIcon(device);
 };
 
 module.exports.unpinDevice = function unpinDevice(device) {
-  pinnedDevices.push(device);
+  pinnedDevices.splice(pinnedDevices.indexOf(device), 1);
   DEVICE.changePinIndex(device, false);
+  updatePinIcon(device);
 };
 
 module.exports.resetPinned = function resetPinned() {
   pinnedDevices.length = 0;
   activeDevice = false;
+
+  Object.keys(DEVICE.all).forEach((id) => {
+    DEVICE.all[id].frameDrawn = false;
+  });
 
   try {
     document.querySelector('#device-list .active-device').classList.remove('active-device');

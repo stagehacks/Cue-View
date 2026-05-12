@@ -91,6 +91,12 @@ window.init = function init() {
     DEVICE.refreshActive();
   };
 
+  document.getElementById('delete-device-button').onclick = function deleteClick(e) {
+    e.stopPropagation();
+    DEVICE.deleteActive();
+    VIEW.selectPreviousDevice();
+  };
+
   document.getElementById('device-list').onclick = function listClick(e) {
     e.stopPropagation();
     const deviceID = e.srcElement.id;

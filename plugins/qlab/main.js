@@ -79,23 +79,43 @@ exports.data = function data(_device, oscData) {
   }
 
   if (oscData.address === '/reply/workspaces') {
+    const incomingIDs = new Set(json.data.map((w) => w.uniqueID));
+    let changed = false;
+
+    // remove workspaces that are no longer present
+    Object.keys(device.data.workspaces).forEach((id) => {
+      if (!incomingIDs.has(id)) {
+        delete device.data.workspaces[id];
+        changed = true;
+      }
+    });
+
     for (let i = 0; i < json.data.length; i++) {
-      device.data.workspaces[json.data[i].uniqueID] = {
-        version: json.data[i].version,
-        displayName: json.data[i].displayName,
-        port: json.data[i].port,
-        udpReplyPort: json.data[i].udpReplyPort,
-        cueLists: [],
-        selected: [],
-      };
-      device.data.version = json.data[i].version;
-      device.data.workspaces[json.data[i].uniqueID].permission = 'ok';
-      device.send(`/workspace/${json.data[i].uniqueID}/connect`, device.fields.passcode);
+      const existing = device.data.workspaces[json.data[i].uniqueID];
+      if (!existing) {
+        device.data.workspaces[json.data[i].uniqueID] = {
+          version: json.data[i].version,
+          displayName: json.data[i].displayName,
+          port: json.data[i].port,
+          udpReplyPort: json.data[i].udpReplyPort,
+          cueLists: [],
+          selected: [],
+        };
+        device.data.version = json.data[i].version;
+        device.data.workspaces[json.data[i].uniqueID].permission = 'ok';
+        device.send(`/workspace/${json.data[i].uniqueID}/connect`, device.fields.passcode);
+        changed = true;
+      }
     }
 
     this.deviceInfoUpdate(device, 'status', 'ok');
-    device.draw();
+    if (changed) {
+      device.draw();
+    }
   } else if (/reply\/workspace\/.*\/connect/.test(oscData.address)) {
+    if (!device.data.workspaces[json.workspace_id]) {
+      return;
+    }
     if (json.data === 'badpass') {
       device.data.workspaces[json.workspace_id].permission = 'badpass';
     } else {
@@ -220,6 +240,14 @@ exports.data = function data(_device, oscData) {
   } else if (/update\/workspace\/.*\/dashboard/.test(oscData.address)) {
     device.send(`/workspace/${msgAddr[2]}/selectedCues`);
     device.send(`/cue_id/active/preWaitElapsed`);
+  } else if (/update\/workspace\/.*\/disconnect/.test(oscData.address)) {
+    const wsID = msgAddr[2];
+    const ws = device.data.workspaces[wsID];
+    if (ws) {
+      collectCueIDs(ws.cueLists, device.data.cueKeys);
+      delete device.data.workspaces[wsID];
+      device.draw();
+    }
   }
 };
 
@@ -303,12 +331,22 @@ exports.heartbeat = function heartbeat(_device) {
   if (device.data.ticks % 10 === 0) {
     device.send(`/thump`);
   }
+  if (device.data.ticks % 300 === 0) {
+    device.send('/workspaces');
+  }
   if (device.data.ticks - device.data.lastElapsedMessage < 5) {
     device.send(`/cue_id/active/preWaitElapsed`);
     device.send(`/cue_id/active/postWaitElapsed`);
     device.send(`/cue_id/active/actionElapsed`);
   }
 };
+
+function collectCueIDs(cueLists, cueKeys) {
+  cueLists.forEach((cue) => {
+    delete cueKeys[cue.uniqueID];
+    if (cue.cues) collectCueIDs(cue.cues, cueKeys);
+  });
+}
 
 function insertChildCues(_device, _oldCues, newCues, _parent) {
   const device = _device;
