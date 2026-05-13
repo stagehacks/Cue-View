@@ -1,0 +1,142 @@
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  src: url(../../src/assets/font/OpenSans-Light.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url(../../src/assets/font/OpenSans-Regular.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: url(../../src/assets/font/OpenSans-SemiBold.ttf) format('truetype');
+}
+
+body {
+  background-color: #161616;
+  color: #e0e0e0;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.ontime-timer-block {
+  margin: 12px 0;
+  padding: 12px 14px;
+  border-radius: 6px;
+  background-color: #222;
+  border-left: 4px solid #555;
+}
+
+.ontime-timer-block.play {
+  border-left-color: #4caf50;
+}
+
+.ontime-timer-block.pause {
+  border-left-color: #ff9800;
+}
+
+.ontime-timer-block.armed {
+  border-left-color: #2196f3;
+}
+
+.ontime-timer-block.roll {
+  border-left-color: #9c27b0;
+}
+
+.ontime-timer-block.stop {
+  border-left-color: #555;
+}
+
+.ontime-timer-block.overtime {
+  border-left-color: #f44336;
+}
+
+.ontime-playback-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.ontime-timer-value {
+  font-size: 52px;
+  font-weight: 300;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: #ffffff;
+}
+
+.ontime-timer-block.overtime .ontime-timer-value {
+  color: #f44336;
+}
+
+.ontime-timer-block.stop .ontime-timer-value,
+.ontime-timer-block.armed .ontime-timer-value {
+  color: #888;
+}
+
+.ontime-added-time {
+  font-size: 12px;
+  color: #ff9800;
+  margin-top: 4px;
+}
+
+.ontime-event {
+  margin: 8px 0;
+  padding: 10px 12px;
+  border-radius: 4px;
+  background-color: #1e1e1e;
+  border-left: 3px solid #444;
+}
+
+.ontime-event-now {
+  border-left-color: #4caf50;
+}
+
+.ontime-event-next {
+  border-left-color: #444;
+  opacity: 0.7;
+}
+
+.ontime-event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.ontime-event-cue {
+  font-size: 11px;
+  color: #aaa;
+  font-family: monospace;
+}
+
+.ontime-event-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #666;
+}
+
+.ontime-event-title {
+  font-size: 16px;
+  color: #fff;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ontime-event-note {
+  font-size: 12px;
+  color: #888;
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
