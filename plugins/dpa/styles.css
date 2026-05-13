@@ -1,6 +1,25 @@
 /* DPA color palette: #202020 bg, #333 surface, #5b5b5b secondary,
    #a0a0a0 border/muted text, #ddd primary text, #cedc00 brand accent */
 
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 300;
+  src: url(../../src/assets/font/Lato-Light.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 400;
+  src: url(../../src/assets/font/Lato-Regular.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 700;
+  src: url(../../src/assets/font/Lato-Bold.ttf) format('truetype');
+}
+
 table.channel {
   width: 120px;
   height: 340px;
