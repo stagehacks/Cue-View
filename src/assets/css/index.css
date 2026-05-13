@@ -348,6 +348,24 @@ select.button:focus {
 }
 
 @font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  src: url(../font/OpenSans-Light.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url(../font/OpenSans-Regular.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: url(../font/OpenSans-SemiBold.ttf) format('truetype');
+}
+@font-face {
   font-family: 'Material Icons';
   font-style: normal;
   font-weight: 400;

@@ -1,0 +1,52 @@
+<%
+function formatMs(ms) {
+  if (ms === null || ms === undefined) return '--:--';
+  var neg = ms < 0;
+  var abs = Math.abs(ms);
+  var h = Math.floor(abs / 3600000);
+  var m = Math.floor((abs % 3600000) / 60000);
+  var s = Math.floor((abs % 60000) / 1000);
+  var result = h > 0
+    ? h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0')
+    : m + ':' + String(s).padStart(2, '0');
+  return (neg ? '-' : '') + result;
+}
+var playback = data.timer ? data.timer.playback : 'stop';
+var current = data.timer ? data.timer.current : null;
+var overtime = current !== null && current < 0;
+%>
+
+<header>
+  <h1><%= listName %></h1>
+</header>
+
+<div class="ontime-timer-block <%= playback %><%= overtime ? ' overtime' : '' %>">
+  <div class="ontime-playback-label"><%= playback %></div>
+  <div class="ontime-timer-value"><%= formatMs(current) %></div>
+  <% if (data.timer && data.timer.addedTime && data.timer.addedTime !== 0) { %>
+  <div class="ontime-added-time"><%= data.timer.addedTime > 0 ? '+' : '' %><%= Math.round(data.timer.addedTime / 1000) %>s</div>
+  <% } %>
+</div>
+
+<% if (data.eventNow) { %>
+<div class="ontime-event ontime-event-now" style="<%= data.eventNow.colour ? 'border-left-color:' + data.eventNow.colour : '' %>">
+  <div class="ontime-event-header">
+    <span class="ontime-event-cue"><%= data.eventNow.cue || '' %></span>
+    <span class="ontime-event-label">Now</span>
+  </div>
+  <div class="ontime-event-title"><%= data.eventNow.title || '' %></div>
+  <% if (data.eventNow.note) { %>
+  <div class="ontime-event-note"><%= data.eventNow.note %></div>
+  <% } %>
+</div>
+<% } %>
+
+<% if (data.eventNext) { %>
+<div class="ontime-event ontime-event-next" style="<%= data.eventNext.colour ? 'border-left-color:' + data.eventNext.colour : '' %>">
+  <div class="ontime-event-header">
+    <span class="ontime-event-cue"><%= data.eventNext.cue || '' %></span>
+    <span class="ontime-event-label">Next</span>
+  </div>
+  <div class="ontime-event-title"><%= data.eventNext.title || '' %></div>
+</div>
+<% } %>
