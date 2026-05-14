@@ -27,21 +27,21 @@
       <div class="bar-wrapper rf-color">
         <div class="bar" id="ch-<%= i %>-rfa" style="height:<%= Math.round(Math.max(0, Math.min(90, (1 - Math.max(0, Math.min(1, (ch.rfA + 130) / 80))) * 90))) %>px"></div>
       </div>
-      <small><%= ch.rfA %></small>
+      <small class="bar-value"><%= ch.rfA %></small>
     </td>
     <td style="width:35px">
       <small>B</small>
       <div class="bar-wrapper rf-color">
         <div class="bar" id="ch-<%= i %>-rfb" style="height:<%= Math.round(Math.max(0, Math.min(90, (1 - Math.max(0, Math.min(1, (ch.rfB + 130) / 80))) * 90))) %>px"></div>
       </div>
-      <small><%= ch.rfB %></small>
+      <small class="bar-value"><%= ch.rfB %></small>
     </td>
     <td style="width:50px">
       <small>audio</small>
       <div class="bar-wrapper audio-color">
-        <div class="bar" id="ch-<%= i %>-audio" style="height:<%= Math.round(Math.max(0, Math.min(90, (Math.abs(ch.audioLevel) / 80) * 90))) %>px"></div>
+        <div class="bar" id="ch-<%= i %>-audio" style="height:<%= Math.round(Math.max(0, Math.min(90, (1 - (ch.audioLevel + 126) / 126) * 90))) %>px"></div>
       </div>
-      <small><span id="ch-<%= i %>-audio-text"><%= ch.audioLevel %></span><br /><small>dBFS</small></small>
+      <small><span id="ch-<%= i %>-audio-text" class="bar-value"><%= ch.audioLevel %></span><br /><small>dBFS</small></small>
     </td>
   </tr>
   <tr>

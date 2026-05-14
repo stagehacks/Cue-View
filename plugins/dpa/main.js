@@ -2,8 +2,8 @@ const osc = require('osc');
 
 exports.config = {
   defaultName: 'DPA N-Series',
-  connectionType: 'osc',
-  defaultPort: 8000,
+  connectionType: 'osc-tcp',
+  defaultPort: 1993,
   mayChangePorts: true,
   heartbeatInterval: 5000,
   heartbeatTimeout: 10000,
@@ -13,7 +13,7 @@ exports.config = {
     searchBuffer: Buffer.from([
       0xc0, 0x2f, 0x6d, 0x6f, 0x64, 0x65, 0x6c, 0x00, 0x00, 0x2c, 0x00, 0x00, 0x00, 0xc0,
     ]),
-    testPort: 8000,
+    testPort: 1993,
     validateResponse(msg) {
       const str = msg.toString();
       return str.includes('/model') || str.includes('N-DR');
@@ -58,6 +58,12 @@ exports.ready = function ready(_device) {
   subscribeToAddress(device, '/ch/2/audiolevel', 100);
   subscribeToAddress(device, '/advanced/1/antenna/rfstrength', 200);
   subscribeToAddress(device, '/advanced/2/antenna/rfstrength', 200);
+  subscribeToAddress(device, '/ch/1/tx/active', 500);
+  subscribeToAddress(device, '/ch/2/tx/active', 500);
+  subscribeToAddress(device, '/ch/1/tx/name', 5000);
+  subscribeToAddress(device, '/ch/2/tx/name', 5000);
+  subscribeToAddress(device, '/ch/1/tx/batterystatus', 1000);
+  subscribeToAddress(device, '/ch/2/tx/batterystatus', 1000);
 };
 
 exports.data = function data(_device, message) {
@@ -86,7 +92,7 @@ exports.data = function data(_device, message) {
       ch.name = (args && args[0]) ? args[0] : '–';
       device.draw();
     } else if (sub === 'audiolevel') {
-      ch.audioLevel = (args && args[0] !== undefined) ? args[0] : -80;
+      ch.audioLevel = (args && args[0] !== undefined) ? args[0] / 10 : -80;
       device.update('meterUpdate', { channels: device.data.channels });
     } else if (sub === 'tx/active') {
       ch.txActive = args && args[0] === 1;
@@ -106,8 +112,8 @@ exports.data = function data(_device, message) {
     const chNum = parseInt(parts[1], 10);
     if (chNum < 1 || chNum > 2) return;
     const ch = device.data.channels[chNum];
-    ch.rfA = (args && args[0] !== undefined) ? args[0] : -130;
-    ch.rfB = (args && args[1] !== undefined) ? args[1] : -130;
+    ch.rfA = (args && args[1] !== undefined) ? args[1] / 10 : -130;
+    ch.rfB = (args && args[2] !== undefined) ? args[2] / 10 : -130;
     device.update('meterUpdate', { channels: device.data.channels });
   } else if (parts[0] === 'warning') {
     if (parts.length === 2) {
@@ -127,8 +133,8 @@ exports.update = function update(device, doc, updateType, data) {
   for (let i = 1; i <= 2; i++) {
     const ch = data.channels[i];
 
-    // Audio level bar: -80 dBFS = empty, 0 dBFS = full
-    const audioOverlay = Math.max(0, Math.min(90, (Math.abs(ch.audioLevel) / 80) * 90));
+    // Audio level bar: -126 dBFS = empty, 0 dBFS = full
+    const audioOverlay = Math.max(0, Math.min(90, (1 - (ch.audioLevel + 126) / 126) * 90));
     const $audio = doc.getElementById(`ch-${i}-audio`);
     if ($audio) $audio.style.height = `${audioOverlay}px`;
     const $audioText = doc.getElementById(`ch-${i}-audio-text`);

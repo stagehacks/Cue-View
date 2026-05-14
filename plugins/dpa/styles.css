@@ -22,6 +22,7 @@
 
 table.channel {
   width: 120px;
+  table-layout: fixed;
   height: 340px;
   background-color: #333;
   border: 1px solid #a0a0a0;
@@ -72,9 +73,14 @@ table td {
   overflow: hidden;
 }
 
-/* RF bars: DPA teal/cyan tones */
+.bar-value {
+  font-variant-numeric: tabular-nums;
+  display: block;
+}
+
+/* RF bars: DPA blue */
 .bar-wrapper.rf-color {
-  background: linear-gradient(0deg, #1a6060, #20b2aa 40%, #20b2aa 80%, #40d4cc);
+  background: linear-gradient(0deg, #1a2a80, #485CE5 40%, #485CE5 80%, #6b7fff);
 }
 
 /* Audio bars: subtle green to accent */

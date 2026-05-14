@@ -110,7 +110,55 @@ function initDeviceConnection(id) {
   const { type } = devices[id];
   const plugins = PLUGINS.all;
 
-  if (plugins[type].config.connectionType.includes('osc')) {
+  if (plugins[type].config.connectionType === 'osc-tcp') {
+    // OSC over TCP with 4-byte big-endian size prefix
+    device.connection = new net.Socket();
+    let recvBuf = Buffer.alloc(0);
+    device.connection.connect({ port: device.remotePort, host: device.addresses[0] });
+    device.connection.on('error', () => {
+      device.connection.destroy();
+    });
+    device.connection.on('connect', () => {
+      plugins[type].ready(device);
+      if (Object.keys(devices).length === 1) {
+        VIEW.switchDevice(device.id);
+      }
+    });
+    device.connection.on('data', (chunk) => {
+      recvBuf = Buffer.concat([recvBuf, chunk]);
+      while (recvBuf.length >= 4) {
+        const msgLen = recvBuf.readUInt32BE(0);
+        if (recvBuf.length < 4 + msgLen) break;
+        const msgBytes = recvBuf.slice(4, 4 + msgLen);
+        recvBuf = recvBuf.slice(4 + msgLen);
+        try {
+          const message = osc.readPacket(msgBytes, {});
+          plugins[type].data(device, message);
+        } catch (err) {
+          console.error(err);
+        }
+        device.trafficSignal(device);
+        device.lastMessage = Date.now();
+      }
+    });
+    device.connection.on('close', () => {
+      infoUpdate(device, 'status', 'broken');
+    });
+    device.send = (address, args) => {
+      device.sendQueue.push({ address, args });
+    };
+    device.sendNow = (data) => {
+      try {
+        const bytes = osc.writePacket(data, {});
+        const buf = Buffer.allocUnsafe(4 + bytes.length);
+        buf.writeUInt32BE(bytes.length, 0);
+        Buffer.from(bytes).copy(buf, 4);
+        device.connection.write(buf);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+  } else if (plugins[type].config.connectionType.includes('osc')) {
     if (plugins[type].config.connectionType.includes('udp')) {
       device.connection = new osc.UDPPort({
         localAddress: '0.0.0.0',
@@ -122,6 +170,7 @@ function initDeviceConnection(id) {
       device.connection = new osc.TCPSocketPort({
         address: device.addresses[0],
         port: device.remotePort,
+        useSLIP: true,
       });
     }
     device.connection.open();
