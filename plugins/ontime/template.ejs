@@ -11,8 +11,15 @@ function formatMs(ms) {
     : m + ':' + String(s).padStart(2, '0');
   return (neg ? '-' : '') + result;
 }
+function formatClock(ms) {
+  if (ms === null || ms === undefined) return '';
+  var h = Math.floor(ms / 3600000) % 24;
+  var m = Math.floor((ms % 3600000) / 60000);
+  return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+}
 var playback = data.timer ? data.timer.playback : 'stop';
 var current = data.timer ? data.timer.current : null;
+var duration = data.timer ? data.timer.duration : null;
 var overtime = current !== null && current < 0;
 %>
 
@@ -20,13 +27,26 @@ var overtime = current !== null && current < 0;
   <h1><%= listName %></h1>
 </header>
 
-<div class="ontime-timer-block <%= playback %><%= overtime ? ' overtime' : '' %>">
-  <div class="ontime-playback-label"><%= playback %></div>
-  <div class="ontime-timer-value"><%= formatMs(current) %></div>
-  <% if (data.timer && data.timer.addedTime && data.timer.addedTime !== 0) { %>
-  <div class="ontime-added-time"><%= data.timer.addedTime > 0 ? '+' : '' %><%= Math.round(data.timer.addedTime / 1000) %>s</div>
+<div class="ontime-top-bar <%= playback %><%= overtime ? ' overtime' : '' %>">
+  <div class="ontime-top-section">
+    <div class="ontime-top-label">Running timer</div>
+    <div class="ontime-timer-value"><%= formatMs(current) %></div>
+    <% if (data.timer && data.timer.addedTime && data.timer.addedTime !== 0) { %>
+    <div class="ontime-added-time"><%= data.timer.addedTime > 0 ? '+' : '' %><%= Math.round(data.timer.addedTime / 1000) %>s</div>
+    <% } %>
+  </div>
+  <% if (data.clock !== null && data.clock !== undefined) { %>
+  <div class="ontime-top-section ontime-top-clock">
+    <div class="ontime-top-label">Time now</div>
+    <div class="ontime-clock-value"><%= formatClock(data.clock) %></div>
+  </div>
   <% } %>
 </div>
+<% if (duration !== null && duration !== undefined && duration > 0) { %>
+<%   var elapsed = data.timer && data.timer.elapsed !== null && data.timer.elapsed !== undefined ? data.timer.elapsed : null; %>
+<%   var pct = elapsed !== null ? Math.max(0, Math.min(100, (elapsed / duration) * 100)) : 0; %>
+<div class="ontime-progress-bar"><div class="ontime-progress-fill" style="width:<%= Math.round(pct) %>%"></div></div>
+<% } %>
 
 <% if (data.eventNow) { %>
 <div class="ontime-event ontime-event-now" style="<%= data.eventNow.colour ? 'border-left-color:' + data.eventNow.colour : '' %>">
@@ -35,6 +55,9 @@ var overtime = current !== null && current < 0;
     <span class="ontime-event-label">Now</span>
   </div>
   <div class="ontime-event-title"><%= data.eventNow.title || '' %></div>
+  <% if (data.eventNow.timeStart !== undefined && data.eventNow.timeEnd !== undefined) { %>
+  <div class="ontime-event-times"><%= formatClock(data.eventNow.timeStart) %> – <%= formatClock(data.eventNow.timeEnd) %></div>
+  <% } %>
   <% if (data.eventNow.note) { %>
   <div class="ontime-event-note"><%= data.eventNow.note %></div>
   <% } %>
@@ -48,5 +71,11 @@ var overtime = current !== null && current < 0;
     <span class="ontime-event-label">Next</span>
   </div>
   <div class="ontime-event-title"><%= data.eventNext.title || '' %></div>
+  <% if (data.eventNext.timeStart !== undefined && data.eventNext.timeEnd !== undefined) { %>
+  <div class="ontime-event-times"><%= formatClock(data.eventNext.timeStart) %> – <%= formatClock(data.eventNext.timeEnd) %></div>
+  <% } %>
+  <% if (data.eventNext.note) { %>
+  <div class="ontime-event-note"><%= data.eventNext.note %></div>
+  <% } %>
 </div>
 <% } %>
