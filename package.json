@@ -19,7 +19,7 @@
   "homepage": "https://github.com/stagehacks/Cue-View",
   "repository": "https://github.com/stagehacks/Cue-View",
   "devDependencies": {
-    "electron": "40.10.0",
+    "electron": "42.0.1",
     "electron-builder": "26.10.0",
     "eslint": "8.57.0",
     "eslint-config-airbnb-base": "15.0.0",
