@@ -21,7 +21,7 @@
 }
 
 table.channel {
-  width: 120px;
+  width: 140px;
   table-layout: fixed;
   height: 340px;
   background-color: #333;
@@ -95,13 +95,14 @@ table td {
 }
 
 .batt-wrapper {
-  width: 84px;
-  height: 28px;
+  width: 104px;
+  height: 35px;
   margin: 8px auto;
   border: 2px solid #5b5b5b;
   border-radius: 4px;
   padding: 2px;
   position: relative;
+  box-sizing: content-box;
 }
 
 .batt-wrapper.low {
@@ -112,9 +113,9 @@ table td {
   background-color: #5b5b5b;
   position: absolute;
   right: -5px;
-  top: 8px;
+  top: 10px;
   width: 5px;
-  height: 12px;
+  height: 16px;
   border-radius: 2px;
 }
 
@@ -123,16 +124,18 @@ table td {
 }
 
 .batt-bar {
-  height: 20px;
+  height: 100%;
   background: linear-gradient(90deg, #a8b400, #cedc00);
   border-radius: 2px;
   font-size: 10px;
-  line-height: 20px;
   color: #202020;
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
+  display: flex;
+  align-items: center;
   padding-left: 3px;
+  box-sizing: border-box;
 }
 
 .batt-wrapper.low .batt-bar {
@@ -142,12 +145,12 @@ table td {
 
 .warnings {
   padding: 2px 3px;
-  min-height: 18px;
+  height: 32px;
 }
 
 .warn {
   display: inline-block;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: bold;
   border-radius: 2px;
   padding: 1px 3px;
