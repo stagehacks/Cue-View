@@ -310,6 +310,10 @@ module.exports.resetPinned = function resetPinned() {
   pinnedDevices.length = 0;
   activeDevice = false;
 
+  Object.keys(DEVICE.all).forEach((id) => {
+    DEVICE.all[id].frameDrawn = false;
+  });
+
   try {
     document.querySelector('#device-list .active-device').classList.remove('active-device');
   } catch (err) {
