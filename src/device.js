@@ -243,6 +243,46 @@ function initDeviceConnection(id) {
       });
       infoUpdate(device, 'status', 'ok');
     });
+  } else if (plugins[type].config.connectionType === 'websocket') {
+    const wsPath = (device.fields && device.fields.wsPath) ? device.fields.wsPath : '/ws';
+    const wsUrl = `ws://${device.addresses[0]}:${device.remotePort}${wsPath}`;
+    device.connection = new WebSocket(wsUrl);
+
+    device.connection.onopen = () => {
+      device.lastMessage = Date.now();
+      infoUpdate(device, 'status', 'ok');
+      plugins[type].ready(device);
+      if (Object.keys(devices).length === 1) {
+        VIEW.switchDevice(device.id);
+      }
+    };
+
+    device.connection.onmessage = (event) => {
+      try {
+        const msg = JSON.parse(event.data);
+        plugins[type].data(device, msg);
+      } catch (err) {
+        console.error(err);
+      }
+      device.lastMessage = Date.now();
+      device.trafficSignal(device);
+      infoUpdate(device, 'status', 'ok');
+    };
+
+    device.connection.onerror = () => {};
+
+    device.connection.onclose = () => {
+      device.lastMessage = 0;
+    };
+
+    device.send = (data) => {
+      device.sendQueue.push(data);
+    };
+    device.sendNow = (data) => {
+      if (device.connection.readyState === WebSocket.OPEN) {
+        device.connection.send(JSON.stringify(data));
+      }
+    };
   }
 
   return true;
@@ -263,6 +303,8 @@ module.exports.deleteActive = function deleteActive() {
     } else if (device.plugin.config.connectionType === 'multicast') {
       device.connection?.close();
     } else if (device.plugin.config.connectionType.startsWith('osc')) {
+      device.connection?.close();
+    } else if (device.plugin.config.connectionType === 'websocket') {
       device.connection?.close();
     }
     VIEW.removeDeviceFromList(device);
