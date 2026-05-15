@@ -1,0 +1,85 @@
+<header>
+  <h1><%= listName %></h1>
+  <h2><%= data.model %></h2>
+</header>
+
+<% for (var i = 1; i <= 2; i++) { %>
+<% var ch = data.channels[i]; %>
+<table class="channel">
+  <tr>
+    <td colspan="3"><small>CH <%= i %></small></td>
+  </tr>
+  <tr>
+    <td colspan="3" class="chan-name"><%= ch.name %></td>
+  </tr>
+  <tr>
+    <td colspan="3" class="tx-row">
+      <% if (ch.txActive) { %>
+        <span class="tx-dot active">&#9679;</span> <%= ch.txName || 'TX' %>
+      <% } else { %>
+        <span class="tx-dot">&#9675;</span> <small>No TX</small>
+      <% } %>
+    </td>
+  </tr>
+  <tr>
+    <td style="width:40px">
+      <small>A</small>
+      <div class="bar-wrapper rf-color">
+        <div class="bar" id="ch-<%= i %>-rfa" style="height:<%= Math.round(Math.max(0, Math.min(90, (1 - Math.max(0, Math.min(1, (ch.rfA + 130) / 80))) * 90))) %>px"></div>
+      </div>
+      <small class="bar-value"><%= Math.round(ch.rfA) %></small>
+    </td>
+    <td style="width:40px">
+      <small>B</small>
+      <div class="bar-wrapper rf-color">
+        <div class="bar" id="ch-<%= i %>-rfb" style="height:<%= Math.round(Math.max(0, Math.min(90, (1 - Math.max(0, Math.min(1, (ch.rfB + 130) / 80))) * 90))) %>px"></div>
+      </div>
+      <small class="bar-value"><%= Math.round(ch.rfB) %></small>
+    </td>
+    <td style="width:60px">
+      <small>audio</small>
+      <div class="bar-wrapper audio-color">
+        <div class="bar" id="ch-<%= i %>-audio" style="height:<%= Math.round(Math.max(0, Math.min(90, (1 - (ch.audioLevel + 126) / 126) * 90))) %>px"></div>
+      </div>
+      <small><span id="ch-<%= i %>-audio-text" class="bar-value"><%= ch.audioLevel %></span><br /><small>dBFS</small></small>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="3">
+      <% if (ch.battCapacity !== null) { %>
+        <div class="batt-wrapper<%= ch.battCapacity < 20 ? ' low' : '' %>">
+          <div class="batt-bar" style="width:<%= ch.battCapacity %>%">
+            <% if (ch.battTimeMin !== null && ch.battTimeMin < 65535) { %>
+              <%= Math.floor(ch.battTimeMin / 60) %>:<%= String(ch.battTimeMin % 60).padStart(2, '0') %>
+            <% } else { %>
+              <%= ch.battCapacity %>%
+            <% } %>
+          </div>
+          <div class="batt-knob<%= ch.battCapacity < 20 ? ' low' : '' %>"></div>
+        </div>
+      <% } else { %>
+        <div class="batt-wrapper"><div class="batt-knob"></div></div>
+      <% } %>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="3" class="warnings">
+      <% if (ch.warnings.txdropout) { %><span class="warn alert">DROPOUT</span><% } %>
+      <% if (ch.warnings.lowbattery) { %><span class="warn warning">LOW BATT</span><% } %>
+      <% if (ch.warnings.interference) { %><span class="warn warning">INTERF</span><% } %>
+      <% if (ch.warnings.afoverload) { %><span class="warn warning">OVERLOAD</span><% } %>
+      <% if (ch.warnings.antennashorted) { %><span class="warn warning">ANT SHORT</span><% } %>
+      <% if (ch.warnings.txsyncmismatch) { %><span class="warn notify">SYNC MISM</span><% } %>
+    </td>
+  </tr>
+</table>
+<% } %>
+
+<% if (data.warnings.hightemp || data.warnings.criticaltemp || data.warnings.rfoverload || data.warnings.fan) { %>
+<div class="device-warnings">
+  <% if (data.warnings.criticaltemp) { %><span class="warn alert">CRIT TEMP</span><% } %>
+  <% if (data.warnings.hightemp) { %><span class="warn warning">HIGH TEMP</span><% } %>
+  <% if (data.warnings.rfoverload) { %><span class="warn warning">RF OVERLOAD</span><% } %>
+  <% if (data.warnings.fan) { %><span class="warn warning">FAN</span><% } %>
+</div>
+<% } %>
