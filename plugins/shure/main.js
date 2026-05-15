@@ -78,7 +78,7 @@ exports.data = function data(_device, message) {
       channel.rf_antenna = msgParts[3];
       channel.rx_rf_lvl = Number(msgParts[4]) - 128;
       channel.audio_lvl = Number(msgParts[5]);
-      if (channelNumber === 4) {
+      if (channelNumber === device.data.channelCount) {
         device.update('updateSample', {
           channels: device.data.channels,
         });
