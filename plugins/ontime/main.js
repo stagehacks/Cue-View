@@ -2,9 +2,18 @@ exports.config = {
   defaultName: 'Ontime',
   connectionType: 'websocket',
   remotePort: 4001,
-  mayChangePorts: false,
+  mayChangePorts: true,
   heartbeatInterval: 500,
   heartbeatTimeout: 15000,
+  fields: [
+    {
+      key: 'wsPath',
+      label: 'WS Path',
+      type: 'textinput',
+      value: '/ws',
+      action: () => {},
+    },
+  ],
 };
 
 exports.ready = function ready(device) {

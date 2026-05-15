@@ -244,7 +244,8 @@ function initDeviceConnection(id) {
       infoUpdate(device, 'status', 'ok');
     });
   } else if (plugins[type].config.connectionType === 'websocket') {
-    const wsUrl = `ws://${device.addresses[0]}:${device.remotePort}/ws`;
+    const wsPath = (device.fields && device.fields.wsPath) ? device.fields.wsPath : '/ws';
+    const wsUrl = `ws://${device.addresses[0]}:${device.remotePort}${wsPath}`;
     device.connection = new WebSocket(wsUrl);
 
     device.connection.onopen = () => {
