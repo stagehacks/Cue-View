@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@jwetzell/posistagenet": "2.1.2",
-    "atem-connection": "3.9.0",
+    "atem-connection": "3.10.2",
     "bonjour": "3.5.1",
     "electron-updater": "6.8.9",
     "html-to-vdom": "0.7.0",
